@@ -1,0 +1,89 @@
+<h2 mat-dialog-title>Set Target</h2>
+<mat-dialog-content class="mat-typography">
+
+
+  <div class="modal-body">
+    <form (ngSubmit)="submitForm(targetForm)" [formGroup]="targetForm">
+      <div class="input-field col s12 d-none">
+        <input class="form-control" formControlName="id" type="hidden">
+      </div>
+
+      <div class="row">
+
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Duration</mat-label>
+            <mat-select formControlName="duration">
+              <mat-option disabled value="">Select duration</mat-option>
+              <mat-option value="weekly">Weekly</mat-option>
+              <mat-option value="monthly">Monthly</mat-option>
+            <!--   <mat-option value="quarterly">Quarterly</mat-option> -->
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Start Day</mat-label>
+            <input matInput formControlName="startDate" [matDatepickerFilter]="weekendsDatesFilter" [matDatepicker]="pickerStart">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+            <mat-datepicker #pickerStart  [startAt]="today"></mat-datepicker>
+            <mat-error *ngIf="targetForm.get('startDate').hasError('required')">
+              Start Date is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+      </div>
+      <div class="row">
+ 
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Booking target</mat-label>
+            <input matInput formControlName="bookingCount" type="number"> 
+            <mat-error *ngIf="targetForm.get('bookingCount').hasError('required')">
+              Bookings is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Site Visit</mat-label>
+            <input formControlName="siteVisitCount" matInput type="number">
+            <mat-error *ngIf="targetForm.get('siteVisitCount').hasError('required')">
+              Site Visit is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      <!--   <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>End Day</mat-label>
+            <input matInput formControlName="endTime" [matDatepicker]="pickerEnd">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd [startAt]="today"></mat-datepicker>
+            <mat-error *ngIf="targetForm.get('endTime').hasError('required')">
+              endTime is required
+            </mat-error>
+          </mat-form-field>
+
+        </div> -->
+      </div>
+
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <div class="example-button-row">
+            <button [disabled]="!targetForm.valid" color="primary" mat-raised-button type="submit">Set
+              Target</button>
+            <button (click)="onNoClick()" color="warn" mat-raised-button tabindex="-1">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</mat-dialog-content>

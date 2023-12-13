@@ -1,0 +1,213 @@
+<section class="content">
+  <div class="container-fluid">
+
+    <!-- Widgets -->
+    <div class="row">
+      <div class="col-lg-3 col-sm-6">
+        <mat-card style="border-radius: 35px;"  (click)="goToTotalLead()" class="mat-elevation-z8 tile-card height margin-bottom">
+          <div class="info-box7-block tile">
+            <h4 class="m-b-20 heading">Total Lead</h4>
+
+            <h2 class="text-end"><i class="fas fa-chart-line float-start"></i><span>{{totalLeads?.count}}</span></h2>
+
+            <!-- <p class="m-b-0">18% Higher Then Last Month</p> -->
+          </div>
+        </mat-card>
+      </div>
+
+      <div class="col-lg-3 col-sm-6">
+        <!-- <div class="info-box7 l-bg-purple order-info-box7"> -->
+          <mat-card  style="border-radius: 35px;" (click)="goToActiveLead()" class="mat-elevation-z8 tile-card height margin-bottom">
+          <div class="info-box7-block tile">
+            <h4 class="m-b-20 heading">Total Active Leads</h4>
+
+            <h2 class="text-end"><i class="fas fa-chart-line float-start"></i><span>{{activeLeads?.count}}</span>
+            </h2>
+
+            <!-- <p class="m-b-0">21% Higher Then Last Month</p> -->
+          </div>
+          <!--  </div> -->
+        </mat-card>
+      </div>
+
+      <div class="col-lg-3 col-sm-6">
+        <!--  <div class="info-box7 l-bg-orange order-info-box7"> -->
+          <mat-card  style="border-radius: 35px;" (click)="goToFollowup()" class="mat-elevation-z8 tile-card height margin-bottom">
+          <div class="info-box7-block tile">
+            <h4 class="m-b-20 heading">Today's Followup</h4>
+
+            <h2 class="text-end"><i class="fas fa-comments float-start"></i><span>{{followUps?.count}}</span>
+            </h2>
+
+            <!-- <p class="m-b-0">37% Higher Then Last Month</p> -->
+          </div>
+          <!-- </div> -->
+        </mat-card>
+      </div>
+
+      <div class="col-lg-3 col-sm-6">
+        <!-- <div class="info-box7 l-bg-card1 order-info-box7"> -->
+          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height margin-bottom">
+          <div class="info-box7-block tile">
+            <h4 class="m-b-20 heading">Today's Meeting</h4>
+            <h2 class="text-end"><i class="fas fa-business-time float-start"></i><span>0</span></h2>
+            <!-- <p class="m-b-0">10% Higher Then Last Month</p> -->
+          </div>
+          <!-- </div> -->
+        </mat-card>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 col-sm-6">
+          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height">
+          <div class="info-box7-block tile">
+            <h4 class="m-b-20 heading">Performance & Ranking</h4>
+            <h2 class="text-end"><i class="fas fa-star float-start"></i><span>0</span></h2>
+            <!--  <p class="m-b-0">18% Higher Then Last Month</p> -->
+          </div>
+        </mat-card>
+      </div>
+
+      <div class="col-lg-3 col-sm-6">
+        <!-- <div class="info-box7 l-bg-purple order-info-box7"> -->
+          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height">
+          <div class="info-box7-block tile">
+            <h4 class="m-b-20 heading">Follow-Up Ranking</h4>
+            <h2 class="text-end"><i class="fas fa-star float-start"></i><span>0</span></h2>
+            <!-- <p class="m-b-0">21% Higher Then Last Month</p> -->
+          </div>
+          <!--  </div> -->
+        </mat-card>
+      </div>
+
+      <div class="col-lg-3 col-sm-6">
+        <!--  <div class="info-box7 l-bg-orange order-info-box7"> -->
+          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height">
+          <div class="info-box7-block tile">
+            <h4 class="m-b-20 heading">Weekly Target(Visit)</h4>
+            <h2 class="text-end"><i class="fas fa-crosshairs float-start"></i><span>{{weeklyTargetSitevisit}}</span></h2>
+            <!-- <p class="m-b-0">37% Higher Then Last Month</p> -->
+          </div>
+          <!-- </div> -->
+        </mat-card>
+      </div>
+
+      <div class="col-lg-3 col-sm-6">
+        <!-- <div class="info-box7 l-bg-card1 order-info-box7"> -->
+          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height">
+          <div class="info-box7-block tile">
+            <h4 class="m-b-20 heading">Weekly Target(Booking)</h4>
+            <h2 class="text-end"><i class="fas fa-bullseye float-start"></i><span>{{weeklyTargetBooking}}</span></h2>
+            <!--  <p class="m-b-0">10% Higher Then Last Month</p> -->
+          </div>
+          <!-- </div> -->
+        </mat-card>
+      </div>
+    </div>
+    <br>
+
+    <br>
+    <!-- #END# Widgets -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="card">
+          <div class="header row">
+            <div class="col-6">
+              <h2>
+                <strong>Site </strong> Visit
+              </h2>
+            </div>
+            <div class="col-6" style="text-align: right">
+              <!-- <ul class="header-buttons">
+              <li>
+                <div class="icon-button-demo">
+                  <mat-select appearance="outline"  (selectionChange)="siteVisitTargetGraph($event.value)" >
+                    <mat-option disabled value="">Select gender</mat-option>
+                    <mat-option value="all">All Time</mat-option>
+                    <mat-option value="weekly">Weekly</mat-option>
+                    <mat-option value="monthly">Monthly</mat-option>
+                  </mat-select>
+                </div>
+              </li>
+            </ul> -->
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-secondary" [ngClass]="siteVisitChartFormat == 'all' ? 'active' : ''">
+                  <input type="radio" name="options" id="option1" autocomplete="off" value="all"
+                    [checked]="siteVisitChartFormat == 'all'" (change)="setFormate($event)"> All Time
+                </label>
+                <label class="btn btn-secondary" [ngClass]="siteVisitChartFormat == 'weekly' ? 'active' : ''">
+                  <input type="radio" name="options" id="option2" autocomplete="off" value="weekly"
+                    [checked]="siteVisitChartFormat == 'weekly'" (change)="setFormate($event)"> Weekly
+                </label>
+                <label class="btn btn-secondary" [ngClass]="siteVisitChartFormat == 'monthly' ? 'active' : ''">
+                  <input type="radio" name="options" id="option3" autocomplete="off" value="monthly"
+                    [checked]="siteVisitChartFormat == 'monthly'" (change)="setFormate($event)"> Monthly
+                </label>
+              </div>
+            </div>
+
+          </div>
+          <div class="body">
+
+            <canvas baseChart class="chart" [datasets]="barChartData" [labels]="barChartLabels"
+              [options]="barChartOptions" [colors]="barChartColors" [legend]="barChartLegend"
+              [chartType]="barChartType"></canvas>
+            <div class="row">
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="card">
+          <div class="header row">
+            <div class="col-6">
+              <h2>
+                <strong>Bookings </strong>
+              </h2>
+            </div>
+            <div class="col-6" style="text-align: right;">
+              <!-- <ul class="header-buttons">
+                <li>
+                  <div class="icon-button-demo">
+                    <mat-select appearance="outline" (selectionChange)="bookingTargetGraph($event.value)">
+                      <mat-option disabled value="">Select gender</mat-option>
+                      <mat-option value="all">All Time</mat-option>
+                      <mat-option value="weekly">Weekly</mat-option>
+                      <mat-option value="monthly">Monthly</mat-option>
+                    </mat-select>
+                  </div>
+                </li>
+              </ul> -->
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-secondary" [ngClass]="bookingChartFormat == 'all' ? 'active' : ''">
+                  <input type="radio" name="options" id="option1" autocomplete="off" value="all"
+                    [checked]="bookingChartFormat == 'all'" (change)="setBookingFormate($event)"> All Time
+                </label>
+                <label class="btn btn-secondary" [ngClass]="bookingChartFormat == 'weekly' ? 'active' : ''">
+                  <input type="radio" name="options" id="option2" autocomplete="off" value="weekly"
+                    [checked]="bookingChartFormat == 'weekly'" (change)="setBookingFormate($event)"> Weekly
+                </label>
+                <label class="btn btn-secondary" [ngClass]="bookingChartFormat == 'monthly' ? 'active' : ''">
+                  <input type="radio" name="options" id="option3" autocomplete="off" value="monthly"
+                    [checked]="bookingChartFormat == 'monthly'" (change)="setBookingFormate($event)"> Monthly
+                </label>
+              </div>
+            </div>
+
+          </div>
+          <div class="body">
+
+            <canvas baseChart class="chart" [datasets]="barChartDataBooking" [labels]="barChartLabels"
+              [options]="barChartOptions" [colors]="barChartColors" [legend]="barChartLegend"
+              [chartType]="barChartType"></canvas>
+            <div class="row">
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

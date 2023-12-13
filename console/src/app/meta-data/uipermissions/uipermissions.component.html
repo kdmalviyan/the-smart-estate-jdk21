@@ -1,0 +1,59 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+          <div class="body">
+            <div class="row">
+              <div class="col-sm-12">
+                <h2>
+                  <strong>Adjust Permissions</strong>
+                </h2>
+                <br>
+                <br>
+                <br>
+                
+
+                <mat-accordion>
+                  <mat-expansion-panel *ngFor="let role of roles">
+
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        {{role.description}}
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+
+                    <div class="row">
+                      <div *ngFor="let permissionTab of role.alltabs" let i="index">
+
+                        <!-- mainmenu -->
+                        <span class="example-list-section">
+                          <mat-checkbox *ngIf="permissionTab.topMenu" class="example-margin"
+                            [checked]="permissionTab.checked" (change)="updateParent($event.checked,permissionTab,role)">
+                            {{permissionTab.title}}
+                          </mat-checkbox>
+
+                          <!-- submenu -->
+                          <ul *ngIf="permissionTab.submenu.length>0">
+                            <li *ngFor="let submenu of permissionTab.submenu" style="margin-left: 34px;">
+                              <mat-checkbox [checked]="submenu.checked" (change)="updateChild($event.checked,submenu,role)">
+                                {{submenu.title}}
+                              </mat-checkbox>
+                            </li>
+                          </ul>
+                        </span>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

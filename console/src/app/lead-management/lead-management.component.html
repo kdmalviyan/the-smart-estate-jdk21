@@ -1,0 +1,687 @@
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+          <div class="body">
+            <div class="responsive_table">
+              <div class="materialTableHeader">
+                <div class="row">
+                  <div class="col-8">
+                    <ul class="header-buttons-left ml-0">
+                      <li class="dropdown">
+                        <h2>
+                          <strong>Leads</strong>
+                        </h2>
+                      </li>
+                      <li class="dropdown m-l-20">
+                        <label for="search-input"><i class="material-icons search-icon">search</i></label>
+
+                        <input #filter (keyup)='searchCallback($event)' aria-label="Search box"
+                          [(ngModel)]="currentSearchText" class="browser-default search-field"
+                          placeholder="Type min 3 characters" type="text">
+                      </li>
+                      <li class="dropdown m-l-20">
+                        <label for="search-input"><i class="material-icons search-icon">date_range</i></label>
+
+                        <input type="text" class="dateRange" ngxDaterangepickerMd [(ngModel)]="selectedDateRange"
+                          class="browser-default search-field" placeholder="Choose date range filter"
+                          [locale]="{format: 'DD-MM-YYYY'}" [showClearButton]="true" opens="right" [ranges]="range"
+                          [alwaysShowCalendars]="true" (ngModelChange)="choosedDate($event)" />
+                      </li>
+
+                    </ul>
+                  </div>
+                  <div class="col-4">
+                    <ul class="header-buttons">
+                      <li>
+                        <div class="icon-button-demo">
+                          <button (click)="addNew()" mat-mini-fab  >
+                            <mat-icon class="col-white" matTooltip="Add new Lead">add</mat-icon>
+                          </button>
+                        </div>
+                      </li>
+
+                      <li>
+                        <div class="icon-button-demo">
+                          <button (click)="addAdvanceFilter()" mat-mini-fab >
+                            <mat-icon matTooltip="{{isAdvanceFilter ? 'Advance Filters Active' : 'Advance Filters'}}"
+                              [style.color]="isAdvanceFilter ? 'yellow' : 'white'">filter_alt</mat-icon>
+                          </button>
+                        </div>
+                      </li>
+
+                      <li>
+                        <div class="icon-button-demo">
+                          <button mat-mini-fab   (click)="changeSort()">
+                            <mat-icon class="col-white"
+                              matTooltip=" Sort By : {{isCreatedAt ? 'Created At' : 'Updated At' }}">
+                              {{isCreatedAt ? "toggle_on" :
+                              "toggle_off"}}</mat-icon>
+                          </button>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="icon-button-demo">
+                          <button (click)="clearFilters()" mat-mini-fab  >
+                            <mat-icon class="col-white" matTooltip="Clear all Filters">clear</mat-icon>
+                          </button>
+                        </div>
+                      </li>
+                   
+                      <!-- <li>
+                        <div  class="icon-button-demo">
+
+                          <button mat-mini-fab  
+                            (click)="transferLeads(trasnferLead)">
+                            <mat-icon class="col-white" matTooltip="Transfer Leads">compare_arrows</mat-icon>
+                          </button>
+                        </div>
+                      </li> -->
+                      <li>
+                        <div [hidden]="!isAdminOrSuperAdmin()" class="icon-button-demo">
+                          <button mat-mini-fab  
+                            (click)="importLeads(importLead)" matTooltip="Upload Leads in Excel">
+                            <mat-icon>file_upload</mat-icon>
+                          </button>
+                        </div>
+                      </li>
+                      <li>
+                        <div [hidden]="!isAdminOrSuperAdmin()" class="icon-button-demo">
+                          <button (click)="exportExcel()"   mat-mini-fab  >
+                            <mat-icon class="col-white" matTooltip="Download Leads in Excel">file_download</mat-icon>
+                          </button>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="icon-button-demo">
+                          <button (click)="refresh()"   mat-mini-fab  >
+                            <mat-icon class="col-white" matTooltip="Refresh">refresh</mat-icon>
+                          </button>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="row">
+                  <span style="margin-top:58px">
+                    <small class="text-muted" style="color: #1b1f52">
+                      <!-- <b>Filters :</b> -->
+                      <small class="text-muted"><b>Start : </b>{{dateFilter.startDate}}, <b>End
+                          :</b>{{dateFilter.endDate}}
+                      </small>
+                      <small class="text-muted">| <b> Budget :</b>
+                        {{budget.startAmount}}{{budget.startUnit}}-{{budget.endAmount}}{{budget.endUnit}} </small>
+                      <small class="text-muted"> |<b> Sort :</b> {{ isCreatedAt ? "Created At" : "Updated At"}}</small>
+                      <small *ngIf="projectNameFilter" class="text-muted"> |<b> Project:</b> {{projectNameFilter}}
+                      </small>
+                      <small *ngIf="sourceFilter" class="text-muted"> |<b> Source:</b> {{sourceFilter}}
+                      </small>
+
+                    </small>
+                  </span>
+                </div>
+              </div>
+
+              <ngx-datatable #table class="material" [rows]="rows" [sortType]="'multi'" [columnMode]="'force'"
+                [headerHeight]="80" [footerHeight]="50" [count]="page.count" [offset]="page.offset" [limit]="page.limit"
+                [externalPaging]="true" (page)="pageCallback($event)" (sort)="sortCallback($event)"
+                (select)="onLeadSelect($event)" [selected]="selectedLeads" [selectionType]="SelectionType.checkbox"
+                [rowHeight]="'75'" [loadingIndicator]="loadingIndicator" [scrollbarH]="true" rowHeight="auto"
+                [scrollbarV]="true" [virtualization]="false">
+
+
+                <!-------------------------- Row Detail Template-------------------------------------- -->
+                <ngx-datatable-row-detail rowHeight="175" #myDetailRow (toggle)="onDetailToggle($event)">
+                  <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+                    <div class="row card-group ">
+                      <div class="card" col-6>
+                        <div class="card-body">
+                          <div class="card-text row">
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-2">
+
+                              <div><strong>Customer email</strong> -
+                                <span matTooltip="{{row.customer.email}}">
+                                  {{ row.customer.email | slice:0:30}} {{row.customer.email?.length>20 ? '...':
+                                  ''}}</span>
+                              </div>
+
+                              <div><strong>Created on -</strong>
+                                <span>{{ row?.createdAt | date:'dd-MMM-yyyy HH:mm:SS'}}</span>
+                              </div>
+
+                              <div><strong>Last Updated on -</strong>
+                                <span>{{ row?.lastUpdateAt | date:'dd-MMM-yyyy HH:mm:SS'}}</span>
+                              </div>
+
+                              <div><strong>CreatedBy -</strong>
+                                <span>{{ row?.createdBy.name}} - {{row?.createdBy.roles[0].description}}</span>
+                              </div>
+                              <div><strong>Source -</strong>
+                                <span>{{ row?.source.description}}</span>
+                              </div>
+
+                              <div *ngIf="row?.deactivationReason"><strong style="color: red;">Deactivation Reason -
+                                </strong>
+
+                                <span>{{ row?.deactivationReason?.description}}</span>
+                              </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-8 col-sm-8 mb-2">
+                              <div><strong>Last 2 Followups -</strong>
+                                <ul>
+                                  <li *ngFor="let followup of row?.followups | slice:0:3">
+                                    <span matTooltip="{{followup.followupMessage}}">
+                                      {{followup.followupMessage |
+                                      slice:0:60}}{{followup.followupMessage.length > 60 ? ' ...' : ''}}
+                                    </span>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-8 col-sm-8 mb-2">
+                              <div><strong>Last 2 Events -</strong>
+                                <ul>
+                                  <li *ngFor="let comment of row?.comments| slice:0:2">
+                                    <span matTooltip="{{comment.message}}">
+                                      {{comment.message | slice:0:60}}
+                                      {{comment.message.length > 60 ? ' ...' : ''}}</span>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                        <small class="text-muted">For more details click on mobile number</small>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-row-detail>
+
+
+
+                <!--------------------- Expand collapse all rows ------------------------------ -->
+                <ngx-datatable-column [sortable]="false" [width]="50">
+
+                  <ng-template let-column="column" ngx-datatable-header-template>
+                    <a href="javascript:void(0)" [class.datatable-icon-right]="!expandedAll"
+                      [class.datatable-icon-down]="expandedAll" title="Expand/Collapse Row"
+                      (click)="toggleExpandAllRows($event)">
+                    </a>
+                  </ng-template>
+
+
+                  <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
+                    <a href="javascript:void(0)" [class.datatable-icon-right]="!expanded"
+                      [class.datatable-icon-down]="expanded" title="Expand/Collapse Row" (click)="toggleExpandRow(row)">
+                    </a>
+
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!--------------------------- check box------------------------------------------------->
+
+
+                <ngx-datatable-column [width]="70" [sortable]="false" [checkboxable]="true" [headerCheckboxable]="true">
+
+                </ngx-datatable-column>
+
+                <ngx-datatable-column [width]="220" name="Customer Name">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="d-inline-block text-truncate" style="max-width:146px;"
+                      matTooltip="{{ row?.customer?.name}}">
+                      {{ row?.customer?.name }}<br>
+                      <small class="text-muted"> {{ row?.createdAt | date:'dd-MMM'}} ({{ row?.createdAt|dateAgo
+                        }})</small>
+                    </div>
+                  </ng-template>
+
+
+                </ngx-datatable-column>
+
+
+                <!--------------------------- Customer Phone ------------------------------------------------->
+
+                <ngx-datatable-column [width]="150" name="Customer Phone">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <a (click)='editLead(row)' href="javascript:void(0)" title="Click to view details">{{
+                      row?.customer?.phone }}</a>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+                <!---------------------------  Projects ------------------------------------------------->
+
+                <ngx-datatable-column [width]="300" name="Project">
+
+                  <ng-template let-column="column" ngx-datatable-header-template>
+                    {{column.name}}<br>
+
+                    <select (change)="projectCallbackFilter($event.target.value)" class="select-dropdown filtervalue">
+                      <option value="">No Filter</option>
+                      <option *ngFor="let project of metadata?.projects" [value]="project.name" [ngValue]="project.id">
+                        {{project.name}}
+                      </option>
+                    </select>
+
+                  </ng-template>
+
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <select #s [disabled]="row.status.name==='BOOKED'" (ngModelChange)="changeProject($event,row)"
+                      [(ngModel)]="row.project.id" class="select-dropdown">
+                      <option value="" disabled>Select project</option>
+                      <option *ngFor="let project of metadata?.projects" [ngValue]="project.id">
+                        {{project.name}}
+                      </option>
+                    </select>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+
+
+                <!--------------------------- Inventory size ------------------------------------------------->
+
+
+
+                <ngx-datatable-column [width]="200" name="Inventory">
+                  <ng-template let-column="column" ngx-datatable-header-template>
+                    {{column.name}}<br>
+                    <select (change)="inventoryCallbackFilter($event.target.value)" class="select-dropdown filtervalue">
+                      <option value="">No Filter</option>
+                      <option *ngFor="let inventory of metadata?.leadInventorySize" [value]="inventory.id"
+                        [ngValue]="inventory.id">
+                        {{inventory.description}}
+                      </option>
+                    </select>
+                  </ng-template>
+
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="d-inline-block text-truncate" style="max-width:165px;">{{
+                      row?.leadInventorySize?.description }}</div>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!--------------------------- Site visit------------------------------------------------->
+
+                <ngx-datatable-column [width]="80" name="visit">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <mat-checkbox class="example-margin" [disabled]="row.status.name==='BOOKED'"
+                      [checked]="row?.siteVisit" [color]="'primary'" (change)="setSiteVisit($event.checked,row)">
+                    </mat-checkbox>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!--------------------------- Assigned To ------------------------------------------------->
+
+                <ngx-datatable-column name="Assigned To" [width]="350">
+                  <ng-template let-column="column" ngx-datatable-header-template>
+                    {{column.name}}<br>
+                    <select (change)="assignedToFilterCallback($event.target.value)"
+                      class="select-dropdown filtervalue">
+                      <option value="NO">No Filter</option>
+                      <option *ngFor="let user of metadata?.users" [ngValue]="user.id" [value]="user.id">
+                        {{user?.name}} ({{user?.project?.name}})
+                      </option>
+                    </select>
+                  </ng-template>
+
+
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+
+                    <ng-select dropdownPosition="bottom" style="overflow: visible;" [clearable]="false"
+                      [disabled]="row.status.name==='BOOKED'" (ngModelChange)="changeAssigne($event,row)"
+                      bindLabel="name" appendTo="body" [(ngModel)]="row.assignedTo.id">
+
+                      <ng-option value="" disabled>Select Assignee</ng-option>
+                      <ng-option *ngFor="let user of metadata?.users" [value]="user.id">
+                        {{user.name}}-{{user?.roles[0]?.description}}
+                      </ng-option>
+                    </ng-select>
+
+
+
+                    <!-- <select onclick="getFilterValues(row.project.id)" 
+                  onblur="onclikc($event)"
+                  onchange="onclikc($event)"
+                  open
+                  onreadystatechange ="onclikc($event)"
+                  (ngModelChange)="changeAssigne($event,row)" [(ngModel)]="row.assignedTo.id"
+                      class="select-dropdown">
+                      <option value="" disabled>Select Assignee</option>
+                      <option *ngFor="let user of metadata?.users" [ngValue]="user.id">
+                        {{user.name}}-{{user?.roles[0]?.description}}
+                      </option> 
+                    </select>-->
+
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!---------------------------  Status ------------------------------------------------->
+                <ngx-datatable-column [width]="200" name="Status">
+                  <ng-template let-column="column" ngx-datatable-header-template>
+                    {{column.name}}<br>
+                    <select (change)="statusCallbackFilter($event.target.value)" class="select-dropdown filtervalue">
+                      <option value="NO">No Filter</option>
+                      <option *ngFor="let status of metadata?.leadStatus" [ngClass]="getClassStatusColor(status.name)"
+                        [value]="status.name" [ngValue]="status.name">
+                        {{status.description}}
+                      </option>
+                    </select>
+                  </ng-template>
+
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <select #s (ngModelChange)="changeStatus($event,row,s)" [(ngModel)]="row.status.id"
+                      [disabled]="row.status.name==='BOOKED'" class="select-dropdown">
+                      <option value="" disabled>Select Status</option>
+                      <option *ngFor="let status of metadata?.leadStatus" [ngClass]="getClassStatusColor(status.name)"
+                        [ngValue]="status.id">
+                        {{status.description}}
+                      </option>
+                    </select>
+                  </ng-template>
+                </ngx-datatable-column>
+
+                <!--------------------------- Lead Type ------------------------------------------------->
+                <ngx-datatable-column [width]="200" name="Type">
+
+                  <ng-template let-column="column" ngx-datatable-header-template>
+                    {{column.name}}<br>
+                    <select (change)="typeCallbackFilter($event.target.value)" class="select-dropdown filtervalue">
+                      <option value="NO">No Filter</option>
+                      <option *ngFor="let type of metadata?.leadType" [value]="type.id" [ngValue]="type.id">
+                        {{type.description}}
+                      </option>
+                    </select>
+                  </ng-template>
+
+
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                    <select [disabled]="row.status.name==='BOOKED'" (ngModelChange)="changeLeadType($event,row)"
+                      [(ngModel)]="row.type.id" class=" select-dropdown">
+                      <option value="" disabled>Select Status</option>
+                      <option *ngFor="let type of metadata?.leadType" [ngValue]="type.id">
+                        {{type.description}}
+                      </option>
+                    </select>
+                  </ng-template>
+                </ngx-datatable-column>
+
+
+              </ngx-datatable>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-----------------------------------------------  Transfer Leads ---------------------------->
+
+    <ng-template #trasnferLead let-modal>
+      <div class="modal-header editRowModal">
+        <h4 class="modal-title" id="modal-basic-title">
+          <div class="modal-header ">
+            <div class="modal-about">
+              <div class="font-weight-bold p-t-10 font-17">
+                Transfer Leads
+              </div>
+            </div>
+          </div>
+        </h4>
+
+        <button (click)="modal.dismiss()" aria-label="Close" class="close" type="button">
+          <span aria-hidden="true"><i class="material-icons">close</i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <br>
+
+        <span><b>Selected Leads</b> - {{selectedLeads.length}}</span> <br>
+
+        <form [formGroup]="transferLeadForm">
+          <div class="row">
+
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Tranfer or copy </mat-label>
+                <mat-select formControlName="leadTransferType">
+                  <mat-option value="TRANSFER">Transfer</mat-option>
+                  <mat-option value="COPY">Copy as New lead </mat-option>
+                </mat-select>
+
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Project</mat-label>
+                <mat-select (selectionChange)="selectedProject($event.value)" formControlName="project">
+                  <mat-option *ngFor="let project of metadata?.projects" [value]="project.id">
+                    {{project.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="transferLeadForm.get('project').hasError('required')">
+                  Project is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Assigned To</mat-label>
+                <mat-select formControlName="assignedTo">
+                  <mat-option *ngFor="let user of filteredUsers" [value]="user.id">
+                    {{user.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="transferLeadForm.get('assignedTo').hasError('required')">
+                  Assignee is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <button (click)="transferLeadToUser()" [disabled]="!transferLeadForm.valid" class="btn-space"
+                  mat-raised-button>Submit
+              </button>
+              <button data-dismiss="modal" (click)="modal.dismiss()" mat-button type="button">Cancel</button>
+            </div>
+          </div>
+        </form>
+
+        <br>
+        <mat-expansion-panel *ngIf="transferErrors.length > 0">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <span style="color: red;">Transfer Status</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div *ngFor="let error of transferErrors ; let i = index">
+            {{i +1}}. {{error.message}} </div>
+        </mat-expansion-panel>
+
+        <div [hidden]="!transferMessage" class="alert alert-success">
+          <span>Transfer of Leads Success</span>
+        </div>
+
+      </div>
+    </ng-template>
+
+
+    <!-----------------------------------------------  Import Leads ---------------------------->
+
+    <ng-template #importLead let-modal>
+      <div class="modal-header editRowModal">
+        <h4 class="modal-title" id="modal-basic-title">
+          <div class="modal-header ">
+            <div class="modal-about">
+              <div class="font-weight-bold p-t-10 font-17">
+                Import Leads From Excel
+              </div>
+            </div>
+          </div>
+        </h4>
+        <button (click)="modal.dismiss()" aria-label="Close" class="close" type="button">
+          <span aria-hidden="true"><i class="material-icons">close</i></span>
+        </button>
+      </div>
+      <div *ngIf="!showResponse" class="modal-body">
+        <form [formGroup]="uploadForm">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Select Excel File</mat-label>
+                <ngx-mat-file-input [accept]="accept" [color]="color" formControlName="file">
+                  <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+                </ngx-mat-file-input>
+                <mat-error *ngIf="uploadForm.get('file').hasError('required')">
+                  Sorce Descripton is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+
+              <button (click)="uploadFile()" [disabled]="!uploadForm.valid && isUploadSubmitted" class="btn-space"
+                  mat-raised-button>Submit
+
+              </button>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+              <button mat-button (click)="downloadFile()" style="float: right;">Download File format</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div *ngIf="showResponse" class="modal-body">
+        <div [hidden]="importResponse.status==500" class="alert alert-success">
+          <span>{{importResponse.message}}</span>
+        </div>
+        <div [hidden]="importResponse.status!=500" class="alert alert-danger">
+          <span>{{importResponse.message}}</span>
+        </div>
+        <div class="row tiles" [hidden]="importResponse.status==500">
+          <div class="col-4">
+            <span class="success">{{importResponse.rowsSuccess}} Added </span>
+          </div>
+          <div class="col-4">
+            <span class="warning">{{importResponse.rowsSkipped}} Skipped</span>
+          </div>
+          <div class="col-4">
+            <span class="error">{{importResponse.errors.length ? importResponse.errors.length : 0}}
+              Error </span>
+          </div>
+        </div>
+        <br><br>
+        <mat-accordion>
+
+
+          <!---------------------------------- errors ------------------>
+
+          <mat-expansion-panel *ngIf="importResponse.errors.length > 0">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span style="color: red;">Errors</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let error of importResponse.errors ; let i = index">
+
+              {{i +1}}. {{error.message}} - <strong>on row - </strong> {{error.rowNumber}}</div>
+          </mat-expansion-panel>
+
+          <!---------------------------------- warnings ------------------>
+
+          <mat-expansion-panel *ngIf="importResponse.warnings.length > 0">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span style="color: #F6C900;">Warnings</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let warning of importResponse.warnings; let i = index">
+              {{i +1}}. {{warning.message}} <strong> on row - </strong> {{warning.rowNumber}} -
+              <a href="javascript:void(0)" (click)="goToLead(warning.leadId)" class="link">Go To Lead</a>
+
+
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </ng-template>
+  </div>
+
+
+
+
+  
+
+<!-- oscuratore -->
+<div class="dialog_scrim" *ngIf="openMenu"></div>
+
+<button
+  mat-fab
+  color="accent"
+  (click)="clickMenu()"
+  class="menu-button"
+  [class.mat-elevation-z2]="!isOver"
+  [class.mat-elevation-z8]="isOver"
+  (mouseover)="isOver = true"
+  (mouseleave)="isOver = false"
+>
+  <i class="material-icons" *ngIf="!openMenu">menu</i>
+  <i class="material-icons" *ngIf="openMenu">close</i>
+</button>
+
+<!-- menu button -->
+
+<button
+  mat-mini-fab
+  class="action-button one mat-elevation-z8"
+  *ngIf="openMenu"
+  color="basic"
+  matTooltip="Transfer Lead"
+  (click)="transferLeads(trasnferLead)">
+  <i class="material-icons">compare_arrows</i>
+</button>
+
+<button
+  mat-raised-button
+  class="label labelone mat-elevation-z8"
+  (click)="transferLeads(trasnferLead)"
+  *ngIf="openMenu">
+  Transfer Lead
+</button>
+
+
+
+<button
+  mat-mini-fab
+  class="action-button two mat-elevation-z8"
+  *ngIf="openMenu"
+  color="basic"
+  (click)="exportExcel()"
+>
+  <i class="material-icons">file_download</i>
+</button>
+
+
+<button
+  mat-raised-button
+  class="label labeltwo mat-elevation-z8"
+  (click)="exportExcel()"
+  *ngIf="openMenu">
+  Download  
+</button>
+
+
+
+
+</section>

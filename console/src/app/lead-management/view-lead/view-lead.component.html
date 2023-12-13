@@ -1,0 +1,375 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- Your content goes here  -->
+    <div class="row clearfix">
+      <div class="col-lg-4 col-md-12">
+        <div class="card">
+          <div class="m-b-20">
+            <div class="contact-grid">
+              <div class="profile-header bg-dark">
+                <div class="name-center">Customer</div>
+                <div matTooltip="Double click to edit Customer name" *ngIf="showHide" class="user-name"
+                  (dblclick)="onDblClick($event)">{{leadDetails?.customer?.name}}
+                </div>
+                <div *ngIf="allowEdit" style="display:inline-flex;">
+                  <input [(ngModel)]="custName" class="browser-default search-field" type="text">&nbsp;&nbsp;
+                  <div *ngIf="allowEdit" style="padding-top: 6px;">
+                    <mat-icon style="background-color: red" (click)="closeInput()">clear</mat-icon>&nbsp;&nbsp;
+                    <mat-icon style="background-color: green" (click)="updateName()">done</mat-icon>
+                  </div>
+                </div>
+
+                <!-- <div class="name-center">{{leadDetails?.customerPhone}}</div> -->
+
+              </div>
+              <br>
+              <img alt="" class="user-img" src="assets/images/user/usrbig3.jpg">
+              <p> Email : {{leadDetails?.customer?.email}}
+                <br /> Phone: {{leadDetails?.customer?.phone}}
+              </p>
+
+              <!---------------------------------------- Project ----------------------------------------->
+              <div class="body">
+                <small class="text-muted">Project :</small>
+                <select (ngModelChange)="changeProject($event)" [(ngModel)]="leadDetails.project.id"
+                  [disabled]="leadDetails?.status?.name==='BOOKED'" class="select-dropdown">
+                  <option value="" disabled>Select project</option>
+                  <option *ngFor="let project of metadata?.projects" [ngValue]="project?.id">
+                    {{project?.name}}
+                  </option>
+                </select>
+                <p>
+                  <!-- {{leadDetails?.project?.name}} -->
+                  <br>
+                  {{leadDetails?.project?.address}}
+                </p>
+              </div>
+              <hr>
+
+              <div class="row">
+                <div class="col-6">
+                  <h6>Budget </h6>
+                  <p> {{leadDetails?.budget?.startAmount}} {{leadDetails?.budget?.startUnit}} -
+                    {{leadDetails?.budget?.endAmount}} {{leadDetails?.budget?.endUnit}}</p>
+                </div>
+                <div class="col-6">
+                  <h6>Size Requirement</h6>
+                  <!-- <p>{{leadDetails.leadInventorySize?.description}}</p> -->
+               
+                    <select (ngModelChange)="changeInventory($event)" [(ngModel)]="leadDetails.leadInventorySize.id"
+                      class="select-dropdown">
+                      <option value="" disabled>Select Inventory</option>
+                      <option *ngFor="let inventory of metadata?.leadInventorySize" [value]="inventory.id" 
+                      [ngValue]="inventory.id">
+                        {{inventory.description}}
+                      </option>
+                    </select>
+                    <p>
+                      <!-- {{leadDetails?.project?.name}} -->
+                      <br>
+                      {{leadDetails?.project?.address}}
+                    </p>
+               
+               
+               
+                </div>
+              </div>
+              <hr>
+
+              <div class="row">
+                <div class="col-6">
+                  <h6>Lead Created on </h6>
+                  <small>{{leadDetails?.createdAt|date:'dd-MMM-yyyy HH:mm:SS'}}</small>
+                </div>
+                <div class="col-6">
+                  <h6>Last Update</h6>
+                  <small>{{leadDetails?.lastUpdateAt |date:'dd-MMM-yyyy HH:mm:SS'}}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" [hidden]="showHideCalender">
+          <div class="header order-info-box7">
+            <h2>
+              Follow-up:
+            </h2>
+          </div>
+          <div class="body" style="padding: 0 15px;">
+
+            <span [ngStyle]="{'font-size':'large;','color':currentFollowUp?.open ?'red':'green'}">
+            
+              <b *ngIf="currentFollowUp!=null && !currentFollowUp?.open">Completed Follow up -</b>
+
+              <b *ngIf="currentFollowUp?.open">Pending Follow up-</b>
+              {{currentFollowUp?.followupTime|date:'dd-MMM-yyyy HH:mm:SS'}}
+            </span>
+            <br>
+            <br>
+            <button  *ngIf="currentFollowUp?.open" mat-raised-button
+              color="primary" (click)="markComplete(currentFollowUp)" style="float: right;">Follow up complete</button>
+            <br>
+            <br>
+
+            <div *ngIf="!currentFollowUp?.open">
+              Set New Follow Up
+              <br>
+              <br>
+              <ngx-daterangepicker-material [singleDatePicker]="true" [showClearButton]="false" [timePicker]="true"
+                [isInvalidDate]="isInvalidDate" (choosedDate)="choosedDate($event)">
+              </ngx-daterangepicker-material>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="header order-info-box7">
+            <h2>
+              Lead Created By :
+            </h2>
+          </div>
+
+          <div class="body" style="padding: 0 15px;">
+            <small class="text-muted">Details :</small>
+            <p>{{leadDetails?.createdBy?.name}} - {{leadDetails?.createdBy?.roles[0]?.description}}<br>
+              {{leadDetails?.createdBy?.email}}</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="header ">
+            <h2>
+              Lead Updated By :
+            </h2>
+          </div>
+          <div class="body" style="padding: 0 15px;">
+            <small class="text-muted">Name :</small>
+            <p>{{leadDetails?.updatedBy?.name}} - {{leadDetails?.updatedBy?.roles[0]?.description}}<br>
+              {{leadDetails?.updatedBy?.email}}</p>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-lg-8 col-md-12">
+        <div class="card">
+          <div class="header">
+            <h2>
+              Lead Details:
+            </h2>
+            <ul class="header-dropdown m-r-0">
+              <li>
+                <button mat-raised-button color="primary" (click)="backToLead()" style="float: right;"> Back</button>
+              </li>
+            </ul>
+          </div>
+
+          <!-------------------------------- lead details ----------------------------------->
+
+          <div class="body">
+            <div class="row">
+              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                Lead Type
+                <p class="label bg-red shadow-style">
+                  {{leadDetails?.type.description}}
+                </p>
+              </div>
+              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                Site Visit
+                <mat-checkbox class="example-margin" [disabled]="leadDetails.status.name==='BOOKED'"
+                  [checked]="leadDetails?.siteVisit" [color]="'primary'" (change)="setSiteVisit($event.checked)">
+                </mat-checkbox>
+
+              </div>
+              <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                <a class="link" (click)="goToAddBooking()">Create Booking</a>
+              </div>
+            </div>
+            <hr>
+
+            <div class="row">
+
+
+              <div class="col-6">
+                <small class="text-muted">Assigned To :</small>
+                <mat-form-field appearance="outline" class="example-full-width">
+                  <mat-select [disabled]="leadDetails.status.name==='BOOKED'" (ngModelChange)="changeAssigne($event)"
+                    [(ngModel)]="leadDetails.assignedTo.id">
+                    <mat-option disabled value="">Select Assignee</mat-option>
+                    <mat-option *ngFor="let user of metadata.users" [value]="user.id">
+                      {{user.name}}-{{user?.roles[0]?.description}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="col-6">
+                <small class="text-muted">Status:</small>
+                <mat-form-field appearance="outline" class="example-full-width">
+                  <mat-select [disabled]="leadDetails.status.name==='BOOKED'" (selectionChange)="changeStatus($event)"
+                    [formControl]="status">
+                    <mat-option disabled value="">Select Status</mat-option>
+                    <mat-option *ngFor="let status of metadata.leadStatus" [disabled]="status.name.startsWith('FOLLOW')" [value]="status.id">
+                      {{status.description}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
+
+
+            <small class="text-muted">Source:</small>
+            <mat-form-field appearance="outline" class="example-full-width">
+              <mat-select [disabled]="leadDetails.status.name==='BOOKED'" (ngModelChange)="changeSource($event)"
+                [(ngModel)]="leadDetails.source.id">
+                <mat-option disabled value="">Select Source</mat-option>
+                <mat-option *ngFor="let source of metadata.leadSources" [value]="source.id">
+                  {{source.description}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-------------------------------- lead details end----------------------------------->
+
+
+        <div class="tab-content">
+          <div aria-expanded="true" class="tab-pane active" id="project" role="tabpanel">
+            <div class="row clearfix">
+              <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="card project_widget">
+                  <div class="body">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <div class="body">
+                        <mat-tab-group>
+                          <mat-tab label="Comments">
+                            <br>
+
+                            <div class="tab-pane fade show active" id="commentTab" role="tabpanel">
+                              <div [hidden]="isCommentAdding" class="row">
+                                <div class="col-md-8"></div>
+                                <div class="col-md-4">
+                                  <button (click)="enableAddCommentSection()"
+                                    class="btn btn-outline-warning btn-border-radius" type="button">Add
+                                    Customer
+                                    comment
+                                  </button>
+                                </div>
+                              </div>
+                              <form (ngSubmit)="addComment()" [formGroup]="addCommentForm">
+                                <div [hidden]="!isCommentAdding" id="_comment_id">
+                                  <div class="row">
+                                    <div class="input-field col-md-10">
+                                      <textarea class="form-control" formControlName="message"
+                                        placeholder="Customer Comment">
+                                        </textarea>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <div class="button-demo">
+                                      <button [disabled]="commentAdded"
+                                        class="btn btn-outline-success btn-border-radius" type="submit">Save
+                                      </button>
+                                      <button (click)="disableAddCommentSection()"
+                                        class="btn btn-outline-warning btn-border-radius" type="button">Cancel
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+
+                              <div aria-labelledby="comment-tab" class="tab-pane fade show active" id="comment"
+                                role="tabpanel">
+                                <div class="row">
+                                  <div class="col-md-10">
+                                    <ul class="left-timeline">
+                                      <li *ngFor="let comment of leadDetails?.comments">
+                                        <div class="left-icon"><img alt="" src={{getImagePath(comment)}}>
+                                        </div>
+                                        <div class="left-label empty">
+                                          <span>{{comment.message}}</span><br>
+                                          <small class="text-muted">{{comment.createdBy?.name}} -
+                                            {{comment.createdBy?.roles[0]?.description}}</small>
+                                          <span class="hidden text-muted"
+                                            style="float: right;">{{comment.createdAt|date:'dd-MMM-yyyy
+                                            HH:mm:SS'}}</span>
+                                          <br>
+                                          <span
+                                            [ngClass]="setEventClass(comment?.commentType)">{{comment?.commentType}}</span>
+                                        </div>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </mat-tab>
+                          <mat-tab label="Follow ups">
+                            <br>
+                            <div class="col-md-10">
+                              <ul class="left-timeline">
+                                <li *ngFor="let followup of leadDetails?.followups">
+                                  <div class="left-icon"><img alt="" src="assets/images/user/user1.jpg">
+                                  </div>
+                                  <div class="left-label empty">
+                                    <span> Follow up added for time </span>
+                                    <em class="text-muted">{{followup.followupTime|date:'dd-MMM-yyyy HH:mm:SS'}}.</em>
+                                    <span> By </span>
+                                    <em class="text-muted">{{followup.createdBy?.name}}</em>
+
+                                    <span class="hidden text-muted"
+                                      style="float: right;">{{followup.createdAt|date:'dd-MMM-yyyy HH:mm:SS'}}
+                                    </span>
+                                  </div>
+                                </li>
+                              </ul>
+                            </div>
+                          </mat-tab>
+                          <mat-tab label="Call History">
+                            <br>
+                            <div class="col-md-10">
+                              <ul class="left-timeline">
+                                <li *ngFor="let element of leadDetails?.calls">
+                                  <div class="left-icon"><img alt="" src="assets/images/custom/phone.png">
+                                  </div>
+                                  
+                                  <div class="left-label empty">
+                                    <span>Called on  {{element?.createdAt|date: 'medium'}}
+                                    </span>
+                                    <em class="text-muted">{{element.assignedFrom?.name}}</em><br>
+                                    <span> Mobile number  - </span>
+                                    <em class="text-muted">{{element?.phone}}</em> <br>
+                                    <span> Conversation time -  </span>
+                                    <em class="text-muted">{{element.startTime | dateDifference :element.endTime}}</em><br>
+                                    
+                                    <span>Remark - 
+                                    </span>
+                                    <em class="text-muted">{{element?.comment}}</em> <br>
+                                    <span>Location - 
+                                    </span>
+                                    <em class="text-muted">lat: {{element?.latitude}} - long :{{element?.longitude}}</em> <br>
+
+                                  </div>
+                                </li>
+                              </ul>
+                            </div>
+                          </mat-tab>
+
+                        </mat-tab-group>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

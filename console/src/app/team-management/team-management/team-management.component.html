@@ -1,0 +1,150 @@
+<section class="content">
+    <div class="container-fluid">
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="ngxTableHeader">
+                                    <ul class="header-buttons-left ms-0 mb-0">
+                                        <li class="dropdown">
+                                            <h2>
+                                                <strong>Team Management</strong>
+                                            </h2>
+                                        </li>
+                                        <li class="dropdown m-l-20">
+                                            <label for="search-input"><i
+                                                    class="material-icons search-icon">search</i></label>
+                                            <input placeholder="Search" type="text" class="browser-default search-field"
+                                                (keyup)='filterDatatable($event)' aria-label="Search box">
+                                        </li>
+                                    </ul>
+                                    <ul class="header-buttons">
+                                        <li>
+                                            <button mat-mini-fab   (click)='addRow(addRecord)'
+                                                 >
+                                                <mat-icon class="col-white">add</mat-icon>
+                                            </button>
+                                        </li>
+                                        <li style="padding-left: 5px;">
+                                            <button (click)="refresh()"   mat-mini-fab
+                                                 >
+                                                <mat-icon class="col-white">refresh</mat-icon>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <ngx-datatable #table class="material" [rows]="data" [sortType]="'multi'"
+                                    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'60'" [limit]="10"
+                                    [columnMode]="'force'" [scrollbarH]="true" [loadingIndicator]="loadingIndicator"
+                                    [columnMode]="'flex'">
+
+                                    <ngx-datatable-column name="Name" [width]="200" [minWidth]="200">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <div class="d-inline-block text-truncate" style="max-width:170px;"
+                                                matTooltip="{{ row?.name }}">{{
+                                                row?.name }}</div>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+
+                                    <ngx-datatable-column name="Project" [width]="300" [minWidth]="300">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <div class="d-inline-block text-truncate" style="max-width:270px;"
+                                                matTooltip="{{ row?.project?.name }}">{{ row?.project?.name }}</div>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column name="Team Lead" [width]="300" [minWidth]="300">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            <div class="d-inline-block text-truncate" style="max-width:270px;"
+                                                matTooltip="{{ row?.supervisor?.name }}">{{ row?.supervisor?.name }}
+                                            </div>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+
+                                    <ngx-datatable-column [width]="120" name="Actions" sortable="false">
+                                        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value"
+                                            ngx-datatable-cell-template>
+                                            <span>
+                                                <button (click)='editRow(row, rowIndex, editRecord)'
+                                                    class="btn tblActnBtn h-auto">
+                                                    <i class="material-icons">mode_edit</i>
+                                                </button>
+
+                                                <button (click)='deleteRow(row, rowIndex)'
+                                                    class="btn tblActnBtn h-auto">
+                                                    <i class="material-icons">delete</i>
+                                                </button>
+                                            </span>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                </ngx-datatable>
+                                <!-- Add Record Modal Window -->
+                                <ng-template #addRecord let-modal>
+                                    <div class="modal-header editRowModal">
+                                        <h4 class="modal-title" id="modal-basic-title">
+                                            <div class="modal-header ">
+                                                <!-- <img [src]='newUserImg' alt="avatar"> -->
+                                                <div class="modal-about">
+                                                    <div class="font-weight-bold p-t-10 font-17">
+                                                        New Team
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </h4>
+                                        <button (click)="modal.dismiss()" aria-label="Close" class="close"
+                                            type="button">
+                                            <span aria-hidden="true"><i class="material-icons">close</i></span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form (ngSubmit)="onAddRowSave(teamForm)" [formGroup]="teamForm"
+                                            class="register-form">
+                                            <div class="row">
+                                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+                                                    <mat-form-field appearance="outline" class="example-full-width">
+                                                        <mat-label>Name</mat-label>
+                                                        <input formControlName="name" matInput required>
+                                                        <mat-error *ngIf="teamForm.get('name').hasError('required')">
+                                                            Name is required
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+                                                    <mat-form-field appearance="outline" class="example-full-width">
+                                                        <mat-label>Projects</mat-label>
+                                                        <mat-select formControlName="project">
+                                                            <mat-option *ngFor="let project of projects"
+                                                                [value]="project">
+                                                                {{project.name}}
+                                                            </mat-option>
+                                                        </mat-select>
+                                                        <mat-error *ngIf="teamForm.get('project').hasError('required')">
+                                                            Project is required
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                                                    <button [disabled]="!teamForm.valid" class="btn-space"
+                                                          mat-raised-button>Submit
+                                                    </button>
+                                                    <button data-dismiss="modal" (click)="modal.dismiss()" mat-button
+                                                        type="button">Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </ng-template>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

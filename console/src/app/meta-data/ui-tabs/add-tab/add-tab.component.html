@@ -1,0 +1,118 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    <div class="modal-header ">
+      <div class="font-weight-bold p-t-10 font-17">
+        Add Menu
+      </div>
+    </div>
+  </h4>
+  <button (click)="close()" aria-label="Close" class="close" type="button">
+    <span aria-hidden="true"><i class="material-icons">close</i></span>
+  </button>
+</div>
+<div class="modal-body">
+  <form (ngSubmit)="onSave(menuForm)" [formGroup]="menuForm">
+    <div class="input-field col s12 d-none">
+      <input class="form-control" formControlName="id" type="hidden">
+    </div>
+    <div class="row">
+
+      <!-- Module Name -->
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Module Name</mat-label>
+          <input formControlName="moduleName" matInput>
+          <mat-error *ngIf="menuForm.get('moduleName').hasError('required')">
+            Module Name is required
+          </mat-error>
+          <mat-error *ngIf="menuForm.get('moduleName').hasError('minlength')">
+            Minimum length should be 5
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Path -->
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Path</mat-label>
+          <input formControlName="path" matInput>
+          <mat-error *ngIf="menuForm.get('path').hasError('required')">
+            Path is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Title -->
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Title</mat-label>
+          <input formControlName="title" matInput>
+          <mat-error *ngIf="menuForm.get('title').hasError('required')">
+            Title is required
+          </mat-error>
+          <mat-error *ngIf="menuForm.get('title').hasError('minlength')">
+            Minimum length should be 3
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Icon -->
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Icon</mat-label>
+          <input formControlName="icon" matInput>
+        </mat-form-field>
+      </div>
+
+      <!-- Index -->
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Index</mat-label>
+          <input type="number" formControlName="index" matInput>
+          <mat-error *ngIf="menuForm.get('index').hasError('required')">
+            Index is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- IsTopMenu -->
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Is Top Menu</mat-label>
+          <mat-select formControlName="topMenu">
+            <mat-option [value]="true">True</mat-option>
+            <mat-option [value]="false">False</mat-option>
+          </mat-select>
+          <mat-error *ngIf="menuForm.get('index').hasError('required')">
+            Top Menu is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- CSS Class -->
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Css Class</mat-label>
+          <input formControlName="cssClass" matInput>
+        </mat-form-field>
+      </div>
+
+      <!-- Parent Module -->
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+        <mat-form-field appearance="outline" class="example-full-width">
+          <mat-label>Parent Module Name</mat-label>
+          <input formControlName="parentModule" matInput>
+        </mat-form-field>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <div class="button-demo">
+        <button color="primary" mat-raised-button type="submit" [disabled]="!menuForm.valid">Save
+        </button>
+        <button (click)="close()" mat-button type="button">Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

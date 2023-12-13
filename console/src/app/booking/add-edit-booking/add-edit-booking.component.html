@@ -1,0 +1,362 @@
+<section class="content">
+    <div class="container-fluid">
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="body">
+                        <h1>{{action | titlecase}} Booking
+                            <span style="float: right;">
+                                <button mat-raised-button color="primary" (click)="back()">Back</button>
+                            </span>
+                        </h1>
+                        <br>
+                        <form [formGroup]="bookingForm">
+                            <div class="ngxTableHeader">
+                                <ul class="header-buttons-left ms-0 mb-0">
+                                    <li class="dropdown">
+                                        <h2>
+                                            <strong>Basic</strong> Details
+                                        </h2>
+                                    </li>
+                                </ul>
+                            </div>
+                            <br>
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Projects</mat-label>
+                                            <mat-select formControlName="projectId"
+                                                (selectionChange)="findProjectDetails($event)">
+                                                <mat-option *ngFor="let project of projects" [value]="project.id">
+                                                    {{project.name}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error *ngIf="bookingForm.get('projectId').hasError('required')">
+                                                Project is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Booking Date</mat-label>
+                                            <input matInput formControlName="bookingDate" [matDatepicker]="picker">
+                                            <mat-hint>MM/DD/YYYY</mat-hint>
+                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                            <mat-error *ngIf="bookingForm.get('bookingDate').hasError('required')">
+                                                Booking Date is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div> -->
+                                    <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Created By</mat-label>
+                                            <mat-select formControlName="createdBy">
+                                                <mat-option *ngFor="let user of users" [value]="user.id">
+                                                    {{user.name}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error *ngIf="bookingForm.get('createdBy').hasError('required')">
+                                                Created By is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div> -->
+                                </div>
+                            </div>
+
+                            <div class="ngxTableHeader">
+                                <ul class="header-buttons-left ms-0 mb-0">
+                                    <li class="dropdown">
+                                        <h2>
+                                            <strong>Buyer</strong> Details
+                                        </h2>
+                                    </li>
+                                </ul>
+                            </div>
+                            <br>
+                            <div class="form-card">
+                                <div class="row" formGroupName="buyer">
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Mobile</mat-label>
+                                            <input matInput (focusout)="checkForUser()" (keyup)="checkForUser()" formControlName="phone"
+                                                type="phone" [mask]="phoneMask">
+                                            <mat-icon matSuffix>phone</mat-icon>
+                                        </mat-form-field>
+                                        <val-errors controlName="phone" class="custom-error">
+                                            <ng-template valError="required" let-label>Phone Number is required
+                                            </ng-template>
+                                            <ng-template valError="invalidPhoneNumber" let-label>Please enter a
+                                                valid
+                                                phone number
+                                            </ng-template>
+                                        </val-errors>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Buyer Name</mat-label>
+                                            <input formControlName="name" matInput>
+                                            <mat-icon matSuffix>face</mat-icon>
+                                            <mat-error *ngIf="bookingForm.get('buyer.name').hasError('required')">
+                                                Buyer Name is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Buyer Email</mat-label>
+                                            <input formControlName="email" matInput>
+                                            <mat-icon matSuffix>email</mat-icon>
+                                        </mat-form-field>
+                                        <val-errors controlName="email" class="custom-error">
+                                            <ng-template valError="required" let-label>Email is required
+                                            </ng-template>
+                                            <ng-template valError="invalidEmail" let-label>Please enter a valid
+                                                email
+                                                address
+                                            </ng-template>
+                                        </val-errors>
+                                    </div>
+                                    <!--  <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Alternate Phone</mat-label>
+                                            <input matInput type="text" formControlName="alternatePhone"
+                                                [mask]="phoneMask">
+                                            <mat-icon matSuffix>phone</mat-icon>
+                                        </mat-form-field>
+                                        <val-errors controlName="alternatePhone" class="custom-error">
+                                            <ng-template valError="invalidPhoneNumber" let-label>Please enter a
+                                                valid
+                                                phone number
+                                            </ng-template>
+                                        </val-errors>
+                                    </div> -->
+                                </div>
+                                <div class="row">
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Co Buyer Name</mat-label>
+                                            <input formControlName="coBuyerName" matInput>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ngxTableHeader">
+                                <ul class="header-buttons-left ms-0 mb-0">
+                                    <li class="dropdown">
+                                        <h2>
+                                            <strong>Inventory</strong> Details
+                                        </h2>
+                                    </li>
+                                </ul>
+                            </div>
+                            <br>
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Towers</mat-label>
+                                            <mat-select formControlName="towers"
+                                                (selectionChange)="setInventory($event)">
+                                                <mat-option *ngFor="let group of groupedInventories" [value]="group">
+                                                    {{group?.name}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error *ngIf="bookingForm.get('towers').hasError('required')">
+                                                Tower is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Inventory</mat-label>
+                                            <mat-select formControlName="inventoryId">
+                                                <mat-option *ngFor="let inventory of inventories"
+                                                    [value]="inventory.id">
+                                                    {{inventory?.name}} - {{inventory?.size}} Sq.ft -
+                                                    {{inventory?.corner ?
+                                                    'Corner': 'Not Corner'}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error *ngIf="bookingForm.get('inventoryId').hasError('required')">
+                                                Inventory is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Price</mat-label>
+                                            <input (keyup)="toWords($event)" type="number"
+                                                formControlName="sellingPrice" matInput>
+                                            <span class="text-muted">{{bookingPrice | numberToWords}}</span>
+
+                                            <mat-error *ngIf="bookingForm.get('sellingPrice').hasError('required')">
+                                                Price is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ngxTableHeader">
+                                <ul class="header-buttons-left ms-0 mb-0">
+                                    <li class="dropdown">
+                                        <h2>
+                                            <strong>System Users</strong> Details
+                                        </h2>
+                                    </li>
+                                </ul>
+                            </div>
+                            <br>
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Business Executive</mat-label>
+                                            <mat-select formControlName="businessExecutiveId">
+                                                <mat-option *ngIf="businessExecutives.length == 0">No User</mat-option>
+                                                <mat-option *ngFor="let users of businessExecutives" [value]="users.id">
+                                                    {{users.name}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error
+                                                *ngIf="bookingForm.get('businessExecutiveId').hasError('required')">
+                                                Business Executive is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Business Manager</mat-label>
+                                            <mat-select formControlName="businessManagerId">
+                                                <mat-option *ngIf="businessManagers.length == 0">No User</mat-option>
+                                                <mat-option *ngFor="let users of businessManagers" [value]="users.id">
+                                                    {{users.name}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error
+                                                *ngIf="bookingForm.get('businessManagerId').hasError('required')">
+                                                Business Manager is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Business Head</mat-label>
+                                            <mat-select formControlName="businessHeadId">
+                                                <mat-option *ngIf="businessHeads.length == 0">No User</mat-option>
+                                                <mat-option *ngFor="let users of businessHeads" [value]="users.id">
+                                                    {{users.name}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error *ngIf="bookingForm.get('businessHeadId').hasError('required')">
+                                                Business Head is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Channel Partner</mat-label>
+                                            <input formControlName="channelPartner" matInput>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ngxTableHeader">
+                                <ul class="header-buttons-left ms-0 mb-0">
+                                    <li class="dropdown">
+                                        <h2>
+                                            <strong>Upload</strong> Details
+                                        </h2>
+                                    </li>
+                                </ul>
+                            </div>
+                            <br>
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Application Form*</mat-label>
+                                            <ngx-mat-file-input placeholder="Application Form"
+                                                formControlName="applicationForm">
+                                                <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+                                            </ngx-mat-file-input>
+                                            <mat-error *ngIf="bookingForm.get('applicationForm').hasError('required')">
+                                                Application Form is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Buyer Pan Card*</mat-label>
+                                            <ngx-mat-file-input placeholder="Buyer Pan Card" formControlName="buyerPan">
+                                                <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+                                            </ngx-mat-file-input>
+                                            <mat-error *ngIf="bookingForm.get('buyerPan').hasError('required')">
+                                                Buyer Pan Card is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Co-Buyer Pan Card</mat-label>
+                                            <ngx-mat-file-input placeholder="Co-Buyer Pan Card"
+                                                formControlName="coBuyerPan">
+                                                <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+                                            </ngx-mat-file-input>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Buyer Aadhar card*</mat-label>
+                                            <ngx-mat-file-input placeholder="Buyer Aadhar card"
+                                                formControlName="buyerAadhar">
+                                                <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+                                            </ngx-mat-file-input>
+                                            <mat-error *ngIf="bookingForm.get('buyerAadhar').hasError('required')">
+                                                Buyer Aadhar card is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Co-Buyer Aadhar Card</mat-label>
+                                            <ngx-mat-file-input placeholder="Co-Buyer Aadhar Card"
+                                                formControlName="coBuyerAadhar">
+                                                <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+                                            </ngx-mat-file-input>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 mb-2">
+                                        <mat-form-field appearance="outline" class="example-full-width">
+                                            <mat-label>Payment Copy*</mat-label>
+                                            <ngx-mat-file-input placeholder="Payment Copy"
+                                                formControlName="paymentCopy">
+                                                <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+                                            </ngx-mat-file-input>
+                                            <mat-error *ngIf="bookingForm.get('paymentCopy').hasError('required')">
+                                                Payment Copy is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <mat-form-field appearance="outline" class="example-full-width">
+                                        <mat-label>Remark</mat-label>
+                                        <textarea formControlName="remark" matInput></textarea>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-12">
+                                    <button mat-raised-button color="primary" type="submit" (click)="submitBooking()"
+                                        [disabled]="!bookingForm.valid">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

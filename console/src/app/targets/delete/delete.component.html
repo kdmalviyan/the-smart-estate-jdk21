@@ -1,0 +1,22 @@
+<mat-dialog-content>
+	<h5 style="color:red;">
+		Are you sure you want to Delete ? 
+	</h5>
+	<p>
+		You will loose all your booking and site visits for this target
+	</p>
+	<Pre>
+		<span><b>Deleting</b></span>
+		<span>StartDate :{{content.startDate}}</span><br>
+		<span>EndDate :{{content.endDate}}</span><br>
+		<span >Done booking : {{content.bookingDoneCount}}</span><br>
+		<span>Done site visit :{{content.siteVisitDoneCount}}</span><br>
+	</Pre>
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+	<button mat-raised-button color="primary" (click)="confirmDelete()" tabindex="1">Delete Target</button>
+	<button mat-raised-button mat-dialog-close tabindex="-1">Cancel</button>
+</mat-dialog-actions>

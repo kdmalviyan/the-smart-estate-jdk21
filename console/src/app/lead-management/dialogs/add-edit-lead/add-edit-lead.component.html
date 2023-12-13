@@ -1,0 +1,245 @@
+<div class="addContainer">
+  <div class="modalHeader">
+    <div class="editRowModal">
+      <div class="modalHeader clearfix">
+        <div class="modal-about">
+          <div class="font-weight-bold p-t-5 font-17">
+            {{dialogTitle}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <button (click)="dialogRef.close()" aria-label="Close dialog" mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div mat-dialog-content>
+
+    <!-- Lead Management Form Start -->
+    <form (ngSubmit)="submitForm(leadManagmentForm)" [formGroup]="leadManagmentForm" class="register-form m-4">
+
+      <div formGroupName="customer">
+
+        <div class="row">
+
+          <!-- Customer Name -->
+          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+            <mat-form-field appearance="outline" class="example-full-width">
+              <mat-label>Customer Name</mat-label>
+              <input formControlName="name" matInput>
+              <mat-icon matSuffix>face</mat-icon>
+              <mat-error *ngIf="leadManagmentForm.get('customer.name').hasError('required')">
+                Customer Name is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Customer Email -->
+          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+            <mat-form-field appearance="outline" class="example-full-width">
+              <mat-label>Customer Email</mat-label>
+              <input formControlName="email" matInput>
+              <mat-icon matSuffix>email</mat-icon>
+            </mat-form-field>
+            <val-errors controlName="email" class="custom-error">
+              <ng-template valError="invalidEmail" let-label>Please enter a valid email
+                address
+              </ng-template>
+            </val-errors>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Customer phone -->
+          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+            <mat-form-field appearance="outline" class="example-full-width">
+              <mat-label>Customer Phone</mat-label>
+              <input type="text" matInput formControlName="phone" [mask]="phoneMask">
+              <mat-icon matSuffix>phone</mat-icon>
+            </mat-form-field>
+            <val-errors controlName="phone" class="custom-error">
+              <ng-template valError="required" let-label>Phone Number is required
+              </ng-template>
+              <ng-template valError="invalidPhoneNumber" let-label>Please enter a valid
+                phone number
+              </ng-template>
+            </val-errors>
+          </div>
+
+          <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+            <mat-form-field appearance="outline" class="example-full-width">
+              <mat-label>Alternate Phone</mat-label>
+              <input matInput type="text" formControlName="alternatePhone" [mask]="phoneMask">
+              <mat-icon matSuffix>phone</mat-icon>
+            </mat-form-field>
+            <val-errors controlName="alternatePhone" class="custom-error">
+              <ng-template valError="invalidPhoneNumber" let-label>Please enter a valid
+                phone number
+              </ng-template>
+            </val-errors>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <!-- Source -->
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Source</mat-label>
+            <mat-select formControlName="source">
+              <mat-option *ngFor="let source of leadSources" [value]="source">
+                {{source.description}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Project -->
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Projects</mat-label>
+            <mat-select (selectionChange)="selectedProject($event.value)" formControlName="project">
+              <mat-option *ngFor="let project of projects" [value]="project">
+                {{project.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+
+      </div>
+
+      <div class="row">
+        <!-- Assigned to -->
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Assigned To</mat-label>
+            <mat-select formControlName="assignedTo">
+              <mat-option *ngFor="let user of filteredUsers" [value]="user">
+                {{user.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="leadManagmentForm.get('assignedTo').hasError('required')">
+              Assignee is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Status -->
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let s of leadStatus" [value]="s">
+                {{s.description}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">
+
+        <!-- type -->
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="type">
+              <mat-option *ngFor="let t of leadType" [value]="t">
+                {{t.description}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Status -->
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>Inventory size</mat-label>
+            <mat-select formControlName="leadInventorySize">
+              <mat-option *ngFor="let s of leadInventorySizes" [value]="s">
+                {{s.description}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+      </div>
+
+      <!-- budget -->
+      <div class="row" formGroupName="budget">
+        <div class="col-xl-6 col-lg-6 " style="display: flex;">
+          <div class="col-xl-6 col-lg-6 " style="display: flex;">
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>Budget Start</mat-label>
+              <input matInput formControlName="startAmount" OnlyNumber="true">
+              <mat-error *ngIf="leadManagmentForm.get('budget.startAmount').hasError('required')">
+                Budget start amount is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-xl-6 col-lg-6 " style="display: flex;">
+
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>Unit</mat-label>
+              <mat-select formControlName="startUnit">
+                <mat-option value="LAC" selected>Lac</mat-option>
+                <mat-option value="CRORE">Cr</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="col-xl-6 col-lg-6 " style="display: flex;">
+
+          <div class="col-xl-6 col-lg-6 " style="display: flex;">
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>Budget End</mat-label>
+              <input matInput formControlName="endAmount" OnlyNumber="true">
+              <mat-error *ngIf="leadManagmentForm.get('budget.endAmount').hasError('required')">
+                Budget end amount is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 mb-2">
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>Unit</mat-label>
+              <mat-select formControlName="endUnit">
+                <mat-option value="LAC" selected>Lac</mat-option>
+                <mat-option value="CRORE">Cr</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row" formGroupName="comments">
+        <!-- Comments -->
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Comment</mat-label>
+            <textarea formControlName="message" matInput></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <div class="example-button-row">
+            <button [disabled]="!leadManagmentForm.valid && isSubmitted" color="primary" mat-raised-button
+              type="submit">Save</button>
+            <button (click)="onNoClick()" color="warn" mat-raised-button tabindex="-1">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!--End Lead Management Form -->
+  </div>
+</div>

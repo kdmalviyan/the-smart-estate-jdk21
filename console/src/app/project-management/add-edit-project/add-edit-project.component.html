@@ -1,0 +1,141 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+          <div class="body">
+            <h1>{{action | titlecase}} Project
+              <span style="float: right;">
+                <button mat-raised-button color="primary" routerLink="/project-management">Back</button>
+              </span>
+            </h1>
+            <br>
+
+            <!-- Project form  -->
+            <div class="ngxTableHeader">
+              <ul class="header-buttons-left ms-0 mb-0">
+                <li class="dropdown">
+                  <h2>
+                    <strong>Project</strong> Details
+                  </h2>
+                </li>
+              </ul>
+            </div>
+            <br>
+            <form [formGroup]="projectForm">
+              <div class="form-card">
+                <div class="row">
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                    <!-- <div *ngIf="isReadOnly">
+                      <p><strong>Name : </strong> {{this.project.name}}</p>
+                    </div> -->
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Name</mat-label>
+                      <input formControlName="name" matInput>
+                      <mat-error *ngIf="projectForm.get('name').hasError('required')">
+                        Name is required
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                    <!-- <div *ngIf="isReadOnly">
+                      <p><strong>Email : </strong> {{this.project.email}}</p>
+                    </div> -->
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Email</mat-label>
+                      <input matInput formControlName="email">
+                    </mat-form-field>
+                    <val-errors controlName="email" class="custom-error">
+                      <ng-template valError="invalidEmail" let-label>Please enter a valid email
+                        address
+                      </ng-template>
+                    </val-errors>
+                  </div>
+                  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                    <!-- <div *ngIf="isReadOnly">
+                      <p><strong>Phone : </strong> {{this.project.phone}}</p>
+                    </div> -->
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Phone</mat-label>
+                      <input matInput formControlName="phone" [mask]="phoneMask">
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Address</mat-label>
+                      <input formControlName="address" matInput>
+                      <mat-error *ngIf="projectForm.get('address').hasError('required')">
+                        Address is required
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                </div>
+
+
+                <div class="btn-row">
+                  <button (click)="onProjectSave(projectForm)" [disabled]="!projectForm.valid" color="primary"
+                    mat-raised-button>Save
+                  </button>
+                  <br>
+                  <br>
+                  <br>
+                </div>
+
+                <app-project-files (uploadFile)="uploadFile($event)" [fileList]="files"
+                  (downloadFile)="downloadFile($event)" (deleteFile)="deleteFile($event)">
+                </app-project-files>
+                <div class="row">
+                  <div class="col-sm-12">
+
+                    <div class="ngxTableHeader">
+                      <ul class="header-buttons-left ms-0 mb-0">
+                        <li class="dropdown">
+                          <h2>
+                            <strong>Inventories</strong>
+                          </h2>
+                        </li>
+
+                      </ul>
+                      <ul class="header-buttons">
+                        <li>
+                          <div class="icon-button-demo">
+                            <button mat-mini-fab color="primary"  
+                              (click)="uploadInventory()" matTooltip="Upload inventory in Excel">
+                              <mat-icon>file_upload</mat-icon>
+                            </button>
+                          </div>
+
+                        </li>
+                        <li>
+                        <!--   <button (click)='addRow()' color="primary" mat-mini-fab>
+                            <mat-icon class="col-white">add</mat-icon>
+                          </button> -->
+                        </li>
+                      </ul>
+                    </div>
+
+
+                    <ag-grid-angular style="width: 100%; height: 300px;" [animateRows]="true"
+                      [defaultColDef]="defaultColDef" class="ag-theme-alpine" [rowData]="inventoriesData"
+                      [columnDefs]="flatcolumns">
+                    </ag-grid-angular>
+
+
+                  </div>
+                </div>
+
+              </div>
+            </form>
+            <!--  end Project form  -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,185 @@
+<div class="addContainer">
+  <div class="modalHeader">
+    <div class="editRowModal">
+      <div class="modalHeader clearfix">
+        <!--  <img [src]='advanceTable.img' alt="avatar"> -->
+        <div class="modal-about">
+          <div class="font-weight-bold p-t-5 font-17">
+            {{dialogTitle}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <button (click)="dialogRef.close()" aria-label="Close dialog" mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div mat-dialog-content>
+    <form [formGroup]="addUserForm" class="register-form m-4">
+      <div class="row">
+
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Name</mat-label>
+            <input formControlName="name" matInput>
+            <mat-icon matSuffix>face</mat-icon>
+            <mat-error *ngIf="addUserForm.get('name').hasError('required')">
+              Name is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-------------------------username---------------- -->
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>User Name</mat-label>
+            <input formControlName="username" matInput>
+            <mat-icon matSuffix>face</mat-icon>
+            <mat-error *ngIf="addUserForm.get('username').hasError('required')">
+              User Name is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-------------------------Gender---------------- -->
+
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Gender</mat-label>
+            <mat-icon matSuffix>face</mat-icon>
+            <mat-select formControlName="gender">
+              <mat-option disabled value="">Select gender</mat-option>
+              <mat-option value="male">Male</mat-option>
+              <mat-option value="female">Female</mat-option>
+            </mat-select>
+            <mat-error *ngIf="addUserForm.get('gender').hasError('required') || addUserForm.get('gender').touched">
+              Please select Gender
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <!-------------------------DOB---------------- -->
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Date of birth</mat-label>
+            <input matInput formControlName="dateOfBirth"  [max]="today" [matDatepicker]="picker">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker [startAt]="startDate"></mat-datepicker>
+            <mat-error *ngIf="addUserForm.get('dateOfBirth').hasError('required')">
+              dob is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-------------------------Role---------------- -->
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Role</mat-label>
+            <mat-icon matSuffix>face</mat-icon>
+            <mat-select formControlName="role">
+              <mat-option *ngFor="let role of roles" [value]="role.id">
+                {{role.description}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addUserForm.get('role').hasError('required') || addUserForm.get('role').touched">
+              Please select role
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-------------------------Email---------------- -->
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Email</mat-label>
+            <input formControlName="email" matInput required>
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+          <val-errors controlName="email" class="custom-error">
+            <ng-template valError="required" let-label>Email is required
+            </ng-template>
+            <ng-template valError="invalidEmail" let-label>Please enter a valid email
+              address
+            </ng-template>
+          </val-errors>
+        </div>
+      </div>
+
+      <!------------------------- phone---------------- -->
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Mobile</mat-label>
+            <input matInput formControlName="mobile" type="phone" [mask]="phoneMask">
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+          <val-errors controlName="mobile" class="custom-error">
+            <ng-template valError="required" let-label>Phone Number is required
+            </ng-template>
+            <ng-template valError="invalidPhoneNumber" let-label>Please enter a valid
+              phone number
+            </ng-template>
+          </val-errors>
+        </div>
+
+        <!-------------------------Alternate phone---------------- -->
+
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Alternate Phone</mat-label>
+            <input matInput type="text" formControlName="alternatePhone" [mask]="phoneMask">
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+          <val-errors controlName="alternatePhone" class="custom-error">
+            <ng-template valError="invalidPhoneNumber" let-label>Please enter a valid
+              phone number
+            </ng-template>
+          </val-errors>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+          <!-- Project -->
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Projects</mat-label>
+            <mat-select formControlName="project">
+              <mat-option *ngFor="let project of projects" [value]="project.id">
+                {{project?.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addUserForm.get('project').hasError('required') || addUserForm.get('project').touched">
+              Please select project
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!------------------------- address---------------- -->
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Address</mat-label>
+            <textarea formControlName="address" matInput></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+
+
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+          <div class="example-button-row">
+            <button (click)="confirmAdd()" [disabled]="!addUserForm.valid || submitted" color="primary"
+              mat-raised-button>Save
+            </button>
+            <button color="warn" mat-raised-button (click)="dialogRef.close()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

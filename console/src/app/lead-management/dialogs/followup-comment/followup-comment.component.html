@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Please add follow up remark</h2>
+<div [formGroup]="followupCommentForm" >
+
+<mat-dialog-content class="mat-typography">
+    <mat-form-field class="example-full-width" appearance="outline">
+        <mat-label>Remark</mat-label>
+        <textarea rows="4" matInput formControlName="remark"></textarea>
+        <mat-error *ngIf="followupCommentForm.get('remark').hasError('required')">
+            Remark is <strong>required</strong>
+        </mat-error>
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close="cancel">Cancel</button>
+    <button [disabled]="!followupCommentForm.valid" color="primary" (click)="submit()" mat-raised-button type="submit">Submit</button>
+
+</mat-dialog-actions>
+</div>
