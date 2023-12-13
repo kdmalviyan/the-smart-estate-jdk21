@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  mysqldb:
+    image: mysql:8.0.29
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin@123
+      MYSQL_DATABASE: smart_estate_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: Admin@123
+    volumes:
+      - prod_db:/var/lib/mysql
+    ports:
+      - "3301:3306"
+  tenant-service:
+    links:
+      - mysqldb
+    depends_on:
+      - mysqldb
+    build:
+      context: ./tenant-service
+    restart: on-failure
+    ports:
+      - "9090:9090"
+    volumes:
+      - .m2:/root/.m2
+      - ./logs:/home/ec2-user/tenant-service/logs
+    stdin_open: true
+    tty: true
+  thesmart-estateapi-service:
+    links:
+      - mysqldb
+    depends_on:
+      - mysqldb
+    build:
+      context: ./api-service
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    volumes:
+      - .m2:/root/.m2
+      - ./logs:/home/ec2-user/the-smart-estate-api-service/logs
+    stdin_open: true
+    tty: true
+
+networks:
+  the-smart-estate-network:
+volumes:
+  tenant_db: { }
+  prod_db: { }

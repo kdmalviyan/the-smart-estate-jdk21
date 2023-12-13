@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Select Deactivate Reason</h2>
+<mat-dialog-content class="mat-typography">
+    <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>Reason</mat-label>
+        <mat-select [formControl]="reason">
+            <mat-option *ngFor="let reason of deactivationReasons" [value]="reason">
+                {{reason.description}}
+            </mat-option>
+        </mat-select>
+        <mat-error *ngIf="reason.hasError('required')">
+            Reason is <strong>required</strong>
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width" appearance="outline">
+        <mat-label>Remark</mat-label>
+        <textarea rows="4" matInput [formControl]="remark"></textarea>
+        <mat-error *ngIf="remark.hasError('required')">
+            Remark is <strong>required</strong>
+        </mat-error>
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close="cancel">Cancel</button>
+    <button mat-raised-button color="primary" (click)="submit()">Submit</button>
+</mat-dialog-actions>

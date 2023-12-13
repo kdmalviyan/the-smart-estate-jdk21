@@ -1,0 +1,73 @@
+<div [ngClass]="isOpenSidebar ? 'showSettingPanel' : ''" class="settingSidebar">
+  <a (click)="toggleRightSidebar()" class="settingPanelToggle" href="javascript:void(0)"> <i
+      class="fa fa-spin fa-cog"></i>
+  </a>
+  <div [ngStyle]="{'position' : 'relative', 'max-height' : maxHeight+'px', 'max-width' : maxWidth+'px'}"
+    [perfectScrollbar] class="settingSidebar-body ps-container ps-theme-default">
+    <div class=" fade show active">
+      <div class="setting-panel-header">Setting Panel
+      </div>
+      <div class="p-15 border-bottom">
+        <h6 class="font-medium m-b-10">Select Layout</h6>
+        <div class="flex flex-wrap hiddenradio">
+          <div class="flex flex-col ">
+            <label>
+              <input (click)="lightThemeBtnClick()" [checked]="isDarTheme == false ? true : false" name="value"
+                type="radio" value="light">
+              <img src="assets/images/light.png">
+            </label>
+            <div class="mt-1 text-md text-center"> Light</div>
+          </div>
+          <div class="flex flex-col mt-3"><label>
+              <input (click)="darkThemeBtnClick()" [checked]="isDarTheme == true ? true : false" name="value"
+                type="radio" value="dark">
+              <img src="assets/images/dark.png">
+            </label>
+            <div class="mt-1 text-md text-center"> Dark</div>
+          </div>
+        </div>
+      </div>
+      <div class="rightSetting">
+        <h6 class="font-medium m-b-10">Sidebar Menu Color</h6>
+        <mat-button-toggle-group [value]="isDarkSidebar ? 'dark' : 'light'" class="mt-2">
+          <mat-button-toggle (click)="lightSidebarBtnClick()" value="light">Light</mat-button-toggle>
+          <mat-button-toggle (click)="darkSidebarBtnClick()" value="dark">Dark</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <div class="p-15 border-bottom">
+        <h6 class="font-medium m-b-10">Color Theme</h6>
+        <div class="theme-setting-options">
+          <ul class="choose-theme list-unstyled mb-0">
+            <li (click)="selectTheme('white')" [ngClass]="{'active': selectedBgColor === 'white'}" data-theme="white">
+              <div class="white"></div>
+            </li>
+            <li (click)="selectTheme('black')" [ngClass]="{'active': selectedBgColor === 'black'}" data-theme="black">
+              <div class="black"></div>
+            </li>
+            <li (click)="selectTheme('purple')" [ngClass]="{'active': selectedBgColor === 'purple'}"
+              data-theme="purple">
+              <div class="purple"></div>
+            </li>
+            <li (click)="selectTheme('orange')" [ngClass]="{'active': selectedBgColor === 'orange'}"
+              data-theme="orange">
+              <div class="orange"></div>
+            </li>
+            <li (click)="selectTheme('cyan')" [ngClass]="{'active': selectedBgColor === 'cyan'}" data-theme="cyan">
+              <div class="cyan"></div>
+            </li>
+            <li (click)="selectTheme('green')" [ngClass]="{'active': selectedBgColor === 'green'}" data-theme="green">
+              <div class="green"></div>
+            </li>
+            <li (click)="selectTheme('blue')" [ngClass]="{'active': selectedBgColor === 'blue'}" data-theme="blue">
+              <div class="blue"></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="rightSetting">
+        <h6 class="font-medium m-b-10">RTL Layout</h6>
+        <mat-slide-toggle (change)="switchDirection($event)" [checked]="isRtl" class="mt-2"></mat-slide-toggle>
+      </div>
+    </div>
+  </div>
+</div>

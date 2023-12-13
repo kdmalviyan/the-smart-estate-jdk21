@@ -8,6 +8,8 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/uiDesigner.xml
+.idea/vcs.xml
 *.iws
 *.iml
 *.ipr
@@ -33,6 +35,11 @@ build/
 
 ### VS Code ###
 .vscode/
+console/node_modules
+console/dist
 
 ### Mac OS ###
 .DS_Store
+/console/.angular
+
+.m2/

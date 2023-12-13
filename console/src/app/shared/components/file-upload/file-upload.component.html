@@ -1,0 +1,8 @@
+<div class="file-drop-area">
+  <button color="primary" mat-raised-button>Choose file</button>
+  <span *ngIf="myFiles.length == 0" class="ms-2">{{'or drag and drop file here' }}</span>
+  <span *ngFor="let file of myFiles" class="file-msg">
+     <div class="me-2">{{ file.name }}</div>
+   </span>
+  <input (change)="getFileDetails($event)" class="file-input" multiple type="file">
+</div>

@@ -1,0 +1,160 @@
+<section class="content">
+    <div class="container-fluid">
+        <!-- Basic Examples -->
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="ngxTableHeader">
+                                    <ul class="header-buttons-left ms-0 mb-0">
+                                        <li class="dropdown">
+                                            <h2>
+                                                <strong>Vacation Type</strong>
+                                            </h2>
+                                        </li>
+                                        <li class="dropdown m-l-20">
+                                            <label for="search-input"><i
+                                                    class="material-icons search-icon">search</i></label>
+                                            <input aria-label="Search box" class="browser-default search-field"
+                                               (keyup)='filterDatatable($event)' placeholder="Search" type="text">
+                                        </li>
+                                    </ul>
+                                    <ul class="header-buttons">
+                                        <li>
+                                            <button color="primary" (click)='addEditRow(addEditType,"","add")'
+                                                mat-mini-fab  >
+                                                <mat-icon class="col-white">add</mat-icon>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <ngx-datatable #table [columnMode]="'force'" [footerHeight]="50" [headerHeight]="50"
+                                    [limit]="10" [rowHeight]="'60'" [rows]="vacationTypeData" [sortType]="'multi'"
+                                    class="material">
+
+                                    <!-- <ngx-datatable-column [width]="20" name="id"></ngx-datatable-column> -->
+                                    <ngx-datatable-column [width]="10" name="S No.">
+                                        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row">
+                                            {{rowIndex+1}}
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column [width]="150" name="name"></ngx-datatable-column>
+                                    <ngx-datatable-column [width]="150" name="description"></ngx-datatable-column>
+
+                                    <ngx-datatable-column [width]="120" name="Actions" sortable="false">
+                                        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value"
+                                            ngx-datatable-cell-template>
+                                            <span>
+                                                <button (click)='addEditRow(addEditType,row,"edit")'
+                                                    class="btn tblActnBtn h-auto">
+                                                    <i class="material-icons">mode_edit</i>
+                                                </button>
+                                                <button class="btn tblActnBtn h-auto"
+                                                    (click)="openDeleteVacation(deleteRecord,row)">
+                                                    <i class="material-icons">delete</i>
+
+                                                </button>
+                                            </span>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                </ngx-datatable>
+
+                                <!-- Add Record Modal Window -->
+                                <ng-template #addEditType let-modal>
+                                    <div class="modal-header editRowModal">
+                                        <h4 class="modal-title" id="modal-basic-title">
+                                            <div class="modal-header ">
+                                                <div class="modal-about">
+                                                    <div class="font-weight-bold p-t-10 font-17">
+                                                        {{modalName}} Vacation Type
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </h4>
+                                        <button aria-label="Close" class="close" type="button" (click)="onCloseModal()">
+                                            <span aria-hidden="true"><i class="material-icons">close</i></span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="register-form" [formGroup]="vacationTypeForm">
+                                            <div class="row">
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                                                    <mat-form-field appearance="outline" class="example-full-width">
+                                                        <mat-label>Vacation Type Name</mat-label>
+                                                        <input matInput formControlName="name">
+                                                        <mat-error>
+                                                            Vacation Type Name is required!
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                </div>
+
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+
+                                                    <mat-form-field appearance="outline" class="example-full-width">
+                                                        <textarea matInput placeholder="Enter Description"
+                                                            formControlName="description"></textarea>
+                                                        <mat-error>
+                                                            Vacation Type Description is required!
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                                                    <button [disabled]="!vacationTypeForm.valid" class="btn-space"
+                                                        color="primary"
+                                                        (click)="createUpdateVacationType(vacationTypeForm)"
+                                                        mat-raised-button>Submit
+                                                    </button>
+                                                    <button data-dismiss="modal" mat-button type="button"
+                                                        (click)="onCloseModal()">Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </ng-template>
+
+
+                                <ng-template #deleteRecord let-modal>
+                                    <div class="modal-header editRowModal">
+                                        <h4 class="modal-title" id="modal-basic-title">
+                                            <div class="modal-header ">
+
+                                                <div class="font-weight-bold p-t-10 font-17">
+                                                    Delete Lead Type
+                                                </div>
+                                            </div>
+                                        </h4>
+                                        <button (click)="onCloseModal()" aria-label="Close" class="close" type="button">
+                                            <span aria-hidden="true"><i class="material-icons">close</i></span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <h4>Are You Sure you want to delete?</h4>
+
+                                        <div class="modal-footer">
+                                            <div class="button-demo">
+                                                <button color="primary" mat-raised-button type="submit"
+                                                    (click)="deleteVacationType()">Yes
+                                                </button>
+                                                <button (click)="onCloseModal()" mat-button type="button">No
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </ng-template>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

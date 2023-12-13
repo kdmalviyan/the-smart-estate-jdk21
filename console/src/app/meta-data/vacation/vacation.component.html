@@ -1,0 +1,114 @@
+<section class="content">
+    <div class="container-fluid">
+        <!-- Basic Examples -->
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="ngxTableHeader">
+                                    <ul class="header-buttons-left ms-0 mb-0">
+                                        <li class="dropdown">
+                                            <h2>
+                                                <strong>Vacation</strong>
+                                            </h2>
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+                                <ngx-datatable #table [columnMode]="'force'" [footerHeight]="50" [headerHeight]="50"
+                                    [limit]="10" [rowHeight]="'60'" [rows]="rows" [sortType]="'multi'" class="material">
+
+                                    <!-- <ngx-datatable-column [width]="20" name="id"></ngx-datatable-column> -->
+                                    <ngx-datatable-column [width]="10" name="S No.">
+                                        <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-row="row">
+                                            {{rowIndex+1}}
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column [width]="150" name="Employee Name">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            {{row?.name}}
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column [width]="150" name="Reason">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            {{row?.name}}
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column [width]="150" name="Vaccation Type">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            {{row?.name}}
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column [width]="150" name="Day Type">
+                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                            {{row?.name}}
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                    <ngx-datatable-column [width]="120" name="Actions" sortable="false">
+                                        <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value"
+                                            ngx-datatable-cell-template>
+                                            <select (change)="changeStatus($event,statusRecord)"
+                                                class="select-dropdown filtervalue">
+                                                <option value="">Select</option>
+                                                <option *ngFor="let status of vacationStatus">
+                                                    {{status.value}}
+                                                </option>
+                                            </select>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+                                </ngx-datatable>
+
+
+
+
+                                <ng-template #statusRecord let-modal>
+                                    <div class="modal-header editRowModal">
+                                        <h4 class="modal-title" id="modal-basic-title">
+                                            <div class="modal-header ">
+
+                                                <div class="font-weight-bold p-t-10 font-17">
+                                                    Change Status Type
+                                                </div>
+                                            </div>
+                                        </h4>
+                                        <button (click)="onCloseModal()" aria-label="Close" class="close" type="button">
+                                            <span aria-hidden="true"><i class="material-icons">close</i></span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <h4>Are You Sure you want to {{statusType}}?</h4>
+                                        <mat-form-field class="example-full-width" appearance="outline" *ngIf="showHide">
+                                            <mat-label>Remark</mat-label>
+                                            <textarea rows="4" matInput [formControl]="remark"></textarea>
+                                            <mat-error *ngIf="remark.hasError('required')">
+                                                Remark is <strong>required</strong>
+                                            </mat-error>
+                                        </mat-form-field>
+                                        <div class="modal-footer">
+                                            <div class="button-demo">
+                                                <button color="primary" *ngIf="statusType==='Approve'" mat-raised-button type="submit">Yes
+                                                </button>
+                                                <button color="primary" *ngIf="statusType==='Reject'" [disabled]="!remark.valid" mat-raised-button type="submit">Yes
+                                                </button>
+                                                &nbsp;
+                                                <button (click)="onCloseModal()" mat-button type="button">No
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </ng-template>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

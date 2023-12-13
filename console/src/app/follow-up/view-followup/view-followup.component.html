@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>{{leadData.name}}</h1>
+<div mat-dialog-content>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="body">
+                <h2>Follow up</h2>
+                <br>
+                <div class="row">
+                    <div>
+                        <table *ngIf="leadData?.followups.length>0">
+                            <thead>
+                                <tr>
+                                    <th>Follow up time</th>
+                                    <th>Open</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let followups of leadData.followups" style="width:400px;border: 1px;">
+                                    <td>{{ followups.followupTime |date:'dd-MMM-yyyy HH:mm' }}</td>
+                                    <td *ngIf="!followups.open" ><mat-icon matSuffix style="color: green;">check_circle</mat-icon></td>
+                                    <td *ngIf="followups.open" ><mat-icon matSuffix>ring_volume</mat-icon></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

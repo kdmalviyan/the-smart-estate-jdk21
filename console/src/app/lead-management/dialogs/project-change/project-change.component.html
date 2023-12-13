@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Please select assignee for the Lead</h2>
+<div [formGroup]="changeProjectForm">
+
+    <mat-dialog-content class="mat-typography">
+
+        <mat-form-field class="example-full-width" appearance="outline">
+
+            <mat-label>Select User from project</mat-label>
+            <mat-select formControlName="userdetail" class="select-dropdown">
+                <mat-option disabled value="">Select Assignee</mat-option>
+                <mat-option *ngFor="let user of users" [value]="user">
+                    {{user.name}}-{{user?.roles[0]?.description}}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="changeProjectForm.get('userdetail').hasError('required')">
+                User is <strong>required</strong>
+            </mat-error>
+
+        </mat-form-field>
+
+
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close="cancel">Cancel</button>
+        <button [disabled]="!changeProjectForm.valid" color="primary" (click)="submit()" mat-raised-button
+            type="submit">Submit</button>
+
+    </mat-dialog-actions>
+</div>

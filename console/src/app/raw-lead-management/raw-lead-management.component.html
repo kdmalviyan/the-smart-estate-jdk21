@@ -1,0 +1,208 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+          <div class="body">
+            <div class="responsive_table">
+            <div class="materialTableHeader">
+              <div class="row">
+                <div class="col-8">
+                  <ul class="header-buttons-left ml-0">
+                    <li class="dropdown">
+                      <h2>
+                        <strong>Raw Leads</strong>
+                      </h2>
+                    </li>
+                    <li class="dropdown m-l-20">
+                      <label for="search-input"><i class="material-icons search-icon">search</i></label>
+
+                      <input #filter (keyup)='searchCallback($event)' aria-label="Search box"
+                        [(ngModel)]="currentSearchText" class="browser-default search-field"
+                        placeholder="Type min 3 characters" type="text">
+                    </li>
+                    <li class="dropdown m-l-20">
+                      <label for="search-input"><i class="material-icons search-icon">date_range</i></label>
+
+                      <input type="text" class="dateRange" ngxDaterangepickerMd [(ngModel)]="selectedDateRange"
+                        class="browser-default search-field" placeholder="Choose date range filter"
+                        [locale]="{format: 'DD-MM-YYYY'}" [showClearButton]="true" opens="right" [ranges]="range"
+                        [alwaysShowCalendars]="true" (ngModelChange)="choosedDate($event)" />
+                    </li>
+
+                  </ul>
+                </div>
+                <div class="col-4">
+                  <ul class="header-buttons">
+
+                
+                    <li>
+                      <div [hidden]="!isAdminOrSuperAdmin()" class="icon-button-demo">
+                        <button mat-mini-fab  
+                          (click)="importLeads(importLead)" matTooltip="Upload Leads in Excel">
+                          <mat-icon>file_upload</mat-icon>
+                        </button>
+                      </div>
+                    </li>
+                   
+                  </ul>
+                </div>
+              </div>
+             
+            </div>
+
+
+              <ngx-datatable #table class="material" [rows]="rows" 
+              [sortType]="'multi'" 
+              [columnMode]="'force'"
+              [headerHeight]="50" 
+              [footerHeight]="50" 
+              [count]="page.count"
+              [offset]="page.offset"
+              [limit]="page.limit"
+              [externalPaging]="true" 
+              (page)="pageCallback($event)" 
+              (sort)="sortCallback($event)"
+              [loadingIndicator]="loadingIndicator" 
+               rowHeight="auto"
+              [virtualization]="false"
+              >
+         
+         
+              <ngx-datatable-column [sortable]="false">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <a *ngIf="!row?.leadConverted" (click)='addNew(row)' href="javascript:void(0)"
+                    title="Click to view details">Create Lead</a>
+                  <span *ngIf="row?.leadConverted">
+                    <mat-icon style="color: green;"> done</mat-icon>
+                  </span>
+
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="PhoneNo">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row?.customerPhone }}
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Customer Email">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row?.customerEmail }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Name">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row?.customerName }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Project Name">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row?.projectName }}
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #importLead let-modal>
+      <div class="modal-header editRowModal">
+        <h4 class="modal-title" id="modal-basic-title">
+          <div class="modal-header ">
+            <div class="modal-about">
+              <div class="font-weight-bold p-t-10 font-17">
+                Import Leads From Excel
+              </div>
+            </div>
+          </div>
+        </h4>
+        <button (click)="modal.dismiss()" aria-label="Close" class="close" type="button">
+          <span aria-hidden="true"><i class="material-icons">close</i></span>
+        </button>
+      </div>
+
+      <div *ngIf="!showResponse" class="modal-body">
+        <form [formGroup]="uploadForm">
+          <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+              <mat-form-field appearance="outline" class="example-full-width">
+                <mat-label>Select Excel File</mat-label>
+                <ngx-mat-file-input [accept]="accept" [color]="color" formControlName="file">
+                  <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+                </ngx-mat-file-input>
+                <mat-error *ngIf="uploadForm.get('file').hasError('required')">
+                  Source Descripton is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+
+              <button (click)="uploadFile()" [disabled]="!uploadForm.valid && isUploadSubmitted" class="btn-space"
+                color="primary" mat-raised-button>Submit
+
+              </button>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
+              <button mat-button (click)="downloadFile()" style="float: right;">Download File format</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="showResponse" class="modal-body">
+        <div [hidden]="importResponse.status==500" class="alert alert-success">
+          <span>{{importResponse.message}}</span>
+        </div>
+        <div [hidden]="importResponse.status!=500" class="alert alert-danger">
+          <span>{{importResponse.message}}</span>
+        </div>
+        <div class="row tiles" [hidden]="importResponse.status==500">
+          <div class="col-4">
+            <span class="success">{{importResponse.rowsSuccess}} Added </span>
+          </div>
+          <div class="col-4">
+            <span class="warning">{{importResponse.rowsSkipped}} Skipped</span>
+          </div>
+          <div class="col-4">
+            <span class="error">{{importResponse.errors.length ? importResponse.errors.length : 0}}
+              Error </span>
+          </div>
+        </div>
+        <br><br>
+        <mat-accordion>
+
+          <mat-expansion-panel *ngIf="importResponse.errors.length > 0">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span style="color: red;">Errors</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let error of importResponse.errors ; let i = index">
+
+              {{i +1}}. {{error.message}} - <strong>on row - </strong> {{error.rowNumber}}</div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel *ngIf="importResponse.warnings.length > 0">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span style="color: #F6C900;">Warnings</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let warning of importResponse.warnings; let i = index">
+              {{i +1}}. {{warning.message}} <strong> on row - </strong> {{warning.rowNumber}} -
+              <a href="javascript:void(0)" (click)="goToLead(warning.leadId)" class="link">Go To Lead</a>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </ng-template>
+
+  </div>
+</section>

@@ -1,0 +1,40 @@
+.background{
+    background-image: url('../../../assets/images/login/front.jpg');
+    background-size: cover;
+    height: 100vh;
+}
+// .comp-image{
+
+//     background-image: url('../../../assets/images/login/login-main.png');
+//     width: 100%;
+//     height: 100%;
+// }
+
+.image-div{
+    margin-top: 100px;
+}
+
+.main-content{
+    display: flex;
+}
+
+.signup-card{
+    background-color: transparent;
+    height: 300px;
+    width: 300px;
+    margin-top: 170px;
+
+    input{
+        margin: 10px 0;
+        border: 2px solid #fff;
+        background-color: transparent;
+        border-radius: 5px;
+    }
+    button{
+        width: 30%;
+        border: none;
+        height: 40px;
+        border-radius: 5px;
+    }
+}
+

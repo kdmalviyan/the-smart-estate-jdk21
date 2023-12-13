@@ -1,0 +1,40 @@
+
+.tile-card {
+
+    // border-radius: 0;
+
+    border: 2px solid green;
+    color: #1b1f52;
+
+    .tile {
+        .heading {
+            text-align: center;
+        }
+    }
+}
+
+.tile-card:hover {
+
+    cursor: pointer;
+
+    transition: 0.5s;
+    color: green;
+    border: 2px solid #1b1f52;
+}
+
+.margin-bottom {
+    margin-bottom: 25px;
+}
+
+.height {
+    height: 125px;
+}
+
+.btn-group .active {
+    color: #1b1f52;
+    background-color: green;
+}
+
+.btn-secondary {
+    background-color: #1b1f52;
+}

@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Select Inventory file</h2>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="uploadForm">
+    <button mat-button (click)="downloadFile()" style="float: right;">Download File format</button>
+    <mat-form-field appearance="outline" class="example-full-width">
+      <mat-label>Select Excel File</mat-label>
+      <ngx-mat-file-input formControlName="file">
+        <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+      </ngx-mat-file-input>
+      <mat-error *ngIf="uploadForm.get('file').hasError('required')">
+        Sorce Descripton is required
+      </mat-error>
+    </mat-form-field>
+  </form>
+
+
+
+  <mat-expansion-panel *ngIf="uploadInventoryErrors.length > 0">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <span style="color: red;">Errors</span>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div *ngFor="let error of uploadInventoryErrors ; let i = index">
+      {{error}}
+    </div>
+  </mat-expansion-panel>
+
+
+</mat-dialog-content>
+
+
+<mat-dialog-actions>
+  <button (click)="uploadFile()" [disabled]="!uploadForm.valid && isUploadSubmitted" class="btn-space" color="primary"
+    mat-raised-button>Submit
+  </button>
+  <button (click)="close()" mat-button mat-dialog-close="cancel">Cancel</button>
+</mat-dialog-actions>

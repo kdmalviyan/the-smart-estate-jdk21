@@ -1,0 +1,115 @@
+<div class="row">
+    <div class="col-sm-12">
+
+        <div class="ngxTableHeader">
+            <ul class="header-buttons-left ms-0 mb-0">
+                <li class="dropdown">
+                    <h2>
+                        <strong>Project Files</strong>
+                    </h2>
+                </li>
+            </ul>
+            <ul class="header-buttons">
+                <li>
+                    <button (click)='addRow(addFile)' color="primary" mat-mini-fab>
+                        <mat-icon class="col-white">add</mat-icon>
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <ngx-datatable #flatTable [columnMode]="'force'" [footerHeight]="50" [headerHeight]="50" [limit]="10"
+            [rowHeight]="'60'" [rows]="filedata" [sortType]="'multi'" class="material" [columnMode]="'flex'">
+
+            <ngx-datatable-column [width]="350" [minWidth]="350" name="File Name">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="d-inline-block text-truncate" style="max-width:325px;"
+                        matTooltip=" {{ getFileName(row?.fileName) }}">
+                        {{ getFileName(row?.fileName) }}
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column [width]="150" [minWidth]="150" name="File Type"></ngx-datatable-column>
+            <ngx-datatable-column [width]="150" [minWidth]="150" name="Created At">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="d-inline-block text-truncate" style="max-width:135px;">
+                        {{ row?.createdAt | date }}
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column [width]="250" [minWidth]="250" name="Created By">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <div class="d-inline-block text-truncate" style="max-width:230px;">
+                        {{ row?.createdBy?.name}}
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [width]="120" [minWidth]="120" name="Download" sortable="false">
+                <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+                    <button (click)='downnloadFile(row)' class="btn tblActnBtn h-auto" style="max-width:100px;">
+                        <i class="material-icons">download_file</i>
+                    </button>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column [width]="120" [minWidth]="120" name="Delete" sortable="false">
+                <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+                    <button (click)='deleteFileHandler(row)' class="btn tblActnBtn h-auto"
+                        *ngIf="row.fileType== 'priceList'">
+                        <i class="material-icons">delete</i>
+                    </button>
+                </ng-template>
+            </ngx-datatable-column>
+
+        </ngx-datatable>
+
+
+    </div>
+</div>
+
+<!-- Add Flat Modal Window -->
+<ng-template #addFile let-modal>
+    <div class="modal-header editRowModal">
+        <h4 class="modal-title" id="modal-basic-title">
+            <div class="modal-header ">
+                <div class="modal-about">
+                    <div class="font-weight-bold p-t-10 font-17">
+                        Add File
+                    </div>
+                </div>
+            </div>
+        </h4>
+        <button (click)="modal.dismiss()" aria-label="Close" class="close" type="button">
+            <span aria-hidden="true"><i class="material-icons">close</i></span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+                <mat-form-field appearance="outline" class="example-full-width">
+                    <mat-label>File Type</mat-label>
+                    <mat-select [formControl]="fileType">
+                        <mat-option value="brochure">Broucher</mat-option>
+                        <mat-option value="priceList">Price List</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 mb-2">
+                <mat-form-field appearance="outline" class="example-full-width">
+                    <mat-label>File</mat-label>
+                    <ngx-mat-file-input placeholder="PDF file only" [formControl]="file" [accept]="'.pdf'">
+                        <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+                    </ngx-mat-file-input>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-2">
+                <button class="btn-space" color="primary" mat-raised-button (click)="submit()">Upload
+                </button>
+                <button (click)="modal.dismiss()" mat-button>Cancel</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

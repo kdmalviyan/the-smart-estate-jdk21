@@ -1,0 +1,133 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- Basic Examples -->
+    <div class="row clearfix">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+          <div class="body">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="ngxTableHeader">
+                  <ul class="header-buttons-left ms-0 mb-0">
+                    <li class="dropdown">
+                      <h2>
+                        <strong>Employee Targets</strong>
+                      </h2>
+                    </li>
+
+                    <!--     <li class="dropdown m-l-20">
+                      <label for="search-input"><i class="material-icons search-icon">search</i></label>
+                      <input (keyup)='filterDatatable($event)' aria-label="Search box"
+                        class="browser-default search-field" placeholder="Search" type="text">
+                    </li> -->
+                  </ul>
+                  <ul class="header-buttons">
+                    <li style="padding-right: 30px;" [hidden]="!isAdminOrSuperAdmin()">
+                      <mat-slide-toggle [(ngModel)]="enableGroupBy" [color]="'success'"
+                        (change)="changeToGroupBy($event)"><b> Group by User & Project</b>
+                      </mat-slide-toggle>
+                    </li>
+                    <li>
+                      <div class="icon-button-demo">
+                        <button (click)='addTarget()'   mat-mini-fab  >
+                          <mat-icon class="col-white">add</mat-icon>
+                        </button>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="icon-button-demo">
+                        <button (click)='refresh()'   mat-mini-fab  >
+                          <mat-icon class="col-white">refresh</mat-icon>
+                        </button>
+                      </div>
+                    </li>
+
+                  </ul>
+                </div>
+
+
+                <!-- table for admin only -->
+                <div [hidden]="!isAdminOrSuperAdmin()">
+                <p >Select Columns to hide and show them</p>
+                <ng-select (remove)="removeItem($event)" (add)="addItem($event)" dropdownPosition="bottom"
+                  [multiple]="true" style="overflow: visible;" [clearable]="false" appendTo="body"
+                  [(ngModel)]="selectedColumns">
+
+                  <ng-option value="" disabled>Select Assignee</ng-option>
+
+                  <ng-option *ngFor="let user of targetColumns" [value]="user.field">
+                    {{user.headerName}}
+                  </ng-option>
+                </ng-select>
+                <br>
+                </div>
+
+
+
+                <ag-grid-angular #agGrid  style="width: 100%; height: 500px;"
+                  [animateRows]="true" [defaultColDef]="defaultColDef" class="ag-theme-alpine" [rowData]="data"
+                  [columnDefs]="targetColumns">
+                </ag-grid-angular>
+
+                <!-- This is visible for all employee basic table -->
+
+                <!-- <ngx-datatable [hidden]="isAdminOrSuperAdmin()" #table [columnMode]="'force'" [footerHeight]="50"
+                  [headerHeight]="50" [limit]="10" [rowHeight]="'60'" [rows]="data" [sortType]="'multi'"
+                  class="material">
+
+                  <ngx-datatable-column [width]="150" name="User">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row?.employeeName}}<br>
+                    </ng-template>
+                  </ngx-datatable-column>
+
+                  <ngx-datatable-column [width]="20" name="Project">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row?.project.name}}<br>
+                    </ng-template>
+                  </ngx-datatable-column>
+                
+                  
+                  <ngx-datatable-column [width]="150" name="Booking">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row?.bookingCount}} : {{ row?.bookingDoneCount}}<br>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column [width]="150" name="Site Visit">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row?.siteVisitCount}}: {{ row?.siteVisitDoneCount}}<br>
+                    </ng-template>
+                  </ngx-datatable-column>
+
+                  <ngx-datatable-column [width]="150" name="Start Date">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row?.startDate}}<br>
+                    </ng-template>
+                  </ngx-datatable-column>
+
+                  <ngx-datatable-column [width]="150" name="End Date">
+                    <ng-template let-row="row" ngx-datatable-cell-template>
+                      {{ row?.endDate}}<br>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column [width]="120" name="Actions" sortable="false">
+                    <ng-template let-row="row" let-rowIndex="rowIndex" let-value="value" ngx-datatable-cell-template>
+                      <span>
+                        <button (click)='deleteTarget(row)' class="btn tblActnBtn h-auto">
+                          <i class="material-icons">delete</i>
+                        </button>
+                      </span>
+                    </ng-template>
+                  </ngx-datatable-column>
+                </ngx-datatable>
+ -->
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
