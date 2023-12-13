@@ -41,5 +41,4 @@ console/dist
 ### Mac OS ###
 .DS_Store
 /console/.angular
-
 .m2/
