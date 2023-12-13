@@ -1,0 +1,18 @@
+package com.sfd.thesmartestate.common;
+
+public enum LeadEvents {
+    STATUS_CHANGED,
+    SOURCE_CHANGED,
+    INVENTORY_CHANGED,
+    USER_ASSIGNED,
+    LEAD_TYPE_CHANGED,
+
+    SITE_VISIT,
+    FOLLOWUP_STATUS_UPDATED,
+    FOLLOWUP_STATUS_CHECK,
+    FOLLOWUP_CREATE,
+    TRANSFER_LEAD,
+    DEACTIVE_LEAD,
+    PROJECT_CHANGED,
+    MOBILE_REMARK
+}

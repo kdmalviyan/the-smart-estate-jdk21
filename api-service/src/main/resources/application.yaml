@@ -1,0 +1,101 @@
+logging:
+  pattern:
+    file: '%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n'
+    console: '%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level)
+      %logger.%M - %msg%n'
+  level:
+    com:
+      sfd:
+        smartestate: info
+    root: info
+  path: logs
+  file: ${logging.path}/log.log
+
+server.port: 8080
+
+public:
+  urls: /auth/token,/auth/refreshtoken,/actuator,/vendor,/user/password/forgot/**,/user/password/reset**,/user/password/change**,/user/uploadImage**,/swagger-ui,/v3/api-docs,realestateapi
+
+tenant:
+  filepath: "tenants/config.json"
+  tenantsSchemaPath: "tenants/schema/sfd-tenant-schema.sql"
+  default:
+    aws:
+      bucket: www.data.thesmartestate.com
+    project:
+      bench:
+        email: info@softforgedata.com
+user:
+  default:
+    password: Password@1
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: softforgedata@gmail.com
+    password: njizbwqxtfmlkxnh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable: true
+  profiles:
+    active: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+      database-platform: org.hibernate.dialect.MySQLDialect
+      show-sql: true
+      format-sql: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+security:
+  refresh_token:
+    expires: 60
+  token:
+    expires: 600 #minutes
+  certificates:
+    keys:
+      public: -----BEGIN PUBLIC KEY-----MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4C9Acujc6szUo0FO4nigqLWoEyrvxFS63axtw7zA7yvZDahZB56l4IBG28H30Kh6xqUFyV8moV1CQ8JhPWltfXt1Jlr/qvXiXHITkc3rIiNos5qYXNF34XgQwgiNzzQyoH6G2MaWth7x9rrRk4S51t7MQdpo3ToeYFGEBzJV7/xatttiy3ZOcYv41kGchUszXekKtVtAlF1+e8sNFc/NO8qSILFBxY/a5NXSd651MlGW4H73+EyrbKDjg9HKn09itDWKCsTQxnskl/WReWAOsBlM2B3/mcsLoD27dQeJUdwLeeS+f2fQN7iQITbWz/TskrenN24/XGThoqg1+I0wdwIDAQAB-----END PUBLIC KEY-----
+      private: -----BEGIN PRIVATE KEY-----MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDgL0By6NzqzNSjQU7ieKCotagTKu/EVLrdrG3DvMDvK9kNqFkHnqXggEbbwffQqHrGpQXJXyahXUJDwmE9aW19e3UmWv+q9eJcchORzesiI2izmphc0XfheBDCCI3PNDKgfobYxpa2HvH2utGThLnW3sxB2mjdOh5gUYQHMlXv/Fq222LLdk5xi/jWQZyFSzNd6Qq1W0CUXX57yw0Vz807ypIgsUHFj9rk1dJ3rnUyUZbgfvf4TKtsoOOD0cqfT2K0NYoKxNDGeySX9ZF5YA6wGUzYHf+ZywugPbt1B4lR3At55L5/Z9A3uJAhNtbP9OySt6c3bj9cZOGiqDX4jTB3AgMBAAECggEAaqJvMHlNI65ccm8NG7IvETCfCscAl02KOQjciR9OUjV0IAf0mShAVIIPslYYDzskczppfzhwQo7+hwZ9hF2Sg/5mYeEk/WfJzRlB77eX4XwgQFYHpRbJxAh9SB4TffyhHDAy6gfEBkq/4xFHwLiAQRFm7Of7u0b6zevYNigeMnDdlCSAqC21jK7ZDVr6/B34FVJr7UmdRFErHRqeC82ZxT6f9iUtH/8CK5dL+OMCoRJC/+/G7HtMBAkmxKH7h9A0Za+yMliuzErLOjXyC6j6uEZ+mD/lLj/5XYM9UuuJWxKILfrZCvUsQGfsic0KPUWb72TailClM6Cq+tjKXdDaIQKBgQD4Wi3I08YlZwdg1CWMVbgfK+7ScyL6QVPXvbIBve+eH68OpdAnYTpcOh8k3MoFKdUlN2NVtCWS7aVhc4C3kdlMG/g8DJHUIUU4IcBCxfO+xGcu4aTk0FjGQoHP6V4BqMNQd8+V4XQKRulubSEbcDgrLQPUb7XULMnI+L6pYDJy8QKBgQDnFo2dziXLaxtjln8IxxDlmtXWZ3ECK+1uOUZ9VXbXShe+E4CoCP8TedBpIULVQakcGH4ItBmfoCiUEy9QBZq2jbG2zBKa2Jb4uxU0JU9m6bCyiE1J8LuAq8DoATi1Pdy2opDgM/8HzEvLOQDdQ2gHM4TqZaxI9IL9Cq/p+s0J5wKBgQCAiDt12pSMOvxIksM0FBEMoPIjHM+XcUPxPg3odOKUlZVGIW7PUrSfkr0XmOU9Mt9LOZVBf9CKcE/NVbfiSauKhlc8zMyUWvu2B1G3vTdfHcrBKqrqeSHYygbhEchDV5JuDPP0gBBMWVLqgbRGvRd00QFQathSDTQJvSMACfdSIQKBgQCeN+PYQte/seK7ycPKd7lK6zszo/lM2lSi3hY0I/rNJo6g9mtlIVu7svCNulcu+djWQrKwNNdCYn7F+2iualfmW5dsp8apPFgJjtXSsSTvOltfsVDxqiBG1dGrR4LTHLrsVNvKle8sIKVYS/wagldMbuq3LcvK25Z/t/x/v9b4ywKBgEXGwKkfT722zHdvL16QZUHBR7uJgAWhCRTJnURMm5dI/KZuKML6MD9EtmEVdoz55bRtQlnnpi4v797Esaf576xyOguktGBAAcceX9J303oNjLLtKWPP7d9Y78+blA/Z9KzkfQmocgXFZcFU6CMpU+WZDuZwuNzoyPR/i0YPEHeT-----END PRIVATE KEY-----
+
+aws:
+  s3:
+    region: us-east-1
+    upload-bucket: www.data.thesmartestate.com/documents
+    database-backup: www.data.thesmartestate.com/db_backup
+
+
+
+notification:
+  from: softforgedata@gmail.com
+  otp:
+    recipients: softforgedata@gmail.com
+
+
+vacation:
+  approval:
+    auto-approved-time: 15
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: [ "health","prometheus", "metrics" ]
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true

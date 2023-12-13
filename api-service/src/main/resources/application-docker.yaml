@@ -1,0 +1,7 @@
+tenant:
+  filepath: "tenants/config.json"
+  remote:
+    api:
+      host: http://tenant-validation-service:9090
+      secretKey: testSecretKey
+      apiKey: testApiKey

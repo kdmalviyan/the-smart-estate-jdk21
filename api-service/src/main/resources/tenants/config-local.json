@@ -1,0 +1,57 @@
+[
+    {
+      "name": "SFD",
+      "datasourceDriverClassName": "com.mysql.cj.jdbc.Driver",
+      "datasourceUsername": "root",
+      "datasourceUrl": "jdbc:mysql://localhost:3306/smart_estate_db_sfd?createDatabaseIfNotExist=true",
+      "datasourcePassword": "Admin@123"
+    },
+    {
+      "name": "T1",
+      "datasourceDriverClassName": "com.mysql.cj.jdbc.Driver",
+      "datasourceUsername": "root",
+      "datasourceUrl": "jdbc:mysql://localhost:3306/smart_estate_db_1?createDatabaseIfNotExist=true",
+      "datasourcePassword": "Admin@123"
+    },
+    {
+      "name": "T2",
+      "datasourceDriverClassName": "com.mysql.cj.jdbc.Driver",
+      "datasourceUsername": "root",
+      "datasourceUrl": "jdbc:mysql://localhost:3306/smart_estate_db_2?createDatabaseIfNotExist=true",
+      "datasourcePassword": "Admin@123"
+    },
+    {
+      "name": "T3",
+      "datasourceDriverClassName": "com.mysql.cj.jdbc.Driver",
+      "datasourceUsername": "root",
+      "datasourceUrl": "jdbc:mysql://localhost:3306/smart_estate_db_3?createDatabaseIfNotExist=true",
+      "datasourcePassword": "Admin@123"
+    },
+  {
+    "name": "T4",
+    "datasourceDriverClassName": "com.mysql.cj.jdbc.Driver",
+    "datasourceUsername": "root",
+    "datasourceUrl": "jdbc:mysql://localhost:3306/smart_estate_db_4?createDatabaseIfNotExist=true",
+    "datasourcePassword": "Admin@123"
+  },
+  {
+    "name": "T5",
+    "datasourceDriverClassName": "com.mysql.cj.jdbc.Driver",
+    "datasourceUsername": "root",
+    "datasourceUrl": "jdbc:mysql://localhost:3306/smart_estate_db_5?createDatabaseIfNotExist=true",
+    "datasourcePassword": "Admin@123"
+  },{
+  "name": "T6",
+  "datasourceDriverClassName": "com.mysql.cj.jdbc.Driver",
+  "datasourceUsername": "root",
+  "datasourceUrl": "jdbc:mysql://localhost:3306/smart_estate_db_6?createDatabaseIfNotExist=true",
+  "datasourcePassword": "Admin@123"
+},
+  {
+    "name": "T7",
+    "datasourceDriverClassName": "com.mysql.cj.jdbc.Driver",
+    "datasourceUsername": "root",
+    "datasourceUrl": "jdbc:mysql://localhost:3306/smart_estate_db_7?createDatabaseIfNotExist=true",
+    "datasourcePassword": "Admin@123"
+  }
+  ]
