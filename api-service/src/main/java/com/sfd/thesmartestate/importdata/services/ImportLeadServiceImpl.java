@@ -10,7 +10,7 @@ import com.sfd.thesmartestate.lms.services.LeadService;
 import com.sfd.thesmartestate.lms.services.LeadSourceService;
 import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
@@ -91,7 +91,7 @@ public class ImportLeadServiceImpl implements ImportLeadService {
 
     private LeadImportData validateAndGenerateLeadData(List<XlsLeadRowDto> rows) {
         LeadImportData leadImportData = new LeadImportData();
-        User loggedInUser = userService.findLoggedInUser();
+        Employee loggedInEmployee = userService.findLoggedInUser();
 
         int rowNumber = 1;
         int rowsSkipped = 0;
@@ -104,8 +104,8 @@ public class ImportLeadServiceImpl implements ImportLeadService {
             xlsRow.setRownum(rowNumber);
 
             if (isValid) {
-                List<User> defaultAssignedToUser = userService.getUserByNameStartsWithAndProjectName(xlsRow.getAssignTo(), xlsRow.getProjectName());
-                if (defaultAssignedToUser.isEmpty()) {
+                List<Employee> defaultAssignedToEmployee = userService.getUserByNameStartsWithAndProjectName(xlsRow.getAssignTo(), xlsRow.getProjectName());
+                if (defaultAssignedToEmployee.isEmpty()) {
                     errors.add(new ErrorDto("Assigned user " + xlsRow.getAssignTo() + " not found for the project :" + xlsRow.getProjectName(), "USER_NOT_FOUND", rowNumber, -1L));
                     rowsSkipped++;
                     rowNumber++;
@@ -118,7 +118,7 @@ public class ImportLeadServiceImpl implements ImportLeadService {
                     log.info("checkLeadDuplicate Skipping lead because of duplicate");
                     continue;
                 }
-                Lead lead = createLeadData(loggedInUser, defaultAssignedToUser.get(0), xlsRow, errors);
+                Lead lead = createLeadData(loggedInEmployee, defaultAssignedToEmployee.get(0), xlsRow, errors);
                 if (lead == null) {
                     log.info("Skipping lead because of error");
                     continue;
@@ -136,7 +136,7 @@ public class ImportLeadServiceImpl implements ImportLeadService {
         return leadImportData;
     }
 
-    private Lead createLeadData(User loggedInUser, User defaultAssignedToUser, XlsLeadRowDto xlsRow, List<ErrorDto> errors) {
+    private Lead createLeadData(Employee loggedInEmployee, Employee defaultAssignedToEmployee, XlsLeadRowDto xlsRow, List<ErrorDto> errors) {
         Lead lead = new Lead();
         LeadSource leadSource = leadSourceService.findByName(xlsRow.getLeadSource().trim());
         if (Objects.isNull(leadSource)) {
@@ -160,14 +160,14 @@ public class ImportLeadServiceImpl implements ImportLeadService {
         }
         lead.setSource(leadSource);
         lead.setProject(project);
-        lead.setAssignedTo(defaultAssignedToUser);
+        lead.setAssignedTo(defaultAssignedToEmployee);
         lead.setCustomer(customerService.findByPhone(xlsRow.getCustomerPhone()));
         lead.setType(importUtilsService.getLeadType(xlsRow.getLeadType()));
         lead.setStatus(importUtilsService.getStatus(xlsRow.getLeadStatus()));
         lead.setBudget(budget);
         lead.setLeadInventorySize(leadInventorySize);
-        lead.setComments(getComment(xlsRow.getComment(), loggedInUser));
-        lead.setCreatedBy(loggedInUser);
+        lead.setComments(getComment(xlsRow.getComment(), loggedInEmployee));
+        lead.setCreatedBy(loggedInEmployee);
         lead.setCreatedAt(LocalDateTime.now());
         log.info("Lead Ready to save phone -{},project -{},", xlsRow.getCustomerPhone(), xlsRow.getProjectName());
         return lead;
@@ -181,7 +181,7 @@ public class ImportLeadServiceImpl implements ImportLeadService {
 
 
 
-    private Set<Comment> getComment(String comment, User loggedInUser) {
+    private Set<Comment> getComment(String comment, Employee loggedInEmployee) {
         Comment addComment = new Comment();
         Set<Comment> commentSet = new HashSet<>();
         if (StringUtils.hasText(comment)) {
@@ -191,7 +191,7 @@ public class ImportLeadServiceImpl implements ImportLeadService {
         }
         addComment.setCommentType("Inquiry");
         addComment.setCreatedAt(LocalDateTime.now());
-        addComment.setCreatedBy(loggedInUser);
+        addComment.setCreatedBy(loggedInEmployee);
         commentSet.add(addComment);
         return commentSet;
     }

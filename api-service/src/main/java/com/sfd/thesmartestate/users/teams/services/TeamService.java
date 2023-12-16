@@ -1,6 +1,6 @@
 package com.sfd.thesmartestate.users.teams.services;
 
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.teams.entities.Team;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public interface TeamService {
 
     Team changeTeamLeader(Long teamId, Long currentLead, Long newLead);
 
-    Set<User> findMembersByTeamId(Long teamId);
+    Set<Employee> findMembersByTeamId(Long teamId);
 
     Team changeProject(Long teamId, Long projectId, Long newProjectId);
 

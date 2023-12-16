@@ -9,7 +9,7 @@ import com.sfd.thesmartestate.projects.inventory.Inventory;
 import com.sfd.thesmartestate.projects.inventory.InventoryService;
 import com.sfd.thesmartestate.projects.services.InventoryStatusService;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
@@ -81,7 +81,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
         Project project = projectService.findById(projectId);
         Set<Inventory> projectInventories = project.getInventories();
         InventoryStatus inventoryStatus = inventoryStatusService.findByName(Constants.AVAILABLE);
-        User loggedInUser = userService.findLoggedInUser();
+        Employee loggedInEmployee = userService.findLoggedInUser();
         for (XlsInventoryRowDto xlsInventoryRowDto : rows) {
             try {
                 if (isInventoryValid(xlsInventoryRowDto.getTower(), xlsInventoryRowDto.getInventoryName(), projectInventories)) {

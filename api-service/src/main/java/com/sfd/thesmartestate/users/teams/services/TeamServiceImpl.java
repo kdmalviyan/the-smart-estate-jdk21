@@ -2,7 +2,7 @@ package com.sfd.thesmartestate.users.teams.services;
 
 import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import com.sfd.thesmartestate.users.teams.entities.Team;
 import com.sfd.thesmartestate.users.teams.exceptions.TeamException;
@@ -82,7 +82,7 @@ public class TeamServiceImpl implements TeamService {
     public Team addMember(Long teamId, Long userId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new TeamException("Team does not exists"));
-        Set<User> members = team.getMembers();
+        Set<Employee> members = team.getMembers();
         if (Objects.isNull(members)) {
             members = new HashSet<>();
         }
@@ -97,7 +97,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team removeMember(Long teamId, Long userId) {
         Team team = findById(teamId);
-        Set<User> members = team.getMembers();
+        Set<Employee> members = team.getMembers();
         checkMemberIsNotTeamLead(team.getSupervisor().getId(), userId);
         if (Objects.nonNull(members)) {
             members.remove(userService.findById(userId));
@@ -117,9 +117,9 @@ public class TeamServiceImpl implements TeamService {
     public Team assignTeamLeader(Long teamId, Long userId) {
         Team team = findById(teamId);
         validateTeamLeader(team);
-        User user = userService.findById(userId);
-        team.getMembers().add(user);
-        team.setSupervisor(user);
+        Employee employee = userService.findById(userId);
+        team.getMembers().add(employee);
+        team.setSupervisor(employee);
         team.setLastUpdateAt(LocalDateTime.now());
         team.setUpdatedBy(userService.findLoggedInUser());
         return teamRepository.save(team);
@@ -132,15 +132,15 @@ public class TeamServiceImpl implements TeamService {
         }
     }
 
-    private boolean isLeadAlreadyAssigned(User leader) {
+    private boolean isLeadAlreadyAssigned(Employee leader) {
         return Objects.nonNull(leader);
     }
 
     @Override
     public Team changeTeamLeader(Long teamId, Long currentLeadId, Long newLeadId) {
         Team team = findById(teamId);
-        User currentLead = userService.findById(currentLeadId);
-        User newLead = userService.findById(newLeadId);
+        Employee currentLead = userService.findById(currentLeadId);
+        Employee newLead = userService.findById(newLeadId);
         if (isChangeRequestValid(team, currentLead, newLead)) {
             team.setSupervisor(newLead);
         } else {
@@ -152,7 +152,7 @@ public class TeamServiceImpl implements TeamService {
         return teamRepository.save(team);
     }
 
-    private Team setLeadInMembersIfNotPresent(Team team, User newLead) {
+    private Team setLeadInMembersIfNotPresent(Team team, Employee newLead) {
         team.getMembers().add(newLead);
         return team;
     }
@@ -173,14 +173,14 @@ public class TeamServiceImpl implements TeamService {
                 .orElseThrow(() -> new TeamException("Team does not exists"));
     }
 
-    private boolean isChangeRequestValid(Team team, User currentLead, User newLead) {
+    private boolean isChangeRequestValid(Team team, Employee currentLead, Employee newLead) {
         return Objects.nonNull(team.getSupervisor())
                 && team.getSupervisor().equals(currentLead)
                 && Objects.nonNull(newLead);
     }
 
     @Override
-    public Set<User> findMembersByTeamId(Long teamId) {
+    public Set<Employee> findMembersByTeamId(Long teamId) {
         return teamRepository
                 .findById(teamId)
                 .orElseThrow(() -> new TeamException("Team not found")).getMembers();

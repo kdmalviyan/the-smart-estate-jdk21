@@ -15,7 +15,7 @@ import com.sfd.thesmartestate.projects.inventory.Inventory;
 import com.sfd.thesmartestate.projects.inventory.InventoryService;
 import com.sfd.thesmartestate.projects.services.InventoryStatusService;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
@@ -96,11 +96,11 @@ public class BookingServiceImpl implements BookingService {
         booking.setChannelPartner(bookingDto.getChannelPartner());
         booking.setRemark(bookingDto.getRemark());
 
-        User loggedInUser = userService.findLoggedInUser();
+        Employee loggedInEmployee = userService.findLoggedInUser();
         booking.setCreatedAt(LocalDateTime.now());
-        booking.setCreatedBy(loggedInUser);
+        booking.setCreatedBy(loggedInEmployee);
         booking.setLastUpdatedAt(LocalDateTime.now());
-        booking.setUpdatedBy(loggedInUser);
+        booking.setUpdatedBy(loggedInEmployee);
         booking.setIsActive(true);
 
         // save booking before uploading files so that we can utilize booking id
@@ -142,7 +142,7 @@ public class BookingServiceImpl implements BookingService {
         }
         Booking bookingUpdated = repository.saveAndFlush(persistedBooking);
         log.info("Booking created with files url");
-        targetService.findAndUpdateUserTarget(loggedInUser, LeadEvents.STATUS_CHANGED);
+        targetService.findAndUpdateUserTarget(loggedInEmployee, LeadEvents.STATUS_CHANGED);
         log.info("Target updated successfully");
 
         return bookingUpdated;
@@ -161,14 +161,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> findAll() {
-        User user = userService.findLoggedInUser();
+        Employee employee = userService.findLoggedInUser();
 
-        if (user.isAdmin() || user.isSuperAdmin()) {
+        if (employee.isAdmin() || employee.isSuperAdmin()) {
 
             return repository.findAll().stream()
                     .map(booking -> BookingResponseMapper.mapToBookingResponse(booking, followupService.findFollowupByLead(booking.getLead()))).collect(Collectors.toList());
         }
-        return repository.findByCreatedBy(user).stream()
+        return repository.findByCreatedBy(employee).stream()
                 .map(booking -> BookingResponseMapper.mapToBookingResponse(booking, followupService.findFollowupByLead(booking.getLead()))).collect(Collectors.toList());
     }
 

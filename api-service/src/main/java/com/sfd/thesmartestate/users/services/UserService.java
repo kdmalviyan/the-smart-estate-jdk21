@@ -2,39 +2,41 @@ package com.sfd.thesmartestate.users.services;
 
 import com.sfd.thesmartestate.users.dtos.ChangePasswordRequestPayload;
 import com.sfd.thesmartestate.users.dtos.ResetPasswordRequestPayload;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
-    List<User> findAll();
+    List<Employee> findAll();
 
-    List<User> findUsersByProjectId(Long projectId);
+    List<Employee> findUsersByProjectId(Long projectId);
 
-    User createUser(User user);
+    Employee createUser(Employee employee);
 
     long count();
 
-    User update(User user);
+    Employee update(Employee employee);
 
-    boolean delete(User user);
+    boolean delete(Employee employee);
 
-    User getUserByUsername(String username);
+    Employee getUserByUsername(String username);
 
-    List<User> getUserByNameStartsWithAndProjectName(String name, String projectName);
+    List<Employee> getUserByNameStartsWithAndProjectName(String name, String projectName);
 
-    User findLoggedInUser();
+    Employee findLoggedInUser();
 
-    User findById(Long id);
+    Employee findById(Long id);
 
-    User changePassword(ChangePasswordRequestPayload requestPayload);
+    Employee changePassword(ChangePasswordRequestPayload requestPayload);
 
     void sendForgotPasswordOTP(String email);
 
-    User resetPassword(ResetPasswordRequestPayload requestPayload);
+    Employee resetPassword(ResetPasswordRequestPayload requestPayload);
 
-    User uploadProfilePhoto(MultipartFile photo, Long userId, String vendorId);
+    Employee uploadProfilePhoto(MultipartFile photo, Long userId, String vendorId);
+
+    Employee findByEmployeeUniqueId(String employeeUniqueId);
 
 }

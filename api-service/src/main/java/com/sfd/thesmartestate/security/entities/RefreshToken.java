@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.security.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -21,7 +21,7 @@ public class RefreshToken {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonIgnore
-    private User user;
+    private Employee employee;
 
     @Column(nullable = false, unique = true)
     private String token;

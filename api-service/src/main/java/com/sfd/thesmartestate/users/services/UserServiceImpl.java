@@ -12,7 +12,7 @@ import com.sfd.thesmartestate.notifications.services.OTPService;
 import com.sfd.thesmartestate.users.UserHelper;
 import com.sfd.thesmartestate.users.dtos.ChangePasswordRequestPayload;
 import com.sfd.thesmartestate.users.dtos.ResetPasswordRequestPayload;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.exceptions.UserManagementException;
 import com.sfd.thesmartestate.users.repositories.UserRepository;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -65,27 +65,27 @@ public class UserServiceImpl implements UserService {
     private String profileBucketName;
 
     @Override
-    public List<User> findAll() {
+    public List<Employee> findAll() {
         return userRepository.findAll().stream()
                 .filter(user -> !user.isSuperAdmin()).collect(Collectors.toList());
     }
 
     @Override
-    public List<User> findUsersByProjectId(Long projectId) {
+    public List<Employee> findUsersByProjectId(Long projectId) {
         return userRepository.findByProjectId(projectId);
     }
 
     @Override
-    public User createUser(final User user) {
-        assignDefaultPassword(user);
-        user.setEnabled(true);
-        validateUser(user);
-        user.setCreatedAt(LocalDateTime.now());
-        return userRepository.saveAndFlush(user);
+    public Employee createUser(final Employee employee) {
+        assignDefaultPassword(employee);
+        employee.setActive(true);
+        validateUser(employee);
+        employee.setCreatedAt(LocalDateTime.now());
+        return userRepository.saveAndFlush(employee);
     }
 
-    private void assignDefaultPassword(final User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(defaultPassword));
+    private void assignDefaultPassword(final Employee employee) {
+        employee.setPassword(bCryptPasswordEncoder.encode(defaultPassword));
     }
 
     @Override
@@ -94,101 +94,101 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(User user) {
-        User loggedInUser = findLoggedInUser();
-        User persistentUser = validateUsernameChangesAndGetPersistentUser(user);
-        if (Objects.isNull(loggedInUser)) {
+    public Employee update(Employee employee) {
+        Employee loggedInEmployee = findLoggedInUser();
+        Employee persistentEmployee = validateUsernameChangesAndGetPersistentUser(employee);
+        if (Objects.isNull(loggedInEmployee)) {
             throw new UserManagementException("Invalid permissions, please login again.");
         }
-        validatePasswordChanges(user, persistentUser,
-                loggedInUser.isAdmin() || loggedInUser.isSuperAdmin());
-        validateAdminUpdates(user);
-        user.setAdmin(checkAdminRole(user));
-        user.setLastUpdateAt(LocalDateTime.now());
-        return userRepository.save(user);
+        validatePasswordChanges(employee, persistentEmployee,
+                loggedInEmployee.isAdmin() || loggedInEmployee.isSuperAdmin());
+        validateAdminUpdates(employee);
+        employee.setAdmin(checkAdminRole(employee));
+        employee.setLastUpdateAt(LocalDateTime.now());
+        return userRepository.save(employee);
     }
 
-    private boolean checkAdminRole(User user) {
-        if (!user.getRoles().isEmpty()) {
-            Role role = (Role) user.getRoles().toArray()[0];
+    private boolean checkAdminRole(Employee employee) {
+        if (!employee.getRoles().isEmpty()) {
+            Role role = (Role) employee.getRoles().toArray()[0];
             return "ROLE_ADMIN".equalsIgnoreCase(role.getName());
         } else {
             return false;
         }
     }
 
-    private void validatePasswordChanges(User user, User persistentUser, boolean isAdmin) {
-        if (Objects.nonNull(user)) {
-            if (isAdmin && Objects.nonNull(user.getPassword())) {
-                user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    private void validatePasswordChanges(Employee employee, Employee persistentEmployee, boolean isAdmin) {
+        if (Objects.nonNull(employee)) {
+            if (isAdmin && Objects.nonNull(employee.getPassword())) {
+                employee.setPassword(bCryptPasswordEncoder.encode(employee.getPassword()));
             } else {
-                user.setPassword(persistentUser.getPassword());
+                employee.setPassword(persistentEmployee.getPassword());
             }
         }
     }
 
-    private User validateUsernameChangesAndGetPersistentUser(User user) {
-        User persistentUser = userRepository.findByUsername(user.getUsername());
-        if (Objects.isNull(persistentUser)) {
+    private Employee validateUsernameChangesAndGetPersistentUser(Employee employee) {
+        Employee persistentEmployee = userRepository.findByUsername(employee.getUsername());
+        if (Objects.isNull(persistentEmployee)) {
             throw new UserManagementException("User does not exists, please check if you changed username which is not allowed");
         }
-        return persistentUser;
+        return persistentEmployee;
     }
 
     @Override
-    public boolean delete(User user) {
-        validateAdminUpdates(user);
-        userRepository.delete(user);
+    public boolean delete(Employee employee) {
+        validateAdminUpdates(employee);
+        userRepository.delete(employee);
         return true;
     }
 
     @Override
-    public User getUserByUsername(String username) {
+    public Employee getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     @Override
-    public List<User> getUserByNameStartsWithAndProjectName(String name, String projectName) {
+    public List<Employee> getUserByNameStartsWithAndProjectName(String name, String projectName) {
         return userRepository.getUserByNameStartsWithAndProjectName(name, projectName);
     }
-    private void validateAdminUpdates(User user) {
-        User persistingUser = this.userRepository.findById(user.getId()).orElse(null);
-        assert persistingUser != null;
-        if (!persistingUser.getUsername().equals(user.getUsername()) && Objects.nonNull(userRepository.findByUsername(user.getUsername()))) {
+    private void validateAdminUpdates(Employee employee) {
+        Employee persistingEmployee = this.userRepository.findById(employee.getId()).orElse(null);
+        assert persistingEmployee != null;
+        if (!persistingEmployee.getUsername().equals(employee.getUsername()) && Objects.nonNull(userRepository.findByUsername(employee.getUsername()))) {
             throw new UserManagementException("Username is already taken, Pls try different");
-        } else if (!persistingUser.getEmail().equals(user.getEmail()) && Objects.nonNull(userRepository.findByEmail(user.getEmail()))) {
+        } else if (!persistingEmployee.getEmail().equals(employee.getEmail()) && Objects.nonNull(userRepository.findByEmail(employee.getEmail()))) {
             throw new UserManagementException("This Email address is already associated with another account");
-        } else if ((user.isAdmin() || user.isSuperAdmin()) && notActive(user)) {
+        } else if ((employee.isAdmin() || employee.isSuperAdmin()) && notActive(employee)) {
             throw new UserManagementException("Disabling super admin is not allowed.");
         }
 
     }
 
-    private void validateUser(User user) {
-        if (Objects.nonNull(userRepository.findByUsername(user.getUsername()))) {
+    private void validateUser(Employee employee) {
+        if (Objects.nonNull(userRepository.findByUsername(employee.getUsername()))) {
             throw new UserManagementException("Username is already taken, Pls try different");
-        } else if (Objects.nonNull(userRepository.findByEmail(user.getEmail()))) {
+        } else if (Objects.nonNull(userRepository.findByEmail(employee.getEmail()))) {
             throw new UserManagementException("This Email address is already associated with another account");
         }
     }
 
-    private boolean notActive(User user) {
-        return !user.isEnabled();
+    private boolean notActive(Employee employee) {
+        return !employee.isActive();
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        final User user = userRepository.findByUsername(username);
-        if (Objects.isNull(user)) {
+        final Employee employee = userRepository.findByUsername(username);
+        if (Objects.isNull(employee)) {
             throw new UsernameNotFoundException(username);
         }
-        return user;
+        return employee;
     }
 
     @Override
-    public User findLoggedInUser() {
+    public Employee findLoggedInUser() {
         try {
-            return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return (Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         } catch (Exception e) {
             log.error("Unable to find loggedin user");
         }
@@ -196,63 +196,63 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Long id) {
+    public Employee findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new UserManagementException("User does not exists"));
     }
 
     @Override
-    public User changePassword(ChangePasswordRequestPayload requestPayload) {
+    public Employee changePassword(ChangePasswordRequestPayload requestPayload) {
         // Only admins have permissions to change password
-        User user = getValidUser(requestPayload.getUsername());
-        return updatePasswordAndSaveUser(user, requestPayload.getPassword());
+        Employee employee = getValidUser(requestPayload.getUsername());
+        return updatePasswordAndSaveUser(employee, requestPayload.getPassword());
     }
 
-    private User updatePasswordAndSaveUser(User user, String password) {
-        user.setPassword(bCryptPasswordEncoder.encode(password));
-        user.setLastUpdateAt(LocalDateTime.now());
-        user = userRepository.save(user);
-        return userRepository.save(user);
+    private Employee updatePasswordAndSaveUser(Employee employee, String password) {
+        employee.setPassword(bCryptPasswordEncoder.encode(password));
+        employee.setLastUpdateAt(LocalDateTime.now());
+        employee = userRepository.save(employee);
+        return userRepository.save(employee);
     }
 
     @Override
     public void sendForgotPasswordOTP(String emailUsername) {
-        User user = getValidUser(emailUsername);
+        Employee employee = getValidUser(emailUsername);
         NotificationSender notificationSender = notificationSenderFactory.get(NotificationType.EMAIL);
-        NotificationMessage notificationMessage = userHelper.createPasswordChangeOTPEmailMessage(user);
-        notificationSender.send(notificationMessage, Set.of(user.getUsername()));
+        NotificationMessage notificationMessage = userHelper.createPasswordChangeOTPEmailMessage(employee);
+        notificationSender.send(notificationMessage, Set.of(employee.getUsername()));
     }
 
-    private User getValidUser(String username) {
-        User user = userRepository.findByUsername(username);
-        if (Objects.isNull(user)) {
-            user = userRepository.findByEmail(username);
-            if (Objects.isNull(user) || !user.isEnabled()) {
+    private Employee getValidUser(String username) {
+        Employee employee = userRepository.findByUsername(username);
+        if (Objects.isNull(employee)) {
+            employee = userRepository.findByEmail(username);
+            if (Objects.isNull(employee) || !employee.isActive()) {
                 throw new UserManagementException("Invalid username or user does not exists");
             }
         }
-        return user;
+        return employee;
     }
 
     @Override
-    public User resetPassword(ResetPasswordRequestPayload requestPayload) {
+    public Employee resetPassword(ResetPasswordRequestPayload requestPayload) {
         userHelper.validateResetRequest(requestPayload);
-        User user = getValidUser(requestPayload.getUsername());
-        OneTimePassword otp = userHelper.validateOTP(user, requestPayload.getOtp());
-        user = updatePasswordAndSaveUser(user, requestPayload.getPassword());
+        Employee employee = getValidUser(requestPayload.getUsername());
+        OneTimePassword otp = userHelper.validateOTP(employee, requestPayload.getOtp());
+        employee = updatePasswordAndSaveUser(employee, requestPayload.getPassword());
         otpService.markOTPUsed(otp);
-        return user;
+        return employee;
     }
 
     @Override
-    public User uploadProfilePhoto(MultipartFile photo, Long userId, String vendorId) {
+    public Employee uploadProfilePhoto(MultipartFile photo, Long userId, String vendorId) {
         validatePhoto(photo);
-        User user = findById(userId);
-        String username = user.getUsername();
+        Employee employee = findById(userId);
+        String username = employee.getUsername();
         String path = String.format("%s/%s/%s", profileBucketName, Constants.PROFILE_FOLDER_NAME, username);
         String fileName = String.format("%s", photo.getOriginalFilename());
         fileService.uploadFileToS3(path, fileName, photo);
         String pathToSave = String.format("https://s3." + region + ".amazonaws.com/%s/%s/%s/%s", profileBucketName, Constants.PROFILE_FOLDER_NAME, username, fileName);
-        user.setProfileImagePath(pathToSave);
+        employee.setProfileImagePath(pathToSave);
 
         try {
             BufferedImage thumbnail = Thumbnails.of(photo.getInputStream())
@@ -267,13 +267,18 @@ public class UserServiceImpl implements UserService {
             fileService.uploadFileStreamToS3(thumbnailPath, thumbnailFileName, thumbnail_is);
             String thumbnailPathToSave = String.format("https://s3." + region + ".amazonaws.com/%s/%s/%s/thumbnail/%s", profileBucketName, Constants.PROFILE_FOLDER_NAME, username, fileName);
 
-            user.setProfileImageThumbPath(thumbnailPathToSave);
+            employee.setProfileImageThumbPath(thumbnailPathToSave);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return userRepository.save(user);
+        return userRepository.save(employee);
+    }
+
+    @Override
+    public Employee findByEmployeeUniqueId(String employeeUniqueId) {
+        return userRepository.findByEmployeeUniqueId(employeeUniqueId);
     }
 
     private void validatePhoto(MultipartFile photo) {

@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.users.teams.entities;
 
 import com.sfd.thesmartestate.projects.entities.Project;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -29,22 +29,22 @@ public class Team implements Serializable, Comparable<Team> {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "supervisor_id", referencedColumnName = "id")
-    private User supervisor;
+    private Employee supervisor;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tb_team_members",
             joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "member_id", referencedColumnName = "id")
     )
-    private Set<User> members;
+    private Set<Employee> members;
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     @ManyToOne
     @JoinColumn(name = "updated_by_id")
-    private User updatedBy;
+    private Employee updatedBy;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

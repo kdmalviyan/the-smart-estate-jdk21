@@ -5,7 +5,9 @@ import com.sfd.thesmartestate.common.responsemapper.ProjectResponseMapper;
 import com.sfd.thesmartestate.security.entities.RefreshToken;
 import com.sfd.thesmartestate.security.services.AuthenticationService;
 import com.sfd.thesmartestate.security.services.RefreshTokenService;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.users.entities.LoginDetails;
+import com.sfd.thesmartestate.users.services.LoginDetailsService;
 import com.sfd.thesmartestate.users.services.UserService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,8 @@ import java.util.Optional;
 @Slf4j
 public record AuthenticationController(AuthenticationService authenticationService,
                                        RefreshTokenService refreshTokenService,
-                                       UserService userService) {
+                                       UserService userService,
+                                       LoginDetailsService loginDetailsService) {
 
     @PostMapping("/token")
     public ResponseEntity<AuthResponse> generateToken(@RequestBody Credentials credentials) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -35,14 +38,14 @@ public record AuthenticationController(AuthenticationService authenticationServi
                 .withUsername(credentials.getUsername())
                 .withRefreshToken(refreshTokenService.createRefreshToken(credentials.getUsername())).build();
 
-
-        User user = userService.findLoggedInUser();
-        response.setAdmin(user.isAdmin());
-        response.setSuperAdmin(user.isSuperAdmin());
-        response.setProfilePath(user.getProfileImageThumbPath());
-        Optional<Role> userRole = user.getRoles().stream().findFirst();
+        LoginDetails loginDetails = loginDetailsService.findLoggedInUser();
+        Employee employee = userService.findByEmployeeUniqueId(loginDetails.getEmployeeUniqueId());
+        response.setAdmin(employee.isAdmin());
+        response.setSuperAdmin(employee.isSuperAdmin());
+        response.setProfilePath(employee.getProfileImageThumbPath());
+        Optional<Role> userRole = employee.getRoles().stream().findFirst();
         userRole.ifPresent(role -> response.setRole(role.getDescription()));
-        response.setProject(ProjectResponseMapper.mapToProjectResponse(user.getProject()));
+        response.setProject(ProjectResponseMapper.mapToProjectResponse(employee.getProject()));
         log.info("Token generated successfully");
         return ResponseEntity.ok(response);
     }

@@ -2,7 +2,7 @@ package com.sfd.thesmartestate.lms.services;
 
 import com.sfd.thesmartestate.lms.entities.Comment;
 import com.sfd.thesmartestate.lms.repositories.CommentRepository;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
@@ -27,8 +27,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment create(Comment comment) {
-        User loggedImUser = userService.findLoggedInUser();
-        comment.setCreatedBy(loggedImUser);
+        Employee loggedImEmployee = userService.findLoggedInUser();
+        comment.setCreatedBy(loggedImEmployee);
         comment.setCreatedAt(LocalDateTime.now());
         return commentRepository.saveAndFlush(comment);
     }

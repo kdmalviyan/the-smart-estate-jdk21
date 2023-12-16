@@ -1,5 +1,6 @@
 package com.sfd.thesmartestate.multitenancy;
 
+import com.sfd.thesmartestate.multitenancy.tenants.Subscription;
 import com.sfd.thesmartestate.multitenancy.tenants.Tenant;
 import com.sfd.thesmartestate.multitenancy.tenants.TenantRoutingDataSource;
 import com.sfd.thesmartestate.multitenancy.tenants.aws.TenantAWSService;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +33,37 @@ public class DataSourceConfig {
     @Bean
     public DataSource dataSource() {
         List<Tenant> tenants = tenantAWSService.loadTenants();
+//        List.of(
+//                createLocalTenant()
+//        );//For testing only;
         createDatasourceMap(tenants);
         TenantRoutingDataSource routingDataSource = new TenantRoutingDataSource();
         routingDataSource.setTargetDataSources(targetDataSources);
         return routingDataSource;
+    }
+
+    // For testing only
+    private Tenant createLocalTenant() {
+        Tenant tenant = new Tenant();
+        tenant.setActive(true);
+        tenant.setSuspended(false);
+        tenant.setOrganizationId("SFD");
+        tenant.setDbPassword("Admin@123");
+        tenant.setDbUser("root");
+        tenant.setConnectionString("jdbc:mysql://localhost:3306/smart_estate_db_sfd?createDatabaseIfNotExist=true");
+        tenant.setDatasourceDriverClassName("com.mysql.cj.jdbc.Driver");
+        tenant.setRegistrationDate(LocalDateTime.now());
+        Subscription subscription = new Subscription();
+        subscription.setExpired(false);
+        subscription.setStartDate(LocalDateTime.now());
+        subscription.setEndDate(LocalDateTime.now().plusYears(2));
+        subscription.setNumberOfActiveUsers(10);
+        subscription.setNumberOfRegisteredUsers(10);
+        subscription.setNumberOfUsersAllowed(100);
+        subscription.setNumberOfRegisteredUsers(30);
+        subscription.setActive(true);
+        tenant.setSubscription(subscription);
+        return tenant;
     }
 
     private void createDatasourceMap(List<Tenant> tenants) {

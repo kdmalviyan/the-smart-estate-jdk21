@@ -1,5 +1,6 @@
 package com.sfd.thesmartestate.customer.entities;
 
+import com.sfd.thesmartestate.users.entities.LoginDetails;
 import lombok.Data;
 
 import jakarta.persistence.*;
@@ -24,6 +25,12 @@ public class Customer implements Serializable, Comparable<Customer> {
 
     @Column(name = "alternate_phone")
     private String alternatePhone;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private LoginDetails loginDetails;
+
+    @Column(name = "customer_unique_id")
+    private String customerUniqueId;
 
     @Override
     public int compareTo(Customer o) {

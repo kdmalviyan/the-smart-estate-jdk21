@@ -1,6 +1,6 @@
 package com.sfd.thesmartestate.lms.calls;
 
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -40,7 +40,7 @@ public class Call implements Serializable, Comparable<Call> {
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

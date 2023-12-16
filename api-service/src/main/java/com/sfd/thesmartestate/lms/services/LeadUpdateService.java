@@ -12,7 +12,7 @@ import com.sfd.thesmartestate.lms.repositories.LeadRepository;
 import com.sfd.thesmartestate.lms.targets.TargetService;
 import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
@@ -82,9 +82,9 @@ public class LeadUpdateService {
         Optional<Lead> optional = repository.findById(lead.getId());
         if (optional.isPresent()) {
             Lead leadInDb = optional.get();
-            User loggedInUser = userService.findLoggedInUser();
+            Employee loggedInEmployee = userService.findLoggedInUser();
             // update lead value on base of status
-            setLeadStatusOnEvent(lead, leadEvent, leadInDb, loggedInUser);
+            setLeadStatusOnEvent(lead, leadEvent, leadInDb, loggedInEmployee);
 
             if (!commentRequired(leadEvent)) {
                 //set comment for lead events
@@ -96,12 +96,12 @@ public class LeadUpdateService {
         return null;
     }
 
-    private void setLeadStatusOnEvent(Lead lead, LeadEvents leadEvent, Lead leadInDb, User loggedInUser) {
+    private void setLeadStatusOnEvent(Lead lead, LeadEvents leadEvent, Lead leadInDb, Employee loggedInEmployee) {
         switch (leadEvent) {
             case STATUS_CHANGED:
                 leadInDb.setStatus(leadStatusService.findById(lead.getStatus().getId()));
                 if (Constants.BOOKED.equals(lead.getStatus().getName())) {
-                    targetService.findAndUpdateUserTarget(loggedInUser, leadEvent);
+                    targetService.findAndUpdateUserTarget(loggedInEmployee, leadEvent);
                 }
                 break;
             case USER_ASSIGNED:
@@ -122,14 +122,14 @@ public class LeadUpdateService {
             case SITE_VISIT:
                 leadInDb.setSiteVisit(lead.isSiteVisit());
                 if (lead.isSiteVisit()) {
-                    targetService.findAndUpdateUserTarget(loggedInUser, leadEvent);
+                    targetService.findAndUpdateUserTarget(loggedInEmployee, leadEvent);
                 }
                 break;
             default:
                 break;
         }
         leadInDb.setLastUpdateAt(LocalDateTime.now());
-        leadInDb.setUpdatedBy(loggedInUser);
+        leadInDb.setUpdatedBy(loggedInEmployee);
     }
 
     private boolean commentRequired(LeadEvents leadEvent) {

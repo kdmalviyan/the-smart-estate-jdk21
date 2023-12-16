@@ -4,7 +4,9 @@ import com.sfd.thesmartestate.security.JwtTokenGenerator;
 import com.sfd.thesmartestate.security.entities.RefreshToken;
 import com.sfd.thesmartestate.security.exceptions.InvalidCredentialsException;
 import com.sfd.thesmartestate.security.exceptions.UserDisableException;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.users.entities.LoginDetails;
+import com.sfd.thesmartestate.users.services.LoginDetailsService;
 import com.sfd.thesmartestate.users.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ import java.security.spec.InvalidKeySpecException;
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final UserService userService;
+    private final LoginDetailsService loginDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenGenerator jwtTokenGenerator;
     private final RefreshTokenService refreshTokenService;
@@ -33,20 +35,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String generateToken(String username, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        UserDetails userDetails = userService.loadUserByUsername(username);
+        LoginDetails loginDetails = (LoginDetails)loginDetailsService.loadUserByUsername(username);
         log.info("Validating user found in database");
         // check user found or not
-        checkUserFoundAndNotDisabled(username, userDetails);
+        checkUserFoundAndNotDisabled(username, loginDetails);
         log.info("User is valid");
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         log.info("Authenticating user");
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         log.info("User authenticated");
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return (jwtTokenGenerator.generate((User) userDetails, false));
+        return (jwtTokenGenerator.generate(loginDetails, false));
     }
 
-    private void checkUserFoundAndNotDisabled(String username, UserDetails userDetails) {
+    private void checkUserFoundAndNotDisabled(String username, LoginDetails userDetails) {
         if (userDetails == null) {
             throw new UsernameNotFoundException("Username " + username + " not found");
         } else {
@@ -59,11 +61,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public boolean changePassword(String username, String newPassword, String oldPassword) {
         try {
-            User user = (User) userService.loadUserByUsername(username);
+            LoginDetails loginDetails = loginDetailsService.findByUsername(username);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, oldPassword);
             authenticationManager.authenticate(authenticationToken);
-            user.setPassword(bCryptPasswordEncoder.encode(newPassword));
-            userService.update(user);
+            loginDetails.setPassword(bCryptPasswordEncoder.encode(newPassword));
+            loginDetailsService.update(loginDetails);
         } catch (Throwable throwable) {
             throw new InvalidCredentialsException("Invalid credentials!");
         }
@@ -74,10 +76,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public boolean resetPassword(String username, String password, String otp) {
         // Validate OTP
         try {
-            User user = (User) userService.loadUserByUsername(username);
+            LoginDetails loginDetails = loginDetailsService.findByUsername(username);
             // Validate OTP else throw exception
-            user.setPassword(bCryptPasswordEncoder.encode(password));
-            userService.update(user);
+            loginDetails.setPassword(bCryptPasswordEncoder.encode(password));
+            loginDetailsService.update(loginDetails);
         } catch (Throwable throwable) {
             return false;
         }
@@ -87,12 +89,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String generateTokenWithRefreshToken(String username, RefreshToken refreshToken) {
         refreshTokenService.verifyExpiration(refreshToken);
-        UserDetails userDetails = userService.loadUserByUsername(username);
+        LoginDetails loginDetails = loginDetailsService.findByUsername(username);
         log.info("Validating user found in database");
         // check user found or not
-        checkUserFoundAndNotDisabled(username, userDetails);
+        checkUserFoundAndNotDisabled(username, loginDetails);
         try {
-            return jwtTokenGenerator.generate((User) userDetails, false);
+            return jwtTokenGenerator.generate(loginDetails, false);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new InvalidCredentialsException(e.getMessage());
         }

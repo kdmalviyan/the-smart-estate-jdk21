@@ -18,12 +18,14 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "tb_users")
+@Table(name = "tb_employees")
 @Data
 @SuppressFBWarnings("EI_EXPOSE_REP")
 
-public class User implements UserDetails, Comparable<User> {
-
+public class Employee implements UserDetails, Comparable<Employee> {
+    public Employee() {
+        this.loginDetails = new LoginDetails();
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -60,14 +62,14 @@ public class User implements UserDetails, Comparable<User> {
     private String alternatePhone;
 
     @Column(nullable = false)
-    private boolean enabled;
+    private boolean active;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "supervisor_id")
-    private User supervisor;
+    private Employee supervisor;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<User> subordinates;
+    private Set<Employee> subordinates;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<Role> roles;
@@ -91,6 +93,12 @@ public class User implements UserDetails, Comparable<User> {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private LoginDetails loginDetails;
+
+    @Column(name = "employee_unique_id")
+    private String employeeUniqueId;
 
     @Override
     @JsonIgnore
@@ -116,7 +124,12 @@ public class User implements UserDetails, Comparable<User> {
     }
 
     @Override
-    public int compareTo(User o) {
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public int compareTo(Employee o) {
         return this.getUsername().compareTo(o.getUsername());
     }
 
@@ -134,8 +147,8 @@ public class User implements UserDetails, Comparable<User> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return username.equals(user.username);
+        Employee employee = (Employee) o;
+        return username.equals(employee.username);
     }
 
     @Override

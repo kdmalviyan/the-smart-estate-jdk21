@@ -11,7 +11,7 @@ import com.sfd.thesmartestate.lms.entities.Lead;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.services.LeadStatusService;
 import com.sfd.thesmartestate.lms.services.LeadUpdateService;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
@@ -103,11 +103,11 @@ public class FollowupServiceImpl implements FollowupService {
     @Override
     public Long findByIsOpenAndFollowupTimeGreaterThan(boolean isOpen, LocalDateTime followupStart, LocalDateTime followupEnd) {
 
-        User loggedInUser = userService.findLoggedInUser();
-        if (loggedInUser.isSuperAdmin() || loggedInUser.isAdmin()) {
+        Employee loggedInEmployee = userService.findLoggedInUser();
+        if (loggedInEmployee.isSuperAdmin() || loggedInEmployee.isAdmin()) {
             return repository.findByIsOpenAndFollowupTimeBetweenStartAndEndDate(isOpen, followupStart, followupEnd);
         }
-        return repository.findByUserIsOpenAndFollowupTimeBetweenStartAndEndDate(isOpen, followupStart, followupEnd,loggedInUser.getId());
+        return repository.findByUserIsOpenAndFollowupTimeBetweenStartAndEndDate(isOpen, followupStart, followupEnd, loggedInEmployee.getId());
     }
 
     @Override
@@ -145,10 +145,10 @@ public class FollowupServiceImpl implements FollowupService {
 
     private Page<Followup> getFollowupPage(PageableFilterDto filterRequestPayload, LocalDateTime followupStartTime,
                                            LocalDateTime followupEndTime, Double startAmount, Double endAmount, String searchText,
-                                           String deactivationReason, String status, User loggedInUser) {
+                                           String deactivationReason, String status, Employee loggedInEmployee) {
         boolean isOpen = filterRequestPayload.isOpen();
 
-        return loggedInUser.isAdmin() || loggedInUser.isSuperAdmin()
+        return loggedInEmployee.isAdmin() || loggedInEmployee.isSuperAdmin()
                 ?
                 getAdminFollowupPage(filterRequestPayload, followupStartTime,
                         followupEndTime, startAmount, endAmount, searchText,
@@ -156,7 +156,7 @@ public class FollowupServiceImpl implements FollowupService {
                 :
                 getNonAdminFollowupPage(filterRequestPayload, followupStartTime,
                         followupEndTime, startAmount, endAmount, searchText,
-                        deactivationReason, status, loggedInUser.getId(), isOpen);
+                        deactivationReason, status, loggedInEmployee.getId(), isOpen);
     }
 
     private Page<Followup> getNonAdminFollowupPage(PageableFilterDto filterRequestPayload,

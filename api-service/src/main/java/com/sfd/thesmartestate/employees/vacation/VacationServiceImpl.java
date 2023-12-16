@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.employees.vacation;
 import com.sfd.thesmartestate.employees.vacation.action.VacationAction;
 import com.sfd.thesmartestate.employees.vacation.action.VacationActionService;
 import com.sfd.thesmartestate.employees.vacation.exceptions.VacationException;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +54,8 @@ public class VacationServiceImpl implements VacationService {
 
     @Override
     public List<Vacation> findByStatus(VacationStatus vacationStatus) {
-        User user = userService.findLoggedInUser();
-        return repository.findByStatusAndCreatedForUsername(vacationStatus, user.getUsername());
+        Employee employee = userService.findLoggedInUser();
+        return repository.findByStatusAndCreatedForUsername(vacationStatus, employee.getUsername());
     }
 
     @Override
@@ -64,9 +64,9 @@ public class VacationServiceImpl implements VacationService {
         if(!vacation.getStatus().equals(fromStatus)) {
             throw new VacationException("Invalid current status");
         }
-        User user = userService.findLoggedInUser();
+        Employee employee = userService.findLoggedInUser();
         VacationAction vacationAction = createVacationAction(
-                new VacationUpdateDto(vacation.getId(), user.getId(),
+                new VacationUpdateDto(vacation.getId(), employee.getId(),
                         "Status changed from " + fromStatus + " to " + toStatus),
                 "Status changed");
         vacation.getActions().add(vacationAction);
@@ -76,8 +76,8 @@ public class VacationServiceImpl implements VacationService {
 
     @Override
     public List<Vacation> findMyVacations() {
-        User user = userService.findLoggedInUser();
-        return repository.findByCreatedForUsername(user.getUsername());
+        Employee employee = userService.findLoggedInUser();
+        return repository.findByCreatedForUsername(employee.getUsername());
     }
 
     @Override
@@ -92,14 +92,14 @@ public class VacationServiceImpl implements VacationService {
 
     @Override
     public List<Vacation> findVacationApprovedByMe() {
-        User user = userService.findLoggedInUser();
-        return repository.findVacationByApproverAndStatus(user.getId(), VacationStatus.APPROVED);
+        Employee employee = userService.findLoggedInUser();
+        return repository.findVacationByApproverAndStatus(employee.getId(), VacationStatus.APPROVED);
     }
 
     @Override
     public List<Vacation> findVacationForMyApproval() {
-        User user = userService.findLoggedInUser();
-        return repository.findVacationByApproverAndStatusNot(user.getId(), VacationStatus.APPROVED);
+        Employee employee = userService.findLoggedInUser();
+        return repository.findVacationByApproverAndStatusNot(employee.getId(), VacationStatus.APPROVED);
     }
 
     private VacationAction createVacationAction(VacationUpdateDto vacationUpdateDto, String name) {
@@ -116,8 +116,8 @@ public class VacationServiceImpl implements VacationService {
     private void addApprover(Vacation vacation) {
         // Add approver only if already not added from frontend
         if(Objects.isNull(vacation.getApprover())) {
-            User user = (User) userService.loadUserByUsername(vacation.getCreatedForUsername());
-            User approver = user.getSupervisor();
+            Employee employee = (Employee) userService.loadUserByUsername(vacation.getCreatedForUsername());
+            Employee approver = employee.getSupervisor();
             vacation.setApprover(approver.getId());
         }
     }

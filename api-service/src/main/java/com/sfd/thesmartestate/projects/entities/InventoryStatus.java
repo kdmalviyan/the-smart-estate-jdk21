@@ -1,6 +1,6 @@
 package com.sfd.thesmartestate.projects.entities;
 
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -34,7 +34,7 @@ public class InventoryStatus implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "updated_by_id")
-    private User updatedBy;
+    private Employee updatedBy;
 
     @Column(name = "is_active")
     private Boolean active;

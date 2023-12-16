@@ -2,7 +2,7 @@ package com.sfd.thesmartestate.lms.targets;
 
 import com.sfd.thesmartestate.common.LeadEvents;
 import com.sfd.thesmartestate.dashboard.dtos.TargetCountResponseDto;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -10,11 +10,11 @@ import java.util.List;
 public interface TargetService {
     Target create(Target target);
 
-    List<Target> findByCreatedByAndStartDate(User user, LocalDate startDate);
+    List<Target> findByCreatedByAndStartDate(Employee employee, LocalDate startDate);
 
     Target update(Target target);
 
-    Target findAndUpdateUserTarget(User user, LeadEvents leadEvent);
+    Target findAndUpdateUserTarget(Employee employee, LeadEvents leadEvent);
 
     List<Target> findAll(boolean groupBy);
 

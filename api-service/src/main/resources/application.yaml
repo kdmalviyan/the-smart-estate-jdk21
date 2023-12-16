@@ -17,6 +17,7 @@ public:
   urls: /auth/token,/auth/refreshtoken,/actuator,/vendor,/user/password/forgot/**,/user/password/reset**,/user/password/change**,/user/uploadImage**,/swagger-ui,/v3/api-docs,realestateapi
 
 tenant:
+  run-db-scripts: false
   filepath: "tenants/config.json"
   tenantsSchemaPath: "tenants/schema/sfd-tenant-schema.sql"
   default:

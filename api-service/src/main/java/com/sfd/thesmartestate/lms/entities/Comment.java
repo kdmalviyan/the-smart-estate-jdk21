@@ -1,6 +1,6 @@
 package com.sfd.thesmartestate.lms.entities;
 
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -24,7 +24,7 @@ public class Comment implements Serializable, Comparable<Comment> {
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

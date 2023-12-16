@@ -1,19 +1,21 @@
 package com.sfd.thesmartestate.users.repositories;
 
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor {
-    User findByUsername(String username);
+public interface UserRepository extends JpaRepository<Employee, Long>, JpaSpecificationExecutor {
+    Employee findByUsername(String username);
 
-    User findByName(String name);
+    Employee findByName(String name);
 
-    List<User> getUserByNameStartsWithAndProjectName(String name, String projectName);
+    List<Employee> getUserByNameStartsWithAndProjectName(String name, String projectName);
 
-    User findByEmail(String username);
+    Employee findByEmail(String username);
 
-    List<User> findByProjectId(Long projectId);
+    List<Employee> findByProjectId(Long projectId);
+
+    Employee findByEmployeeUniqueId(String employeeUniqueId);
 }

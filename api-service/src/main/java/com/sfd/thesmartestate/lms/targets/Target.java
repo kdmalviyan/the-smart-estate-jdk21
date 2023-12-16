@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.lms.targets;
 
 import com.sfd.thesmartestate.projects.entities.Project;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -51,11 +51,11 @@ public class Target implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "assigned_to_id")
-    private User assignedTo;
+    private Employee assignedTo;
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

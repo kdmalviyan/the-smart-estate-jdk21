@@ -10,7 +10,7 @@ import com.sfd.thesmartestate.lms.helpers.BudgetHelper;
 import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.services.ProjectService;
 import com.sfd.thesmartestate.security.exceptions.UserNotFoundException;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import com.sfd.thesmartestate.users.teams.entities.Team;
 import com.sfd.thesmartestate.users.teams.exceptions.TeamException;
@@ -88,16 +88,16 @@ public class LeadServiceHelper {
     public void addLeadAssignment(Lead lead) {
         Project project = lead.getProject();
         // username -> List<user> (same user repeated into the team, it represents number of teams it acts as supervisor
-        Map<String, List<User>> teamLeaders = findAllTeamLeadersInAProject(project);
-        List<User> users = teamLeaders
+        Map<String, List<Employee>> teamLeaders = findAllTeamLeadersInAProject(project);
+        List<Employee> employees = teamLeaders
                 .entrySet()
                 .stream().min(sortWithValues())
                 .orElseThrow(() -> new TeamException("No Team found for assignment"))
                 .getValue();
-        User user = users.get(randomIndex(users.size()));
-        if (Objects.isNull(user))
+        Employee employee = employees.get(randomIndex(employees.size()));
+        if (Objects.isNull(employee))
             throw new UserNotFoundException("No User found for lead assignment");
-        lead.setAssignedTo(user);
+        lead.setAssignedTo(employee);
     }
 
     public void addAssignedToDetails(Lead lead) {
@@ -107,11 +107,11 @@ public class LeadServiceHelper {
     /**
      * 1 project multiple teams
      */
-    private Map<String, List<User>> findAllTeamLeadersInAProject(Project project) {
+    private Map<String, List<Employee>> findAllTeamLeadersInAProject(Project project) {
         return teamService.findByProjectId(project.getId())
                 .stream()
                 .map(Team::getSupervisor)
-                .collect(Collectors.groupingBy(User::getUsername));
+                .collect(Collectors.groupingBy(Employee::getUsername));
     }
 
 
@@ -122,7 +122,7 @@ public class LeadServiceHelper {
         return RANDOM.nextInt(size);
     }
 
-    private Comparator<Map.Entry<String, List<User>>> sortWithValues() {
+    private Comparator<Map.Entry<String, List<Employee>>> sortWithValues() {
         return (a, b) -> {
             if (a.getValue().size() > b.getValue().size()) {
                 return -1;

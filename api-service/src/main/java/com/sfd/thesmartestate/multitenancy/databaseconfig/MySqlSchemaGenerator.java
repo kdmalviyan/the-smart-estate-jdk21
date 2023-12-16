@@ -35,6 +35,9 @@ public class MySqlSchemaGenerator implements SchemaGenerator {
     private String tenantsSchemaPath;
     @Value("${tenant.default.aws.bucket}")
     private String defaultAwsBucketName;
+    @Value("${tenant.run-db-scripts}")
+    private boolean runDbScripts;
+
     public MySqlSchemaGenerator(final ResourceLoader resourceLoader,
                                 final FileService fileService,
                                 final PasswordEncoder passwordEncoder) {
@@ -66,7 +69,7 @@ public class MySqlSchemaGenerator implements SchemaGenerator {
     }
 
     private void createTenantSuperadmin(Connection connection, Tenant tenant) throws SQLException {
-        final String USER_INSERT = "INSERT INTO `tb_users` " +
+        final String USER_INSERT = "INSERT INTO `tb_employees` " +
                 "VALUES (1,NULL,NULL,'" +
                 LocalDateTime.now() +  "',NULL," +
                 "'super@dupar@gmail.com',true," +
@@ -75,7 +78,7 @@ public class MySqlSchemaGenerator implements SchemaGenerator {
                 "'" + passwordEncoder.encode("Password@1") + "'" +
                 ",NULL,NULL," +
                 "'" + tenant.getOrganizationId() + "_admin',NULL,NULL,NULL)";
-        final String USER_ROLES_INSERT = "INSERT INTO `tb_users_roles` VALUES (1,3)";
+        final String USER_ROLES_INSERT = "INSERT INTO `tb_employees_roles` VALUES (1,3)";
         PreparedStatement userStatement = connection.prepareStatement(USER_INSERT);
         userStatement.executeUpdate();
         PreparedStatement rolesStatement = connection.prepareStatement(USER_ROLES_INSERT);
@@ -85,7 +88,7 @@ public class MySqlSchemaGenerator implements SchemaGenerator {
 
     private boolean isDatabaseAlreadyExists(Connection connection) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tb_users");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tb_employees");
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 String username = resultSet.getString("username");
@@ -98,9 +101,11 @@ public class MySqlSchemaGenerator implements SchemaGenerator {
     }
 
     private void executeDatabaseScript(Connection connection) throws IOException {
-        Resource resource = fileService.download(tenantsSchemaPath, defaultAwsBucketName);
-        ScriptRunner sr = new ScriptRunner(connection);
-        Reader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
-        sr.runScript(reader);
+        if(runDbScripts) {
+            Resource resource = fileService.download(tenantsSchemaPath, defaultAwsBucketName);
+            ScriptRunner sr = new ScriptRunner(connection);
+            Reader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+            sr.runScript(reader);
+        }
     }
 }

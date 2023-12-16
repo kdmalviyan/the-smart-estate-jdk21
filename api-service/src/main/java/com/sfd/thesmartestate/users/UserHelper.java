@@ -8,7 +8,7 @@ import com.sfd.thesmartestate.notifications.services.OTPService;
 import com.sfd.thesmartestate.notifications.web.EmailNotificationMessage;
 import com.sfd.thesmartestate.users.dtos.ChangePasswordRequestPayload;
 import com.sfd.thesmartestate.users.dtos.ResetPasswordRequestPayload;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.exceptions.UserManagementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +68,7 @@ public class UserHelper {
         log.info("ResetPasswordRequestPayload validated");
     }
 
-    public NotificationMessage createPasswordChangeOTPEmailMessage(User user) {
+    public NotificationMessage createPasswordChangeOTPEmailMessage(Employee employee) {
         log.info("Creating OTP for password change");
         String otp = otpService.generateOTP();
         String message = "Dear User! " +
@@ -78,30 +78,30 @@ public class UserHelper {
         String subject = "OTP: Password Change";
         boolean isTransactional = true;
         NotificationMessage notificationMessage = new EmailNotificationMessage(message, subject, isTransactional);
-        saveOneTimePassword(user, otp);
+        saveOneTimePassword(employee, otp);
         log.info("OTP for password change is created");
         return notificationMessage;
     }
 
-    private void saveOneTimePassword(User user, String otpValue) {
+    private void saveOneTimePassword(Employee employee, String otpValue) {
         OneTimePassword otp = new OneTimePassword();
         otp.setValue(otpValue);
         otp.setTarget(OTPTarget.EMAIL);
         otp.setType(OTPType.FORGOT_PASSWORD);
         otp.setCreatedAt(LocalDateTime.now());
         otp.setUsed(false);
-        otp.setUsername(user.getUsername());
-        otp.setCreatedBy(user);
-        OneTimePassword oldOTP = otpService.findByUsername(user.getUsername());
+        otp.setUsername(employee.getUsername());
+        otp.setCreatedBy(employee);
+        OneTimePassword oldOTP = otpService.findByUsername(employee.getUsername());
         if (Objects.nonNull(oldOTP)) {
             otp.setId(oldOTP.getId());
         }
         otpService.save(otp);
     }
 
-    public OneTimePassword validateOTP(User user, String oneTimePassword) {
-        log.info("Validating OPT for password change for " + user.getUsername());
-        OneTimePassword otp = otpService.findByUsername(user.getUsername());
+    public OneTimePassword validateOTP(Employee employee, String oneTimePassword) {
+        log.info("Validating OPT for password change for " + employee.getUsername());
+        OneTimePassword otp = otpService.findByUsername(employee.getUsername());
         otpService.checkOtpUsed(otp);
         otpService.checkOtpValue(oneTimePassword, otp);
         otpService.checkOtpExpired(otp);

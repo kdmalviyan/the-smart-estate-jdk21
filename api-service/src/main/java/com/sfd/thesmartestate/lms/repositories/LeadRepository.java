@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.lms.repositories;
 import com.sfd.thesmartestate.adhoc.dto.DuplicateResponse;
 import com.sfd.thesmartestate.lms.entities.Lead;
 import com.sfd.thesmartestate.projects.entities.Project;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -21,7 +21,7 @@ public interface LeadRepository extends JpaRepository<Lead, Long>, JpaSpecificat
 
     List<Lead> findByCustomerIdAndProjectId(Long phone, Long id);
 
-    List<Lead> findByAssignedTo(User user);
+    List<Lead> findByAssignedTo(Employee employee);
 
     @Query(value = "select count(*) from tb_leads l join tb_lead_status s on l.status_id = s.id where s.lead_status_name " +
             "in ('ACTIVE','IN-PROCESS','FOLLOW','FOLLOW-UP','FOLLOW-UP-EXPIRE') ", nativeQuery = true)

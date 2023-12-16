@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.projects.inventory;
 
 import com.sfd.thesmartestate.projects.entities.InventoryStatus;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -37,7 +37,7 @@ public class Inventory implements Serializable, Comparable<Inventory> {
     private Long sellingPrice;
 
 
-    private User updatedBy;
+    private Employee updatedBy;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

@@ -3,6 +3,7 @@ package com.sfd.thesmartestate.security;
 
 import com.sfd.thesmartestate.common.Constants;
 import com.sfd.thesmartestate.multitenancy.filters.TenantFilter;
+import com.sfd.thesmartestate.users.services.LoginDetailsService;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,19 +43,18 @@ public class CustomWebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final TenantFilter tenantFilter;
-    private final UserDetailsService userDetailsService;
+    private final LoginDetailsService loginDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Value("#{'${public.urls}'.split(',')}")
     private List<String> publicUrls;
 
     public CustomWebSecurityConfig(final JwtAuthenticationFilter jwtAuthenticationFilter,
-                                   final UserService userDetailsService,
+                                   final LoginDetailsService loginDetailsService,
                                    final BCryptPasswordEncoder bCryptPasswordEncoder,
-                                   final TenantFilter tenantFilter,
-                                   final ApplicationContext applicationContext) {
+                                   final TenantFilter tenantFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.userDetailsService = userDetailsService;
+        this.loginDetailsService = loginDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.tenantFilter = tenantFilter;
     }
@@ -80,7 +80,7 @@ public class CustomWebSecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                         .anyRequest()
                         .authenticated())
-                .userDetailsService(userDetailsService)
+                .userDetailsService(loginDetailsService)
                 .sessionManagement(sessionManagementConfigure())
                 .addFilterBefore(tenantFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -104,7 +104,7 @@ public class CustomWebSecurityConfig {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(userDetailsService)
+                .userDetailsService(loginDetailsService)
                 .passwordEncoder(bCryptPasswordEncoder);
     }
 }

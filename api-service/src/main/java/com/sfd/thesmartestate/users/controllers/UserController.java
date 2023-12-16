@@ -2,7 +2,7 @@ package com.sfd.thesmartestate.users.controllers;
 
 import com.sfd.thesmartestate.users.dtos.ChangePasswordRequestPayload;
 import com.sfd.thesmartestate.users.dtos.ResetPasswordRequestPayload;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
@@ -30,18 +30,18 @@ public class UserController {
      *
      */
     @GetMapping("")
-    public ResponseEntity<List<User>> listAllUsers() {
+    public ResponseEntity<List<Employee>> listAllUsers() {
         return ResponseEntity.ok(userService.findAll().stream().filter(user -> !user.isSuperAdmin()).collect(Collectors.toList()));
     }
 
     @PostMapping("")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+    public ResponseEntity<Employee> createUser(@RequestBody Employee employee) {
+        return ResponseEntity.ok(userService.createUser(employee));
     }
 
     @PutMapping("")
-    public ResponseEntity<User> update(@RequestBody User user) {
-        return ResponseEntity.ok(userService.update(user));
+    public ResponseEntity<Employee> update(@RequestBody Employee employee) {
+        return ResponseEntity.ok(userService.update(employee));
     }
 
     @PutMapping("password/change")
@@ -58,18 +58,18 @@ public class UserController {
     }
 
     @PutMapping("password/reset")
-    public ResponseEntity<User> resetPassword(@RequestBody ResetPasswordRequestPayload requestPayload) {
+    public ResponseEntity<Employee> resetPassword(@RequestBody ResetPasswordRequestPayload requestPayload) {
         log.info("Resetting password for " + requestPayload.getUsername());
         return ResponseEntity.ok(userService.resetPassword(requestPayload));
     }
 
     @GetMapping(value = "project/{projectId}")
-    public ResponseEntity<List<User>> findUsersByProject(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<List<Employee>> findUsersByProject(@PathVariable("projectId") Long projectId) {
         return ResponseEntity.ok(userService.findUsersByProjectId(projectId));
     }
 
     @GetMapping(value = "/userName")
-    public ResponseEntity<User> findUserByUserName(@RequestParam("userName") String userName) {
+    public ResponseEntity<Employee> findUserByUserName(@RequestParam("userName") String userName) {
         return ResponseEntity.ok(userService.getUserByUsername(userName));
     }
 
@@ -78,7 +78,7 @@ public class UserController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<User> uploadUserProfilePhoto(
+    public ResponseEntity<Employee> uploadUserProfilePhoto(
             @RequestParam("file") MultipartFile photo,
             @PathVariable("userId") Long userId,
             @RequestHeader("X-VendorID") String vendorId

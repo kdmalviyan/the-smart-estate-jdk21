@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.lms.calls;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.services.LeadService;
 import com.sfd.thesmartestate.lms.services.LeadUpdateService;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +29,9 @@ public class CallServiceImpl implements CallService {
     public Call create(Call call, Long leadId) {
         Call oldCall = repository.findByPhoneAndStartTime(call.getPhone(), call.getStartTime());
         if(Objects.isNull(oldCall)) {
-            User loggedImUser = userService.findLoggedInUser();
+            Employee loggedImEmployee = userService.findLoggedInUser();
             call.setCreatedAt(LocalDateTime.now());
-            call.setCreatedBy(loggedImUser);
+            call.setCreatedBy(loggedImEmployee);
             call = repository.saveAndFlush(call);
             leadUpdateService.updateLeadCallDetails(call, leadId);
             return call;

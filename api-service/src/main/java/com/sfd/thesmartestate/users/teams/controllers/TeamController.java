@@ -1,6 +1,6 @@
 package com.sfd.thesmartestate.users.teams.controllers;
 
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import com.sfd.thesmartestate.users.teams.entities.Team;
 import com.sfd.thesmartestate.users.teams.services.TeamService;
@@ -87,7 +87,7 @@ public class TeamController {
     }
 
     @GetMapping("/users/{projectId}")
-    public ResponseEntity<List<User>> listAllUsersByProject(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<List<Employee>> listAllUsersByProject(@PathVariable("projectId") Long projectId) {
         return ResponseEntity.ok(userService.findUsersByProjectId(projectId));
     }
 

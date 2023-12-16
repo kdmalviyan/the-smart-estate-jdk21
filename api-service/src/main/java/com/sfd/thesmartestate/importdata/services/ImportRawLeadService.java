@@ -6,7 +6,7 @@ import com.sfd.thesmartestate.importdata.dto.ImportResponseDto;
 import com.sfd.thesmartestate.importdata.dto.XlsLeadRowDto;
 import com.sfd.thesmartestate.lms.rawleads.RawLead;
 import com.sfd.thesmartestate.lms.rawleads.RawLeadService;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.services.UserService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
@@ -72,7 +72,7 @@ public class ImportRawLeadService implements ImportLeadService {
 
     private RawLeadImportData validateAndGenerateLeadData(List<XlsLeadRowDto> rows) {
         RawLeadImportData leadImportData = new RawLeadImportData();
-        User loggedInUser = userService.findLoggedInUser();
+        Employee loggedInEmployee = userService.findLoggedInUser();
 
         int rowNumber = 1;
         int rowsSkipped = 0;
@@ -93,7 +93,7 @@ public class ImportRawLeadService implements ImportLeadService {
             xlsRow.setRownum(rowNumber);
 
             if (Objects.isNull(rawLead)) {
-                RawLead rawLeadData = createRawLeadData(loggedInUser, xlsRow);
+                RawLead rawLeadData = createRawLeadData(loggedInEmployee, xlsRow);
                 rawLeadsToSave.add(rawLeadData);
             } else {
                 rowsSkipped++;
@@ -109,7 +109,7 @@ public class ImportRawLeadService implements ImportLeadService {
         return leadImportData;
     }
 
-    private RawLead createRawLeadData(User loggedInUser, XlsLeadRowDto xlsRow) {
+    private RawLead createRawLeadData(Employee loggedInEmployee, XlsLeadRowDto xlsRow) {
         RawLead rawLead = new RawLead();
         rawLead.setComment(xlsRow.getComment());
         rawLead.setLeadDate(LocalDate.now());
