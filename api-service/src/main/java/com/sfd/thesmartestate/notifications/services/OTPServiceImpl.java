@@ -6,7 +6,7 @@ import com.sfd.thesmartestate.notifications.enums.OTPTarget;
 import com.sfd.thesmartestate.notifications.enums.OTPType;
 import com.sfd.thesmartestate.notifications.exceptions.OneTimePasswordException;
 import com.sfd.thesmartestate.notifications.repositories.OTPRepository;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,16 +34,16 @@ public class OTPServiceImpl implements OTPService {
     }
 
 
-    public OneTimePassword saveOneTimePassword(User user, String otpValue, OTPTarget target, OTPType otpType) {
+    public OneTimePassword saveOneTimePassword(Employee employee, String otpValue, OTPTarget target, OTPType otpType) {
         OneTimePassword otp = new OneTimePassword();
         otp.setValue(otpValue);
         otp.setTarget(target);
         otp.setType(otpType);
         otp.setCreatedAt(LocalDateTime.now());
         otp.setUsed(false);
-        otp.setUsername(user.getUsername());
-        otp.setCreatedBy(user);
-        OneTimePassword oldOTP = findByUsername(user.getUsername());
+        otp.setUsername(employee.getUsername());
+        otp.setCreatedBy(employee);
+        OneTimePassword oldOTP = findByUsername(employee.getUsername());
         if (Objects.nonNull(oldOTP)) {
             otp.setId(oldOTP.getId());
         }

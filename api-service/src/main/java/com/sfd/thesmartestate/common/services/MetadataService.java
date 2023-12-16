@@ -4,7 +4,7 @@ import com.sfd.thesmartestate.common.dto.MetadataResponse;
 import com.sfd.thesmartestate.common.entities.Role;
 import com.sfd.thesmartestate.lms.entities.LeadInventorySize;
 import com.sfd.thesmartestate.projects.dto.ProjectDTO;
-import com.sfd.thesmartestate.users.dtos.UserResponse;
+import com.sfd.thesmartestate.employee.dtos.UserResponse;
 
 import java.util.List;
 

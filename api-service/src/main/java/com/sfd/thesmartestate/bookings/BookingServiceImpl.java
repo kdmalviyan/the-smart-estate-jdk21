@@ -15,8 +15,8 @@ import com.sfd.thesmartestate.projects.inventory.Inventory;
 import com.sfd.thesmartestate.projects.inventory.InventoryService;
 import com.sfd.thesmartestate.projects.services.InventoryStatusService;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class BookingServiceImpl implements BookingService {
     private final ProjectService projectService;
 
     @Autowired
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @Autowired
     private final LeadService leadService;
@@ -87,20 +87,20 @@ public class BookingServiceImpl implements BookingService {
         booking.setBookingDate(LocalDateTime.now());
         booking.setProject(projectService.findById(bookingDto.getProjectId()));
         Inventory inventoryToBook = inventoryService.findById(bookingDto.getInventoryId());
-        inventoryToBook.setUpdatedBy(userService.findLoggedInUser());
+        inventoryToBook.setUpdatedBy(employeeService.findLoggedInEmployee());
         booking.setInventory(inventoryToBook);
         booking.setSellingPrice(bookingDto.getSellingPrice());
-        booking.setBusinessExecutive(userService.findById(bookingDto.getBusinessExecutiveId()));
-        booking.setBusinessManager(userService.findById(bookingDto.getBusinessManagerId()));
-        booking.setBusinessHead(userService.findById(bookingDto.getBusinessHeadId()));
+        booking.setBusinessExecutive(employeeService.findById(bookingDto.getBusinessExecutiveId()));
+        booking.setBusinessManager(employeeService.findById(bookingDto.getBusinessManagerId()));
+        booking.setBusinessHead(employeeService.findById(bookingDto.getBusinessHeadId()));
         booking.setChannelPartner(bookingDto.getChannelPartner());
         booking.setRemark(bookingDto.getRemark());
 
-        User loggedInUser = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         booking.setCreatedAt(LocalDateTime.now());
-        booking.setCreatedBy(loggedInUser);
+        booking.setCreatedBy(loggedInEmployee);
         booking.setLastUpdatedAt(LocalDateTime.now());
-        booking.setUpdatedBy(loggedInUser);
+        booking.setUpdatedBy(loggedInEmployee);
         booking.setIsActive(true);
 
         // save booking before uploading files so that we can utilize booking id
@@ -142,7 +142,7 @@ public class BookingServiceImpl implements BookingService {
         }
         Booking bookingUpdated = repository.saveAndFlush(persistedBooking);
         log.info("Booking created with files url");
-        targetService.findAndUpdateUserTarget(loggedInUser, LeadEvents.STATUS_CHANGED);
+        targetService.findAndUpdateUserTarget(loggedInEmployee, LeadEvents.STATUS_CHANGED);
         log.info("Target updated successfully");
 
         return bookingUpdated;
@@ -161,14 +161,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> findAll() {
-        User user = userService.findLoggedInUser();
+        Employee employee = employeeService.findLoggedInEmployee();
 
-        if (user.isAdmin() || user.isSuperAdmin()) {
+        if (employee.isAdmin() || employee.isSuperAdmin()) {
 
             return repository.findAll().stream()
                     .map(booking -> BookingResponseMapper.mapToBookingResponse(booking, followupService.findFollowupByLead(booking.getLead()))).collect(Collectors.toList());
         }
-        return repository.findByCreatedBy(user).stream()
+        return repository.findByCreatedBy(employee).stream()
                 .map(booking -> BookingResponseMapper.mapToBookingResponse(booking, followupService.findFollowupByLead(booking.getLead()))).collect(Collectors.toList());
     }
 

@@ -4,7 +4,7 @@ import com.sfd.thesmartestate.customer.entities.Customer;
 import com.sfd.thesmartestate.lms.entities.Lead;
 import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.inventory.Inventory;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -40,15 +40,15 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "business_executive_id")
-    private User businessExecutive;
+    private Employee businessExecutive;
 
     @ManyToOne
     @JoinColumn(name = "business_manager_id")
-    private User businessManager;
+    private Employee businessManager;
 
     @ManyToOne
     @JoinColumn(name = "business_head_id")
-    private User businessHead;
+    private Employee businessHead;
 
     private String channelPartner;
 
@@ -75,13 +75,13 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     private LocalDateTime lastUpdatedAt;
 
     @ManyToOne
     @JoinColumn(name = "updated_by_id")
-    private User updatedBy;
+    private Employee updatedBy;
 
     @ManyToOne
     @JoinColumn(name = "lead_id")

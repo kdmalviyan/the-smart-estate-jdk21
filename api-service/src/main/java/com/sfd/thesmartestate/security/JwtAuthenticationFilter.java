@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sfd.thesmartestate.common.Constants;
 import com.sfd.thesmartestate.security.exceptions.InvalidCredentialsException;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.services.LoginDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.extern.slf4j.Slf4j;
@@ -35,19 +35,19 @@ import java.util.Map;
 @Slf4j
 @Order(2)
 public class JwtAuthenticationFilter extends OncePerRequestFilter implements AuthenticationEntryPoint {
-    private final UserService userService;
+    private final LoginDetailsService loginDetailsService;
     @Value("#{'${public.urls}'.split(',')}")
     protected List<String> publicUrls;
     private final JwtTokenValidator jwtTokenValidator;
 
     public JwtAuthenticationFilter(final JwtTokenValidator jwtTokenValidator,
-                                   final UserService userService) {
+                                   final LoginDetailsService loginDetailsService) {
         this.jwtTokenValidator = jwtTokenValidator;
-        this.userService = userService;
+        this.loginDetailsService = loginDetailsService;
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
+    protected boolean shouldNotFilter(final HttpServletRequest request) {
         for (String publicUrl : publicUrls) {
             if (request.getRequestURI().startsWith(publicUrl)) {
                 return true;
@@ -71,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter implements Aut
 
     private void setAuthenticationContext(HttpServletRequest request, String jwtToken) {
         String username = getUserNameFromJwtToken(jwtToken);
-        UserDetails userDetails = userService.loadUserByUsername(username);
+        UserDetails userDetails = loginDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
         token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

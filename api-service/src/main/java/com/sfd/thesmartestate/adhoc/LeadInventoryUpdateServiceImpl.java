@@ -8,8 +8,8 @@ import com.sfd.thesmartestate.lms.followups.Followup;
 import com.sfd.thesmartestate.lms.followups.FollowupRepository;
 import com.sfd.thesmartestate.lms.repositories.LeadInventorySizeRepository;
 import com.sfd.thesmartestate.lms.repositories.LeadRepository;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +31,14 @@ public class LeadInventoryUpdateServiceImpl implements LeadInventoryUpdateServic
     private final FollowupRepository followupRepository;
     private final LeadInventorySizeRepository leadInventorySizeRepository;
 
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @Override
     public void updateLeadInventorySize(UpdateInventorySizeDTO updateInventorySizeDTO, String referenceId) {
         long start = System.currentTimeMillis();
         long counter = 0L;
         List<Lead> leads = leadRepository.findByLeadWithNullInventorySize();
-        User user = userService.findLoggedInUser();
+        Employee employee = employeeService.findLoggedInEmployee();
         for (Lead lead : leads) {
             if (updateInventorySizeDTO.getExcludeProject().contains(lead.getProject().getName())) {
                 log.info("Request Id " + referenceId + ": Skipping lead id " + lead.getId() + " for project " + lead.getProject().getName());
@@ -64,7 +64,7 @@ public class LeadInventoryUpdateServiceImpl implements LeadInventoryUpdateServic
             }
             lead.setLeadInventorySize(leadInventorySize);
             lead.setLastUpdateAt(LocalDateTime.now());
-            lead.setUpdatedBy(user);
+            lead.setUpdatedBy(employee);
             leadRepository.saveAndFlush(lead);
             counter++;
         }

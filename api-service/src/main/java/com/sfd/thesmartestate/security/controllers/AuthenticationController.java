@@ -2,11 +2,15 @@ package com.sfd.thesmartestate.security.controllers;
 
 import com.sfd.thesmartestate.common.entities.Role;
 import com.sfd.thesmartestate.common.responsemapper.ProjectResponseMapper;
+import com.sfd.thesmartestate.customer.entities.Customer;
+import com.sfd.thesmartestate.customer.services.CustomerService;
 import com.sfd.thesmartestate.security.entities.RefreshToken;
 import com.sfd.thesmartestate.security.services.AuthenticationService;
 import com.sfd.thesmartestate.security.services.RefreshTokenService;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.LoginDetails;
+import com.sfd.thesmartestate.employee.services.LoginDetailsService;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -24,7 +29,9 @@ import java.util.Optional;
 @Slf4j
 public record AuthenticationController(AuthenticationService authenticationService,
                                        RefreshTokenService refreshTokenService,
-                                       UserService userService) {
+                                       EmployeeService employeeService,
+                                       LoginDetailsService loginDetailsService,
+                                       CustomerService customerService) {
 
     @PostMapping("/token")
     public ResponseEntity<AuthResponse> generateToken(@RequestBody Credentials credentials) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -35,14 +42,24 @@ public record AuthenticationController(AuthenticationService authenticationServi
                 .withUsername(credentials.getUsername())
                 .withRefreshToken(refreshTokenService.createRefreshToken(credentials.getUsername())).build();
 
+        LoginDetails loginDetails = loginDetailsService.findLoggedInUser();
+        if(Objects.nonNull(loginDetails.getEmployeeUniqueId())) {
+            Employee employee = employeeService.findByEmployeeUniqueId(loginDetails.getEmployeeUniqueId());
+            response.setAdmin(employee.isAdmin());
+            response.setSuperAdmin(employee.isSuperAdmin());
+            response.setProfilePath(employee.getProfileImageThumbPath());
+            Optional<Role> userRole = employee.getRoles().stream().findFirst();
+            userRole.ifPresent(role -> response.setRole(role.getDescription()));
+            response.setProject(ProjectResponseMapper.mapToProjectResponse(employee.getProject()));
+        } else if(Objects.nonNull(loginDetails.getCustomerUniqueId())) {
+            Customer customer = customerService.findByCustomerUniqueId(loginDetails.getCustomerUniqueId());
+            response.setAdmin(false);
+            response.setSuperAdmin(false);
+            response.setProfilePath(customer.getProfileImageThumbPath());
+            Optional<Role> userRole = customer.getLoginDetails().getRoles().stream().findFirst();
+            userRole.ifPresent(role -> response.setRole(role.getDescription()));
+        }
 
-        User user = userService.findLoggedInUser();
-        response.setAdmin(user.isAdmin());
-        response.setSuperAdmin(user.isSuperAdmin());
-        response.setProfilePath(user.getProfileImageThumbPath());
-        Optional<Role> userRole = user.getRoles().stream().findFirst();
-        userRole.ifPresent(role -> response.setRole(role.getDescription()));
-        response.setProject(ProjectResponseMapper.mapToProjectResponse(user.getProject()));
         log.info("Token generated successfully");
         return ResponseEntity.ok(response);
     }

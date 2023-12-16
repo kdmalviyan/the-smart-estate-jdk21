@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.lms.services;
 import com.sfd.thesmartestate.lms.entities.DeactivationReason;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.repositories.DeactivationReasonRepository;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class DeactivationReasonServiceImpl implements DeactivationReasonService {
 
     private final DeactivationReasonRepository deactivationReasonRepository;
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @Override
     public DeactivationReason create(DeactivationReason deactivationReason) {
@@ -31,8 +31,8 @@ public class DeactivationReasonServiceImpl implements DeactivationReasonService 
             deactivationReason.setName(createDeactivationReasonName(deactivationReason.getName()));
             deactivationReason.setCreatedAt(LocalDateTime.now());
             deactivationReason.setLastUpdateAt(LocalDateTime.now());
-            deactivationReason.setCreatedBy(userService.findLoggedInUser());
-            deactivationReason.setUpdatedBy(userService.findLoggedInUser());
+            deactivationReason.setCreatedBy(employeeService.findLoggedInEmployee());
+            deactivationReason.setUpdatedBy(employeeService.findLoggedInEmployee());
             deactivationReason.setActive(true);
             return deactivationReasonRepository.save(deactivationReason);
         } else {
@@ -49,7 +49,7 @@ public class DeactivationReasonServiceImpl implements DeactivationReasonService 
                 existingDeactivationReason.setName(name);
                 existingDeactivationReason.setDescription(deactivationReason.getDescription());
                 existingDeactivationReason.setLastUpdateAt(LocalDateTime.now());
-                existingDeactivationReason.setUpdatedBy(userService.findLoggedInUser());
+                existingDeactivationReason.setUpdatedBy(employeeService.findLoggedInEmployee());
                 return deactivationReasonRepository.save(existingDeactivationReason);
             } else {
                 throw new LeadException("Deactivation Reason already exists with this name");
@@ -79,7 +79,7 @@ public class DeactivationReasonServiceImpl implements DeactivationReasonService 
         DeactivationReason deactivationReason = findById(id);
         if (Objects.nonNull(deactivationReason)) {
             deactivationReason.setActive(false);
-            deactivationReason.setUpdatedBy(userService.findLoggedInUser());
+            deactivationReason.setUpdatedBy(employeeService.findLoggedInEmployee());
             deactivationReason.setLastUpdateAt(LocalDateTime.now());
             return deactivationReasonRepository.save(deactivationReason);
         } else {

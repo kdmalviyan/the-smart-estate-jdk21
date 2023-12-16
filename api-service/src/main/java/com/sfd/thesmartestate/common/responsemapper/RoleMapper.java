@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.common.responsemapper;
 
 import com.sfd.thesmartestate.common.entities.Role;
-import com.sfd.thesmartestate.users.dtos.RoleDto;
+import com.sfd.thesmartestate.employee.dtos.RoleDto;
 
 public class RoleMapper {
     private RoleMapper() {

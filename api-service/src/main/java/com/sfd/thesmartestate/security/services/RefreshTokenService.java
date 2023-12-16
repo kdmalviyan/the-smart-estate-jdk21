@@ -4,8 +4,10 @@ import com.sfd.thesmartestate.security.JwtTokenGenerator;
 import com.sfd.thesmartestate.security.entities.RefreshToken;
 import com.sfd.thesmartestate.security.exceptions.TokenRefreshException;
 import com.sfd.thesmartestate.security.repository.RefreshTokenRepository;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.repositories.UserRepository;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.LoginDetails;
+import com.sfd.thesmartestate.employee.repositories.UserRepository;
+import com.sfd.thesmartestate.employee.services.LoginDetailsService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,13 +27,16 @@ public class RefreshTokenService {
     private final JwtTokenGenerator jwtTokenGenerator;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
+    private final LoginDetailsService loginDetailsService;
 
    public RefreshTokenService(final RefreshTokenRepository refreshTokenRepository,
                               final JwtTokenGenerator jwtTokenGenerator,
-                              final UserRepository userRepository) {
+                              final UserRepository userRepository,
+                              final LoginDetailsService loginDetailsService) {
        this.jwtTokenGenerator = jwtTokenGenerator;
        this.refreshTokenRepository = refreshTokenRepository;
        this.userRepository = userRepository;
+       this.loginDetailsService = loginDetailsService;
    }
 
     public Optional<RefreshToken> findByToken(String token) {
@@ -41,16 +45,17 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(String username) {
-        User user = userRepository.findByUsername(username);
+        Employee employee = userRepository.findByUsername(username);
         try {
             RefreshToken refreshToken = new RefreshToken();
-            RefreshToken oldRefreshToken = refreshTokenRepository.findByUser(user);
+            RefreshToken oldRefreshToken = refreshTokenRepository.findByEmployee(employee);
             if(Objects.nonNull(oldRefreshToken)) {
                 refreshToken = oldRefreshToken;
             }
-            refreshToken.setToken(jwtTokenGenerator.generate(user, true));
+            LoginDetails loginDetails = loginDetailsService.findByUsername(username);
+            refreshToken.setToken(jwtTokenGenerator.generate(loginDetails, true));
             refreshToken.setExpiryDate(LocalDateTime.now().plusMinutes(tokenExpiryInMinutes));
-            refreshToken.setUser(user);
+            refreshToken.setEmployee(employee);
             return refreshTokenRepository.save(refreshToken);
         } catch (Exception e) {
             throw new TokenRefreshException(e.getMessage());

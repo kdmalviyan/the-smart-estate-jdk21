@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.lms.targets;
 
 import com.sfd.thesmartestate.dashboard.dtos.TargetWeekResponseDto;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,9 +76,9 @@ public class TargetStatisticsHelper {
         return convertToTargetDtoObject(map);
     }
 
-    public Map<String, List<Target>> createProjectWiseTargets(User loggedInUser) {
+    public Map<String, List<Target>> createProjectWiseTargets(Employee loggedInEmployee) {
         Map<String, List<Target>> projectWiseTargets = new HashMap<>();
-        for (Target target : getActiveTargets(loggedInUser)) {
+        for (Target target : getActiveTargets(loggedInEmployee)) {
             if (!projectWiseTargets.containsKey(target.getProject().getName())) {
                 projectWiseTargets.put(target.getProject().getName(), new ArrayList<>());
             }
@@ -87,10 +87,10 @@ public class TargetStatisticsHelper {
         return projectWiseTargets;
     }
 
-    public Collection<Target> getActiveTargets(User loggedInUser) {
-        return loggedInUser.isSuperAdmin() || loggedInUser.isAdmin()
+    public Collection<Target> getActiveTargets(Employee loggedInEmployee) {
+        return loggedInEmployee.isSuperAdmin() || loggedInEmployee.isAdmin()
                 ? repository.findByActive(true)
-                : repository.findByActiveAndAssignedTo(true, loggedInUser);
+                : repository.findByActiveAndAssignedTo(true, loggedInEmployee);
     }
 
     public List<TargetWeekResponseDto> createMonthlyBookingDoneMap(List<Target> targets) {

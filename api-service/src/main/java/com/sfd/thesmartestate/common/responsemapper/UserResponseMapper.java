@@ -1,9 +1,9 @@
 package com.sfd.thesmartestate.common.responsemapper;
 
 import com.sfd.thesmartestate.projects.dto.ProjectDTO;
-import com.sfd.thesmartestate.users.dtos.RoleDto;
-import com.sfd.thesmartestate.users.dtos.UserResponse;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.dtos.RoleDto;
+import com.sfd.thesmartestate.employee.dtos.UserResponse;
+import com.sfd.thesmartestate.employee.entities.Employee;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -16,30 +16,30 @@ public class UserResponseMapper {
         throw new IllegalStateException("Constructor can't be initialize error");
     }
 
-    public static UserResponse mapToUserResponse(User user) {
+    public static UserResponse mapToUserResponse(Employee employee) {
         UserResponse response = null;
-        if (user != null) {
+        if (employee != null) {
             response = new UserResponse();
 
-            Set<RoleDto> roleDtos = user.getRoles().stream()
+            Set<RoleDto> roleDtos = employee.getRoles().stream()
                     .map(RoleMapper::mapToRole)
                     .sorted(Comparator.comparingLong(RoleDto::getId).reversed())
                     .collect(Collectors.toCollection(LinkedHashSet::new));
 
-            response.setId(user.getId());
-            response.setName(user.getName());
-            response.setEnabled(user.isEnabled());
-            response.setUsername(user.getUsername());
+            response.setId(employee.getId());
+            response.setName(employee.getName());
+            response.setEnabled(employee.isActive());
+            response.setUsername(employee.getUsername());
             response.setRoles(roleDtos);
-            response.setAdmin(user.isAdmin());
-            response.setSuperAdmin(user.isSuperAdmin());
-            if(Objects.nonNull(user.getProject())) {
+            response.setAdmin(employee.isAdmin());
+            response.setSuperAdmin(employee.isSuperAdmin());
+            if(Objects.nonNull(employee.getProject())) {
                 response.setProject(ProjectDTO
-                        .builder().name(user.getProject().getName()).enabled(user.getProject().isEnabled())
-                        .id(user.getProject().getId()).build());
+                        .builder().name(employee.getProject().getName()).enabled(employee.getProject().isEnabled())
+                        .id(employee.getProject().getId()).build());
             }
-            response.setProfileImagePath(user.getProfileImagePath());
-            response.setProfileImageThumbPath(user.getProfileImageThumbPath());
+            response.setProfileImagePath(employee.getProfileImagePath());
+            response.setProfileImageThumbPath(employee.getProfileImageThumbPath());
         }
         return response;
 

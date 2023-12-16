@@ -2,8 +2,8 @@ package com.sfd.thesmartestate.lms.services;
 
 import com.sfd.thesmartestate.lms.entities.Comment;
 import com.sfd.thesmartestate.lms.repositories.CommentRepository;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.Objects;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @Override
     public List<Comment> findAll(Long leadId) {
@@ -27,8 +27,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment create(Comment comment) {
-        User loggedImUser = userService.findLoggedInUser();
-        comment.setCreatedBy(loggedImUser);
+        Employee loggedImEmployee = employeeService.findLoggedInEmployee();
+        comment.setCreatedBy(loggedImEmployee);
         comment.setCreatedAt(LocalDateTime.now());
         return commentRepository.saveAndFlush(comment);
     }

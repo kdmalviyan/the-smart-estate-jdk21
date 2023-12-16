@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.security.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -21,11 +21,11 @@ public class RefreshToken {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonIgnore
-    private User user;
+    private Employee employee;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "refresh_token", length = 5000)
     private String token;
 
-    @Column(nullable = false)
+    @Column(name = "expiry_date")
     private LocalDateTime expiryDate;
 }

@@ -14,9 +14,10 @@ logging:
 server.port: 8080
 
 public:
-  urls: /auth/token,/auth/refreshtoken,/actuator,/vendor,/user/password/forgot/**,/user/password/reset**,/user/password/change**,/user/uploadImage**,/swagger-ui,/v3/api-docs,realestateapi
+  urls: /auth/token,/auth/refreshtoken,/actuator,/vendor,/user/password/forgot/**,/user/password/reset**,/user/password/change**,/user/uploadImage**,/swagger-ui,/v3/api-docs,realestateapi,/customer/signup
 
 tenant:
+  run-db-scripts: false
   filepath: "tenants/config.json"
   tenantsSchemaPath: "tenants/schema/sfd-tenant-schema.sql"
   default:

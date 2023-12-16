@@ -1,8 +1,8 @@
 package com.sfd.thesmartestate.multitenancy;
 
 import com.sfd.thesmartestate.multitenancy.tenants.Tenant;
+import com.sfd.thesmartestate.multitenancy.tenants.TenantClientService;
 import com.sfd.thesmartestate.multitenancy.tenants.TenantRoutingDataSource;
-import com.sfd.thesmartestate.multitenancy.tenants.aws.TenantAWSService;
 import com.sfd.thesmartestate.multitenancy.tenants.aws.TenantCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -19,18 +19,18 @@ import java.util.Map;
 @Configuration
 @Slf4j
 public class DataSourceConfig {
-    private final TenantAWSService tenantAWSService;
     private final ApplicationContext applicationContext;
+    private final TenantClientService tenantClientService;
     private static final Map<Object, Object> targetDataSources = new HashMap<>();
-    public DataSourceConfig(final TenantAWSService tenantAWSService,
-                            final ApplicationContext applicationContext) {
-        this.tenantAWSService = tenantAWSService;
+    public DataSourceConfig(final ApplicationContext applicationContext,
+                            final TenantClientService tenantClientService) {
         this.applicationContext = applicationContext;
+        this.tenantClientService = tenantClientService;
     }
 
     @Bean
     public DataSource dataSource() {
-        List<Tenant> tenants = tenantAWSService.loadTenants();
+        List<Tenant> tenants = tenantClientService.fetchAllTenants();
         createDatasourceMap(tenants);
         TenantRoutingDataSource routingDataSource = new TenantRoutingDataSource();
         routingDataSource.setTargetDataSources(targetDataSources);
@@ -43,6 +43,7 @@ public class DataSourceConfig {
     }
 
     private DataSource createDataSource(final Tenant tenant) {
+        TenantCache.cacheTenant(tenant);
         return DataSourceBuilder.
                 create()
                 .password(tenant.getDbPassword())
@@ -52,16 +53,15 @@ public class DataSourceConfig {
                 .build();
     }
 
-    public void refreshDataSource() {
+    public void refreshDataSource(List<Tenant> tenants) {
         AbstractRoutingDataSource abstractRoutingDataSource
                 = applicationContext.getBean(AbstractRoutingDataSource.class);
-        for (Tenant tenant : TenantCache.list()) {
+        for (Tenant tenant : tenants) {
             DataSource dataSource = createDataSource(tenant);
             targetDataSources.put(tenant.getOrganizationId(), dataSource);
         }
         abstractRoutingDataSource.setTargetDataSources(targetDataSources);
         abstractRoutingDataSource.afterPropertiesSet();
-        System.out.println(abstractRoutingDataSource.getResolvedDataSources());
     }
 }
 

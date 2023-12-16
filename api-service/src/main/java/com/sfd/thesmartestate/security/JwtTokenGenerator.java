@@ -2,7 +2,7 @@ package com.sfd.thesmartestate.security;
 
 import com.sfd.thesmartestate.common.Constants;
 import com.sfd.thesmartestate.security.certificates.SecurityCertificatesManager;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.LoginDetails;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,22 +27,22 @@ public class JwtTokenGenerator {
         this.securityCertificatesManager = securityCertificatesManager;
     }
 
-    public String generate(User user, boolean isRefreshToken) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public String generate(LoginDetails employee, boolean isRefreshToken) throws NoSuchAlgorithmException, InvalidKeySpecException {
         Instant now = Instant.now();
         log.info("Generating security tokens");
         return isRefreshToken ? Jwts.builder()
                 .claim("isRefreshToken", true)
-                .setSubject(user.getUsername())
+                .setSubject(employee.getUsername())
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plus(tokenExpiryInMinutes, ChronoUnit.MINUTES)))
                 .signWith(securityCertificatesManager.getPrivateKey())
                 .compact()
 
                 : Jwts.builder()
-                .claim(Constants.USERNAME, user.getUsername())
-                .claim(Constants.ROLE, user.getRoles())
+                .claim(Constants.USERNAME, employee.getUsername())
+                .claim(Constants.ROLE, employee.getRoles())
                 .claim("isRefreshToken", false)
-                .setSubject(user.getUsername())
+                .setSubject(employee.getUsername())
                 .setId(UUID.randomUUID().toString())
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plus(tokenExpiryInMinutes, ChronoUnit.MINUTES)))

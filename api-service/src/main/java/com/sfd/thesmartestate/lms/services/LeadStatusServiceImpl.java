@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.lms.services;
 import com.sfd.thesmartestate.lms.entities.LeadStatus;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.repositories.LeadStatusRepository;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class LeadStatusServiceImpl implements LeadStatusService {
 
     private final LeadStatusRepository leadStatusRepository;
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @Override
     public List<LeadStatus> findAll() {
@@ -34,8 +34,8 @@ public class LeadStatusServiceImpl implements LeadStatusService {
         if (Objects.isNull(existingLeadStatus)) {
             leadStatus.setName(createLeadStatusName(leadStatus.getName()));
             leadStatus.setCreatedAt(LocalDateTime.now());
-            leadStatus.setCreatedBy(userService.findLoggedInUser());
-            leadStatus.setUpdatedBy(userService.findLoggedInUser());
+            leadStatus.setCreatedBy(employeeService.findLoggedInEmployee());
+            leadStatus.setUpdatedBy(employeeService.findLoggedInEmployee());
             leadStatus.setLastUpdateAt(LocalDateTime.now());
             leadStatus.setActive(true);
             return leadStatusRepository.save(leadStatus);
@@ -52,7 +52,7 @@ public class LeadStatusServiceImpl implements LeadStatusService {
                 exLeadStatus.setDescription(leadStatus.getDescription());
                 exLeadStatus.setName(createLeadStatusName(leadStatus.getName()));
                 exLeadStatus.setLastUpdateAt(LocalDateTime.now());
-                exLeadStatus.setUpdatedBy(userService.findLoggedInUser());
+                exLeadStatus.setUpdatedBy(employeeService.findLoggedInEmployee());
                 return leadStatusRepository.save(exLeadStatus);
             } else {
                 throw new LeadException("Lead Status already present with this name.");
@@ -88,7 +88,7 @@ public class LeadStatusServiceImpl implements LeadStatusService {
         if (Objects.nonNull(leadStatus)) {
             leadStatus.setActive(false);
             leadStatus.setLastUpdateAt(LocalDateTime.now());
-            leadStatus.setUpdatedBy(userService.findLoggedInUser());
+            leadStatus.setUpdatedBy(employeeService.findLoggedInEmployee());
             return leadStatusRepository.save(leadStatus);
         } else {
             throw new LeadException("Lead Status Not Found");

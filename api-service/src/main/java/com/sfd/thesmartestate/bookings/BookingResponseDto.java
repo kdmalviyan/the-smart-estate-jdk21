@@ -4,7 +4,7 @@ import com.sfd.thesmartestate.customer.entities.Customer;
 import com.sfd.thesmartestate.lms.dto.LeadResponseDto;
 import com.sfd.thesmartestate.projects.dto.ProjectDTO;
 import com.sfd.thesmartestate.projects.inventory.Inventory;
-import com.sfd.thesmartestate.users.dtos.UserResponse;
+import com.sfd.thesmartestate.employee.dtos.UserResponse;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package com.sfd.thesmartestate.lms.entities;
 
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import org.hibernate.annotations.LazyCollection;
@@ -21,15 +21,15 @@ public class LeadAssignHistory implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = User.class)
-    private User assignedBy;
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = Employee.class)
+    private Employee assignedBy;
 
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = User.class)
-    private User assignedTo;
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = Employee.class)
+    private Employee assignedTo;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = User.class)
-    private User assignedFrom;
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = Employee.class)
+    private Employee assignedFrom;
 
 
     private LocalDateTime assignmentTime;

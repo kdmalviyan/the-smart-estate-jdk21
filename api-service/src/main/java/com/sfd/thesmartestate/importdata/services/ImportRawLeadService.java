@@ -6,8 +6,8 @@ import com.sfd.thesmartestate.importdata.dto.ImportResponseDto;
 import com.sfd.thesmartestate.importdata.dto.XlsLeadRowDto;
 import com.sfd.thesmartestate.lms.rawleads.RawLead;
 import com.sfd.thesmartestate.lms.rawleads.RawLeadService;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import static com.sfd.thesmartestate.importdata.services.ImportLeadServiceImpl.F
 public class ImportRawLeadService implements ImportLeadService {
     private final CustomerService customerService;
     private final RawLeadService rawLeadService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @Override
 
@@ -72,7 +72,7 @@ public class ImportRawLeadService implements ImportLeadService {
 
     private RawLeadImportData validateAndGenerateLeadData(List<XlsLeadRowDto> rows) {
         RawLeadImportData leadImportData = new RawLeadImportData();
-        User loggedInUser = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
 
         int rowNumber = 1;
         int rowsSkipped = 0;
@@ -93,7 +93,7 @@ public class ImportRawLeadService implements ImportLeadService {
             xlsRow.setRownum(rowNumber);
 
             if (Objects.isNull(rawLead)) {
-                RawLead rawLeadData = createRawLeadData(loggedInUser, xlsRow);
+                RawLead rawLeadData = createRawLeadData(loggedInEmployee, xlsRow);
                 rawLeadsToSave.add(rawLeadData);
             } else {
                 rowsSkipped++;
@@ -109,7 +109,7 @@ public class ImportRawLeadService implements ImportLeadService {
         return leadImportData;
     }
 
-    private RawLead createRawLeadData(User loggedInUser, XlsLeadRowDto xlsRow) {
+    private RawLead createRawLeadData(Employee loggedInEmployee, XlsLeadRowDto xlsRow) {
         RawLead rawLead = new RawLead();
         rawLead.setComment(xlsRow.getComment());
         rawLead.setLeadDate(LocalDate.now());

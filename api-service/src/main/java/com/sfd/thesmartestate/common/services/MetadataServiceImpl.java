@@ -9,8 +9,8 @@ import com.sfd.thesmartestate.lms.services.*;
 import com.sfd.thesmartestate.projects.dto.ProjectDTO;
 import com.sfd.thesmartestate.projects.services.InventoryStatusService;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.dtos.UserResponse;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.dtos.UserResponse;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class MetadataServiceImpl implements MetadataService {
     @Autowired
     private RoleService roleService;
     @Autowired
-    private UserService userService;
+    private EmployeeService employeeService;
     @Autowired
     private DeactivationReasonService deactivationReasonService;
     @Autowired
@@ -53,7 +53,7 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public UserResponse formatLoggedInUserResponse() {
-        return UserResponseMapper.mapToUserResponse(userService.findLoggedInUser());
+        return UserResponseMapper.mapToUserResponse(employeeService.findLoggedInEmployee());
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public List<UserResponse> fetchAllUsers() {
-        return userService.findAll().stream().map(UserResponseMapper::mapToUserResponse)
+        return employeeService.findAll().stream().map(UserResponseMapper::mapToUserResponse)
                 .sorted(Comparator.comparing(UserResponse::getName)).collect(Collectors.toList());
     }
 

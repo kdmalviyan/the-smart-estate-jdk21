@@ -11,18 +11,15 @@ import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.repositories.InventoryStatusRepository;
 import com.sfd.thesmartestate.projects.services.InventoryStatusService;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Transactional
 @Configuration
@@ -57,7 +54,8 @@ public class InitialDataLoader {
             "ROLE_ADMIN", "Admin",
             "ROLE_BUSINESS_EXECUTIVE", "Business Executive",
             "ROLE_BUSINESS_HEAD", "Business Head",
-            "ROLE_BUSINESS_MANAGER", "Business Manager");
+            "ROLE_BUSINESS_MANAGER", "Business Manager",
+            "ROLE_CUSTOMER", "Customer");
     private static final Map<String, String> initialInventorySize = Map.of(
             "4_bhk_+_servant_room", "4 BHK+servant room",
             "4_bhk", "4 BHK",
@@ -89,7 +87,7 @@ public class InitialDataLoader {
     final ProjectService projectService;
     final DeactivationReasonService deactivationReasonService;
     private final RoleService roleService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final LeadSourceRepository leadSourceRepository;
@@ -100,7 +98,7 @@ public class InitialDataLoader {
     private final InventoryStatusRepository inventoryStatusRepository;
 
     public InitialDataLoader(final RoleService roleService,
-                             final UserService userService,
+                             final EmployeeService employeeService,
                              final BCryptPasswordEncoder bCryptPasswordEncoder,
                              final LeadSourceService leadSourceService,
                              final LeadStatusService leadStatusService,
@@ -116,7 +114,7 @@ public class InitialDataLoader {
                              final DeactivationReasonRepository deactivationReasonRepository,
                              final InventoryStatusRepository inventoryStatusRepository) {
         this.roleService = roleService;
-        this.userService = userService;
+        this.employeeService = employeeService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.leadSourceService = leadSourceService;
         this.leadStatusService = leadStatusService;
@@ -154,25 +152,30 @@ public class InitialDataLoader {
     }
 
     private void loadUsers() {
-        if (userService.count() == 0) {
-            User superadmin = createUser("superadmin", bCryptPasswordEncoder.encode("Password@1"), "ROLE_SUPERADMIN");
-            userService.createUser(superadmin);
+        if (employeeService.count() == 0) {
+            Employee superadmin = createUser("superadmin", bCryptPasswordEncoder.encode("Password@1"), "ROLE_SUPERADMIN");
+            employeeService.createEmployee(superadmin);
         }
     }
 
-    private User createUser(String username, String password, String roleName) {
-        User user = new User();
-        user.setPassword(password);
-        user.setUsername(username);
-        user.setName("SuperAdmin");
-        user.setEmail("super@dupar@gmail.com");
-        user.setCreatedAt(LocalDateTime.now());
-        user.setGender("Male");
-        user.setSubordinates(new TreeSet<>());
-        user.setSupervisor(null);
-        user.setEnabled(true);
-        user.setRoles(Set.of(roleService.findByName(roleName)));
-        return user;
+    private Employee createUser(String username, String password, String roleName) {
+        Employee employee = new Employee();
+        employee.getLoginDetails().setPassword(password);
+        employee.getLoginDetails().setUsername(username);
+        String employeeUniqueId = UUID.randomUUID().toString();
+        employee.getLoginDetails().setEmployeeUniqueId(employeeUniqueId);
+        employee.setEmployeeUniqueId(employeeUniqueId);
+        employee.getLoginDetails().setRoles(Set.of(roleService.findByName(roleName)));
+        employee.getLoginDetails().setName("SuperAdmin");
+        employee.setName("SuperAdmin");
+        employee.setEmail("super@dupar@gmail.com");
+        employee.setCreatedAt(LocalDateTime.now());
+        employee.setGender("Male");
+        employee.setSubordinates(new TreeSet<>());
+        employee.setSupervisor(null);
+        employee.setActive(true);
+        employee.setRoles(Set.of(roleService.findByName(roleName)));
+        return employee;
     }
 
     private void loadRoles() {

@@ -4,6 +4,7 @@ import com.sfd.thesmartestate.multitenancy.tenants.Tenant;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,5 +22,9 @@ public class TenantCache {
     }
     public static Collection<Tenant> list() {
         return TENANTS.values();
+    }
+
+    public static void cacheTenant(List<Tenant> tenants) {
+        tenants.forEach(TenantCache::cacheTenant);
     }
 }

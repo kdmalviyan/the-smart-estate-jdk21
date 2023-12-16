@@ -16,4 +16,6 @@ public interface CustomerService {
     Customer findByPhone(String phone);
 
     Customer update(Customer customer);
+
+    Customer findByCustomerUniqueId(String customerUniqueId);
 }

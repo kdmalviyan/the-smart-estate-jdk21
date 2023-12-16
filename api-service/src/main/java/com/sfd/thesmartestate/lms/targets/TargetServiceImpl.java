@@ -4,10 +4,10 @@ import com.sfd.thesmartestate.common.LeadEvents;
 import com.sfd.thesmartestate.dashboard.dtos.TargetCountResponseDto;
 import com.sfd.thesmartestate.lms.exceptions.TargetException;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.services.UserService;
-import com.sfd.thesmartestate.users.teams.entities.Team;
-import com.sfd.thesmartestate.users.teams.services.TeamService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
+import com.sfd.thesmartestate.employee.teams.entities.Team;
+import com.sfd.thesmartestate.employee.teams.services.TeamService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,18 +27,18 @@ import java.util.stream.Collectors;
 
 public class TargetServiceImpl implements TargetService {
     private final TargetRepository repository;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final ProjectService projectService;
     private final TargetStatisticsHelper helper;
     private final TeamService teamService;
 
     @Override
     public Target create(Target target) {
-        User loggedInUser = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         target.setCreatedAt(LocalDateTime.now());
-        target.setCreatedBy(loggedInUser);
+        target.setCreatedBy(loggedInEmployee);
         if (Objects.isNull(target.getAssignedTo())) {
-            target.setAssignedTo(loggedInUser);
+            target.setAssignedTo(loggedInEmployee);
         }
         if ("weekly".equalsIgnoreCase(target.getDuration())) {
             LocalDate starDate = target.getStartDate();
@@ -55,7 +55,7 @@ public class TargetServiceImpl implements TargetService {
             target.setEndDate(endDate);
             target.setStartDate(starDateFirstDay);
         }
-        List<Target> targets = findByCreatedByAndStartDate(loggedInUser, target.getStartDate());
+        List<Target> targets = findByCreatedByAndStartDate(loggedInEmployee, target.getStartDate());
         if (targets.size() > 0) {
             throw new TargetException("Target for this range already Exists start-" + target.getStartDate() + " End Date-" + target.getEndDate());
         }
@@ -68,8 +68,8 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
-    public List<Target> findByCreatedByAndStartDate(User user, LocalDate startDate) {
-        return repository.findByCreatedByAndStartDate(user, startDate);
+    public List<Target> findByCreatedByAndStartDate(Employee employee, LocalDate startDate) {
+        return repository.findByCreatedByAndStartDate(employee, startDate);
     }
 
     @Override
@@ -78,20 +78,20 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
-    public Target findAndUpdateUserTarget(User user, LeadEvents leadEvent) {
+    public Target findAndUpdateUserTarget(Employee employee, LeadEvents leadEvent) {
         List<Target> targetList;
         Target targetToUpdate;
         // check weekly target present and update that target startday-sunday ,endday-sunday
         LocalDate starDateWeekly = LocalDate.now().with(DayOfWeek.MONDAY).minusDays(1);
         LocalDate endDateWeekly = LocalDate.now().with(DayOfWeek.SATURDAY).plusDays(1);
-        targetList = repository.findAllByCreatedByAndProjectAndStartDateGreaterThanEqualAndEndDateLessThanEqual(user, user.getProject(), starDateWeekly, endDateWeekly);
+        targetList = repository.findAllByCreatedByAndProjectAndStartDateGreaterThanEqualAndEndDateLessThanEqual(employee, employee.getProject(), starDateWeekly, endDateWeekly);
 
         //if no entry found for week then mark for this month
         if (targetList.isEmpty()) {
             YearMonth thisYearMonth = YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonth());
             LocalDate startDateMontly = thisYearMonth.atDay(1);
             LocalDate endDateMontly = thisYearMonth.atEndOfMonth();
-            targetList = repository.findAllByCreatedByAndProjectAndStartDateGreaterThanEqualAndEndDateLessThanEqual(user, user.getProject(), startDateMontly, endDateMontly);
+            targetList = repository.findAllByCreatedByAndProjectAndStartDateGreaterThanEqualAndEndDateLessThanEqual(employee, employee.getProject(), startDateMontly, endDateMontly);
         }
 
         // in case no week target found check for monthly target
@@ -115,24 +115,24 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<Target> findAll(boolean groupBy) {
-        User loggedImUser = userService.findLoggedInUser();
+        Employee loggedImEmployee = employeeService.findLoggedInEmployee();
         List<Target> targets;
-        if (loggedImUser.isSuperAdmin() || loggedImUser.isAdmin()) {
+        if (loggedImEmployee.isSuperAdmin() || loggedImEmployee.isAdmin()) {
             if (groupBy) {
                 targets = groupByProjectAndTarget(repository.findAll());
             } else {
                 targets = repository.findAll();
             }
         } else {
-            List<Team> teams = teamService.findTeamsByMemberIdAndIsActive(loggedImUser.getId(),true);
-            List<User> teamMembers;
+            List<Team> teams = teamService.findTeamsByMemberIdAndIsActive(loggedImEmployee.getId(),true);
+            List<Employee> teamMembers;
             //user is supervisor so fetch all subordinates targets
-            if (!teams.isEmpty() && teams.get(0).getSupervisor().getId().equals(loggedImUser.getId())) {
+            if (!teams.isEmpty() && teams.get(0).getSupervisor().getId().equals(loggedImEmployee.getId())) {
                 Team team = teams.get(0);
                 teamMembers = new ArrayList<>(team.getMembers());
                 targets = repository.findByCreatedByIn(teamMembers);
             } else {
-                targets = repository.findByCreatedBy(loggedImUser);
+                targets = repository.findByCreatedBy(loggedImEmployee);
             }
         }
         return targets;
@@ -145,8 +145,8 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getVisitsTargetCount() {
-        User loggedInUser = userService.findLoggedInUser();
-        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInUser);
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
+        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
             List<Target> targets = projectWiseTargets.get(projectName);
@@ -177,8 +177,8 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getVisitsWeeklyTargetCount() {
-        User loggedInUser = userService.findLoggedInUser();
-        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInUser);
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
+        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
             List<Target> targets = projectWiseTargets.get(projectName);
@@ -195,8 +195,8 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getVisitsMonthlyTargetCount() {
-        User loggedInUser = userService.findLoggedInUser();
-        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInUser);
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
+        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
             List<Target> targets = projectWiseTargets.get(projectName);
@@ -213,8 +213,8 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getBookingsTargetCount() {
-        User loggedInUser = userService.findLoggedInUser();
-        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInUser);
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
+        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
             List<Target> targets = projectWiseTargets.get(projectName);
@@ -243,8 +243,8 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getBookingsWeeklyTargetCount() {
-        User loggedInUser = userService.findLoggedInUser();
-        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInUser);
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
+        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
             List<Target> targets = projectWiseTargets.get(projectName);
@@ -261,8 +261,8 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getBookingsMonthlyTargetCount() {
-        User loggedInUser = userService.findLoggedInUser();
-        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInUser);
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
+        Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
             List<Target> targets = projectWiseTargets.get(projectName);

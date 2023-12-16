@@ -4,7 +4,7 @@ import com.sfd.thesmartestate.customer.entities.Customer;
 import com.sfd.thesmartestate.lms.calls.Call;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.projects.entities.Project;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -43,7 +43,7 @@ public class Lead implements Serializable, Cloneable {
 
     @ManyToOne
     @JoinColumn(name = "assignee_id")
-    private User assignedTo;
+    private Employee assignedTo;
 
     @ManyToOne
     @JoinColumn(name = "leadInventorySize_id")
@@ -66,14 +66,14 @@ public class Lead implements Serializable, Cloneable {
 
     @ManyToOne
     @JoinColumn(name = "updated_by_id")
-    private User updatedBy;
+    private Employee updatedBy;
 
     @Column(name = "last_updated_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime lastUpdateAt;
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = LeadAssignHistory.class)
     @OrderBy("assignmentTime DESC")

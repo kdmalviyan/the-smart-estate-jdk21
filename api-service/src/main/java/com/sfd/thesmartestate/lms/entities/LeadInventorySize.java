@@ -1,6 +1,6 @@
 package com.sfd.thesmartestate.lms.entities;
 
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -34,11 +34,11 @@ public class LeadInventorySize implements Serializable, Comparable<LeadInventory
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     @ManyToOne
     @JoinColumn(name = "updated_by_id")
-    private User updatedBy;
+    private Employee updatedBy;
 
     @Column(name="is_active")
     private Boolean active;

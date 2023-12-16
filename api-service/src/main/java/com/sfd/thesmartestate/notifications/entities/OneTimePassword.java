@@ -2,12 +2,11 @@ package com.sfd.thesmartestate.notifications.entities;
 
 import com.sfd.thesmartestate.notifications.enums.OTPTarget;
 import com.sfd.thesmartestate.notifications.enums.OTPType;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnTransformer;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -34,11 +33,11 @@ public class OneTimePassword implements Serializable, Comparable<OneTimePassword
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     @ManyToOne
     @JoinColumn(name = "updated_by_id")
-    private User updatedBy;
+    private Employee updatedBy;
 
 
     @Column(name = "created_at")

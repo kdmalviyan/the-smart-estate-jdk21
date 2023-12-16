@@ -6,10 +6,10 @@ import com.sfd.thesmartestate.lms.entities.Budget;
 import com.sfd.thesmartestate.lms.entities.Lead;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.rawleads.RawLead;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.services.UserService;
-import com.sfd.thesmartestate.users.teams.entities.Team;
-import com.sfd.thesmartestate.users.teams.services.TeamService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
+import com.sfd.thesmartestate.employee.teams.entities.Team;
+import com.sfd.thesmartestate.employee.teams.services.TeamService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class PageableFilterRequestHelper {
 
     private final EntityManager entityManager;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final TeamService teamService;
 
     private final BudgetHelper budgetHelper;
@@ -115,25 +115,25 @@ public class PageableFilterRequestHelper {
 
     private void buildWithAssignedTo(String assignedTo, PageableFilterDto.PageableFilterDtoBuilder leadPageableFiltersBuilder) {
         if (Objects.nonNull(assignedTo) && StringUtils.hasText(assignedTo)) {
-            User user = userService.findLoggedInUser();
-            if (user.isSuperAdmin() || user.isAdmin()) {
+            Employee employee = employeeService.findLoggedInEmployee();
+            if (employee.isSuperAdmin() || employee.isAdmin()) {
                 leadPageableFiltersBuilder.withAssignedTo(assignedTo);
             } else {
-                List<Team> team = teamService.findTeamsByMemberIdAndIsActive(user.getId(), true);
+                List<Team> team = teamService.findTeamsByMemberIdAndIsActive(employee.getId(), true);
                 // check if logged user is supervisor
                 if (!team.isEmpty()) {
                     long supervisorId;
                     supervisorId = team.stream().filter(Team::getIsActive).findFirst().get().getSupervisor().getId();
                     //used in case of filter
-                    if (supervisorId == user.getId()) {
+                    if (supervisorId == employee.getId()) {
                         leadPageableFiltersBuilder.withAssignedTo(assignedTo);
                     } else {
                         //in team but not supervisor
-                        leadPageableFiltersBuilder.withAssignedTo(user.getId().toString());
+                        leadPageableFiltersBuilder.withAssignedTo(employee.getId().toString());
                     }
                 } else {
                     //not supervisor and not in team so fetch logged in user leads only
-                    leadPageableFiltersBuilder.withAssignedTo(user.getId().toString());
+                    leadPageableFiltersBuilder.withAssignedTo(employee.getId().toString());
                 }
             }
         }
@@ -286,19 +286,19 @@ public class PageableFilterRequestHelper {
 
 
     private boolean isAssignedToFilterApplied(PageableFilterDto pageableFilterDto, StringBuilder queryBuilder, boolean searchTextApplied, boolean typeFilterApplied) {
-        User user = userService.findLoggedInUser();
-        if (user.isSuperAdmin() || user.isAdmin()) {
+        Employee employee = employeeService.findLoggedInEmployee();
+        if (employee.isSuperAdmin() || employee.isAdmin()) {
             return applyFilter(pageableFilterDto.getAssignedTo(),
                     typeFilterApplied
                             || searchTextApplied, queryBuilder, " l.assignedTo.id=");
         } else {
             return applyAssignedToFilterForNonAdmin(queryBuilder,
                     searchTextApplied || typeFilterApplied,
-                    pageableFilterDto, user);
+                    pageableFilterDto, employee);
         }
     }
 
-    private boolean applyAssignedToFilterForNonAdmin(StringBuilder queryBuilder, boolean filterApplied, PageableFilterDto pageableFilterDto, User user) {
+    private boolean applyAssignedToFilterForNonAdmin(StringBuilder queryBuilder, boolean filterApplied, PageableFilterDto pageableFilterDto, Employee employee) {
 
         if (Objects.nonNull(pageableFilterDto.getAssignedTo()) && StringUtils.hasText(pageableFilterDto.getAssignedTo())) {
 
@@ -307,7 +307,7 @@ public class PageableFilterRequestHelper {
             } else {
                 queryBuilder.append(" WHERE (");
             }
-            return fetchAssignedToForNonAdminUsers(queryBuilder, pageableFilterDto, user);
+            return fetchAssignedToForNonAdminUsers(queryBuilder, pageableFilterDto, employee);
         }
         return false;
 
@@ -318,21 +318,21 @@ public class PageableFilterRequestHelper {
      *
      * @param queryBuilder
      * @param pageableFilterDto
-     * @param user
+     * @param employee
      * @return
      */
-    private boolean fetchAssignedToForNonAdminUsers(StringBuilder queryBuilder, PageableFilterDto pageableFilterDto, User user) {
-        List<Team> teams = teamService.findTeamsByMemberIdAndIsActive(user.getId(), true);
+    private boolean fetchAssignedToForNonAdminUsers(StringBuilder queryBuilder, PageableFilterDto pageableFilterDto, Employee employee) {
+        List<Team> teams = teamService.findTeamsByMemberIdAndIsActive(employee.getId(), true);
         List<Long> teamMembers = new ArrayList<>();
 
         if (!teams.isEmpty()) {
             Team team = teams.stream().filter(Team::getIsActive).findFirst().get();
-            teamMembers = team.getMembers().stream().map(User::getId).collect(Collectors.toList());
+            teamMembers = team.getMembers().stream().map(Employee::getId).collect(Collectors.toList());
         }
         if (!teamMembers.isEmpty()) {
             long supervisorId = teams.get(0).getSupervisor().getId();
             //Supervisor and no filter applied so fetch all subordinated details
-            if (supervisorId == user.getId()
+            if (supervisorId == employee.getId()
                     && pageableFilterDto.getAssignedTo().equalsIgnoreCase("NO")) {
 
                 createAssignedToQuery(queryBuilder, teamMembers);
@@ -340,7 +340,7 @@ public class PageableFilterRequestHelper {
             } else {
                 Optional<Long> isSubordinate = teamMembers.stream().filter(userId -> pageableFilterDto.getAssignedTo().equals(userId.toString())).findAny();
                 // Leader applied filter for user which is not his subordinate so check for it ,in case of false
-                // show all his users list by default
+                // show all his employee list by default
                 if (isSubordinate.isPresent()) {
                     queryBuilder.append("l.assignedTo.id in(" + pageableFilterDto.getAssignedTo());
                 } else {
@@ -474,8 +474,8 @@ public class PageableFilterRequestHelper {
     }
 
     boolean applyDeactiveLeadsFilter(StringBuilder queryBuilder, boolean filterApplied) {
-        User loggedInUser = userService.findLoggedInUser();
-        if (!loggedInUser.isSuperAdmin() && !loggedInUser.isAdmin()) {
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
+        if (!loggedInEmployee.isSuperAdmin() && !loggedInEmployee.isAdmin()) {
             if (filterApplied) {
                 queryBuilder.append(" AND l.status.name !='DEACTIVE'");
             } else {

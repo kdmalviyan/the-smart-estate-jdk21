@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.lms.followups;
 
 import com.sfd.thesmartestate.lms.entities.Lead;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 
@@ -36,11 +36,11 @@ public class Followup implements Serializable, Comparable<Followup> {
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     @ManyToOne
     @JoinColumn(name = "updated_by_id")
-    private User updatedBy;
+    private Employee updatedBy;
 
     @Column(name = "created_at")
 

@@ -24,8 +24,8 @@ import com.sfd.thesmartestate.notifications.services.OTPService;
 import com.sfd.thesmartestate.notifications.web.EmailNotificationMessage;
 import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.User;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,7 @@ public class LeadServiceImpl implements LeadService {
     private final LeadUpdateService leadUpdateService;
     private final LeadRepository leadRepository;
     private final ProjectService projectService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final LeadStatusService leadStatusService;
     private final PageableFilterRequestHelper pageableFilterRequestHelper;
     private final DeactivationReasonService deactivationReasonService;
@@ -61,11 +61,11 @@ public class LeadServiceImpl implements LeadService {
 
     @Override
     public List<Lead> findAll() {
-        User user = userService.findLoggedInUser();
-        if (user.isAdmin() || user.isSuperAdmin()) {
+        Employee employee = employeeService.findLoggedInEmployee();
+        if (employee.isAdmin() || employee.isSuperAdmin()) {
             return leadRepository.findAll();
         }
-        return leadRepository.findByAssignedTo(user).stream()
+        return leadRepository.findByAssignedTo(employee).stream()
                 .filter(l -> !Constants.DEACTIVE.equalsIgnoreCase(l.getStatus().getName()))
                 .collect(Collectors.toList());
     }
@@ -135,11 +135,11 @@ public class LeadServiceImpl implements LeadService {
     }
 
     private TransferLeadResponse copy(TransferLeadDto transferLeadDto) {
-        User loggedInUser = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         log.info("Copying " + transferLeadDto.getLeadList() +
                 " leads to " + transferLeadDto.getProject()
                 + " all will be assigned to " + transferLeadDto.getAssignedTo().getUsername());
-        User assignedUser = userService.findById(transferLeadDto.getAssignedTo().getId());
+        Employee assignedEmployee = employeeService.findById(transferLeadDto.getAssignedTo().getId());
         Project project = projectService.findById(transferLeadDto.getProject().getId());
         TransferLeadResponse transferLeadResponse = new TransferLeadResponse();
         List<ErrorDto> errors = new ArrayList<>();
@@ -158,12 +158,12 @@ public class LeadServiceImpl implements LeadService {
             }
 
             lead.setId(null);
-            lead.setAssignedTo(assignedUser);
+            lead.setAssignedTo(assignedEmployee);
             lead.setProject(project);
             lead.setComments(new HashSet<>());
             lead.setCreatedAt(LocalDateTime.now());
-            lead.setCreatedBy(loggedInUser);
-            lead.setUpdatedBy(loggedInUser);
+            lead.setCreatedBy(loggedInEmployee);
+            lead.setUpdatedBy(loggedInEmployee);
             lead.setLastUpdateAt(LocalDateTime.now());
             lead.setLeadAssignHistory(new HashSet<>());
             lead.setCalls(new HashSet<>());
@@ -196,16 +196,16 @@ public class LeadServiceImpl implements LeadService {
                     errors.add(new ErrorDto("Already present in system for given Project and customer ::" + currentLead.getCustomer().getPhone() + " and assigned to given user skipping record", "IGNORED", -1, currentLead.getId()));
                 } else {
                     // assignee is not same so assign to given customer
-                    User assignedUser = userService.findById(transferLeadDto.getAssignedTo().getId());
-                    currentLead.setAssignedTo(assignedUser);
+                    Employee assignedEmployee = employeeService.findById(transferLeadDto.getAssignedTo().getId());
+                    currentLead.setAssignedTo(assignedEmployee);
                     currentLead.setStatus(leadStatusService.findByName(Constants.ACTIVE));
                     updatedLead.add(leadUpdateService.update(currentLead, leadEvent));
                 }
             } else {
                 // Lead is not present in the given project so change the project of lead and assign the user
-                User assignedUser = userService.findById(transferLeadDto.getAssignedTo().getId());
+                Employee assignedEmployee = employeeService.findById(transferLeadDto.getAssignedTo().getId());
                 Project project = projectService.findById(transferLeadDto.getProject().getId());
-                currentLead.setAssignedTo(assignedUser);
+                currentLead.setAssignedTo(assignedEmployee);
                 currentLead.setProject(project);
                 currentLead.setStatus(leadStatusService.findByName(Constants.ACTIVE));
                 updatedLead.add(leadUpdateService.update(currentLead, leadEvent));
@@ -238,7 +238,7 @@ public class LeadServiceImpl implements LeadService {
         lead.setStatus(leadStatusService.findByName(Constants.DEACTIVE));
         lead.setDeactivationReason(deactivationReasonService.findById(deactivateLeadDto.getDeactivationReason().getId()));
         Comment comment = deactivateLeadDto.getComment();
-        comment.setCreatedBy(userService.findLoggedInUser());
+        comment.setCreatedBy(employeeService.findLoggedInEmployee());
         comment.setCreatedAt(LocalDateTime.now());
         comment.setCommentType("De-Active");
         lead.getComments().add(comment);
@@ -247,32 +247,32 @@ public class LeadServiceImpl implements LeadService {
 
     @Override
     public Long findAllCount() {
-        User loggedInUser = userService.findLoggedInUser();
-        if (loggedInUser.isSuperAdmin() || loggedInUser.isAdmin()) {
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
+        if (loggedInEmployee.isSuperAdmin() || loggedInEmployee.isAdmin()) {
             return leadRepository.count();
         }
-        return leadRepository.countByAssignee(loggedInUser.getId());
+        return leadRepository.countByAssignee(loggedInEmployee.getId());
     }
 
     @Override
     public Long findCountByAllActiveStatus() {
-        User loggedInUser = userService.findLoggedInUser();
-        if (loggedInUser.isSuperAdmin() || loggedInUser.isAdmin()) {
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
+        if (loggedInEmployee.isSuperAdmin() || loggedInEmployee.isAdmin()) {
             return leadRepository.findCountByStatusForAllActives();
         }
-        return leadRepository.countByAssigneeAndAllActiveStatus(loggedInUser.getId());
+        return leadRepository.countByAssigneeAndAllActiveStatus(loggedInEmployee.getId());
     }
 
     @Override
     public ResponseDto generateOtpToDownloadLeads() {
         log.info("Creating OTP for password change");
         String otp = otpService.generateOTP();
-        User user = userService.findLoggedInUser();
+        Employee employee = employeeService.findLoggedInEmployee();
 
-        otpService.saveOneTimePassword(userService.findLoggedInUser(), otp, OTPTarget.EMAIL, OTPType.DOWNLOAD_REPORT);
+        otpService.saveOneTimePassword(employeeService.findLoggedInEmployee(), otp, OTPTarget.EMAIL, OTPType.DOWNLOAD_REPORT);
 
         String message = "Dear User! Your OTP for Download leads  is here. " + otp +
-                " This is valid for 15 min." + " OTP generated by user - " + user.getName();
+                " This is valid for 15 min." + " OTP generated by user - " + employee.getName();
         String subject = "OTP: Download Leads";
         boolean isTransactional = true;
 
@@ -284,13 +284,13 @@ public class LeadServiceImpl implements LeadService {
 
     @Override
     public OneTimePassword validateOtpDownloadLeadReport(String otp) {
-        User user = userService.findLoggedInUser();
-        return validateOTP(user, otp);
+        Employee employee = employeeService.findLoggedInEmployee();
+        return validateOTP(employee, otp);
     }
 
-    public OneTimePassword validateOTP(User user, String oneTimePassword) {
-        log.info("Validating OPT for password change for " + user.getUsername());
-        OneTimePassword otp = otpService.findByUsername(user.getUsername());
+    public OneTimePassword validateOTP(Employee employee, String oneTimePassword) {
+        log.info("Validating OPT for password change for " + employee.getUsername());
+        OneTimePassword otp = otpService.findByUsername(employee.getUsername());
         otpService.checkOtpUsed(otp);
         otpService.checkOtpValue(oneTimePassword, otp);
         otpService.checkOtpExpired(otp);

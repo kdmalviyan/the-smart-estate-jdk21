@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.notifications.entities;
 
 import com.sfd.thesmartestate.notifications.enums.NotificationType;
-import com.sfd.thesmartestate.users.entities.User;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -32,11 +32,11 @@ public class Notification implements Serializable, Comparable<Notification> {
 
     @ManyToOne
     @JoinColumn(name = "created_by_id")
-    private User createdBy;
+    private Employee createdBy;
 
     @ManyToOne
     @JoinColumn(name = "updated_by_id")
-    private User updatedBy;
+    private Employee updatedBy;
 
 
     @Column(name = "created_at")
