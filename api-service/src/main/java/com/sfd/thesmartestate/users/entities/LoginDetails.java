@@ -26,7 +26,6 @@ public class LoginDetails implements UserDetails {
 
     private String username;
 
-    @JsonIgnore
     private String password;
 
     private String employeeUniqueId;

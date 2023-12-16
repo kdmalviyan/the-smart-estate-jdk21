@@ -23,7 +23,7 @@ public class CustomerController {
         return ResponseEntity.ok(vendors);
     }
 
-    @PostMapping
+    @PostMapping("signup")
     public ResponseEntity<Customer> create(@RequestBody Customer customer) {
         return ResponseEntity.ok(customerService.create(customer));
     }

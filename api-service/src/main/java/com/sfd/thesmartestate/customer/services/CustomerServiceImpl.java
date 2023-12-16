@@ -2,40 +2,57 @@ package com.sfd.thesmartestate.customer.services;
 
 import com.sfd.thesmartestate.customer.entities.Customer;
 import com.sfd.thesmartestate.customer.repositories.CustomerRepository;
-import lombok.AllArgsConstructor;
+import com.sfd.thesmartestate.users.entities.LoginDetails;
+import com.sfd.thesmartestate.users.services.LoginDetailsService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
-    private CustomerRepository customerRepository;
-
+    private final CustomerRepository repository;
+    private final LoginDetailsService loginDetailsService;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public List<Customer> findAll() {
-        return customerRepository.findAll();
+        return repository.findAll();
     }
 
     @Override
     public Customer create(Customer customer) {
-        return customerRepository.saveAndFlush(customer);
+        LoginDetails loginDetails = loginDetailsService
+                .findByUsername(customer.getLoginDetails().getUsername());
+
+        if(Objects.isNull(loginDetails)){
+            String customerUniqueId = UUID.randomUUID().toString();
+            customer.setCustomerUniqueId(customerUniqueId);
+            customer.getLoginDetails().setCustomerUniqueId(customerUniqueId);
+            customer.getLoginDetails()
+                    .setPassword(passwordEncoder.encode(customer.getLoginDetails().getPassword()));
+            return repository.saveAndFlush(customer);
+        }
+        return repository.findByCustomerUniqueId(loginDetails.getCustomerUniqueId());
     }
 
     @Override
     public void saveAll(Collection<Customer> customers) {
-        customerRepository.saveAll(customers);
+        repository.saveAll(customers);
     }
 
     @Override
     public Customer findByPhone(String phone) {
-        return customerRepository.findByPhone(phone).orElse(null);
+        return repository.findByPhone(phone).orElse(null);
     }
 
     @Override
     public Customer update(Customer customer) {
-        return customerRepository.saveAndFlush(customer);
+        return repository.saveAndFlush(customer);
     }
 
 }
