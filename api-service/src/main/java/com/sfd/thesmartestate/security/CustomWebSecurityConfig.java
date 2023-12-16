@@ -44,7 +44,6 @@ public class CustomWebSecurityConfig {
     private final TenantFilter tenantFilter;
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ApplicationContext applicationContext;
 
     @Value("#{'${public.urls}'.split(',')}")
     private List<String> publicUrls;
@@ -58,7 +57,6 @@ public class CustomWebSecurityConfig {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.tenantFilter = tenantFilter;
-        this.applicationContext = applicationContext;
     }
 
     @Bean

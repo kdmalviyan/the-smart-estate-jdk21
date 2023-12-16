@@ -75,6 +75,7 @@
         span {
           // margin: 7px 3px 7px 0;
         }
+        /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.*/
         .mat-button-wrapper {
           margin: 7px 0 7px 12px;
         }
@@ -133,7 +134,7 @@
       padding-right: 0px;
     }
   }
-  .mat-radio-button ~ .mat-radio-button {
+  .mat-mdc-radio-button ~ .mat-radio-button {
     margin-right: 16px;
   }
   @media (min-width: 768px) {

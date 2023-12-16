@@ -1,0 +1,33 @@
+server:
+  port: 9093
+  servlet:
+    context-path: /tenant
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/tenants_db?createDatabaseIfNotExist=true
+    username: root
+    password: Admin@123
+  jpa:
+    hibernate:
+      ddl-auto: update
+      show-sql: true
+    properties:
+      hibernate:
+        default_schema: sfd-schema
+
+tenant:
+  filepath: "tenants/config.json"
+  tenantsSchemaPath: "tenants/schema/sfd-tenant-schema.sql"
+  default:
+    aws:
+      bucket: www.data.thesmartestate.com
+    project:
+      bench:
+        email: info@softforgedata.com
+aws:
+  s3:
+    region: us-east-1
+    upload-bucket: www.data.thesmartestate.com/documents
+    database-backup: www.data.thesmartestate.com/db_backup

@@ -905,11 +905,15 @@
   }
 
   /* Material Design Form style */
-
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of checkbox that may no longer apply for the MDC version.
+ */
   .mat-checkbox-frame {
     border-color: #96a2b4;
   }
-
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of radio that may no longer apply for the MDC version.
+ */
   .mat-radio-outer-circle {
     border-color: #96a2b4;
   }
@@ -929,14 +933,16 @@
 
     .actions {
       background-color: #12161f;
-
+      /*
+ TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.
+ */
       .mat-button-wrapper {
         .material-icons {
           color: white;
         }
       }
 
-      .mat-stroked-button:not([disabled]) {
+      .mat-mdc-outlined-button:not([disabled]) {
         border-color: rgba(255, 255, 255, 0.37);
       }
     }
@@ -945,34 +951,47 @@
   .mat-datepicker-toggle {
     color: #96a2b4;
   }
-
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version.
+ */
   .mat-select-value {
     color: #96a2b4;
   }
 
   .mat-form-field-appearance-legacy {
-    .mat-hint {
+    .mat-mdc-form-field-hint {
       color: #96a2b4;
     }
-
+    /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
     .mat-form-field-label {
       color: #96a2b4;
     }
-
+    /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
     .mat-form-field-underline {
       background-color: #96a2b4;
     }
   }
 
   .mat-form-field-appearance-outline {
+    /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
     .mat-form-field-outline-thick {
       color: #b7b7b7;
     }
-
+    /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
     .mat-form-field-outline {
       color: #96a2b4;
     }
-
+    /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
     &.mat-focused .mat-form-field-outline-thick {
       color: #bbb;
     }
@@ -997,11 +1016,15 @@
   .mat-stepper-horizontal-line {
     border-top-color: rgba(255, 255, 255, 0.12);
   }
-
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
   .mat-form-field-ripple {
     background-color: #96a2b4;
   }
-
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version.
+ */
   .mat-select-arrow {
     color: #96a2b4;
   }
@@ -1010,51 +1033,60 @@
     caret-color: #96a2b4;
   }
 
-  .mat-input-element {
+  .mat-mdc-input-element {
     caret-color: #96a2b4;
   }
 
-  .mat-hint {
+  .mat-mdc-form-field-hint {
     color: #96a2b4;
   }
 
-  .mat-table {
+  .mat-mdc-table {
     background: #1a202e;
   }
 
-  .mat-cell {
+  .mat-mdc-cell {
     color: #96a2b4;
     border-bottom-color: rgba(234, 229, 229, 0.12);
   }
 
-  .mat-footer-cell {
+  .mat-mdc-footer-cell {
     color: #96a2b4;
   }
 
-  .mat-header-cell {
+  .mat-mdc-header-cell {
     color: #96a2b4;
     border-bottom: 1px solid #66757d;
     border-top: 1px solid #66757d;
   }
 
-  .mat-paginator {
+  .mat-mdc-paginator {
     color: #96a2b4;
     background: #1a202e;
   }
-
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
   .mat-form-field-type-mat-native-select .mat-form-field-infix::after {
     color: #96a2b4;
   }
-
-  .mat-form-field.mat-focused .mat-form-field-label {
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
+  .mat-mdc-form-field.mat-focused .mat-form-field-label {
     color: #bbb;
   }
 
   .mat-form-field-appearance-fill {
+    /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
     .mat-form-field-flex {
       background-color: rgba(0, 0, 0, 0.25);
     }
-
+    /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
     .mat-form-field-underline::before {
       background-color: #96a2b4;
     }
@@ -1063,12 +1095,14 @@
   .mat-step-header .mat-step-label.mat-step-label-active {
     color: #96a2b4;
   }
-
-  .mat-paginator-page-size .mat-select-trigger {
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version.
+ */
+  .mat-mdc-paginator-page-size .mat-select-trigger {
     color: #96a2b4;
   }
 
-  .mat-dialog-container {
+  .mat-mdc-dialog-container {
     background: #1a202e;
     color: #96a2b4;
   }
@@ -1087,20 +1121,22 @@
     color: #96a2b4;
   }
 
-  .mat-card {
+  .mat-mdc-card {
     background: #12161f;
     color: #96a2b4;
   }
 
-  .mat-card-subtitle {
+  .mat-mdc-card-subtitle {
+    color: #96a2b4;
+  }
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of list that may no longer apply for the MDC version.
+ */
+  .mat-mdc-list-base .mat-list-option {
     color: #96a2b4;
   }
 
-  .mat-list-base .mat-list-option {
-    color: #96a2b4;
-  }
-
-  .mat-list-base .mat-list-item {
+  .mat-mdc-list-base .mat-mdc-list-item {
     color: #96a2b4;
   }
 
@@ -1117,9 +1153,11 @@
       background-color: rgba(10, 10, 10, 0.5);
     }
   }
-
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version.
+ */
   .mat-tab-label,
-  .mat-tab-link {
+  .mat-mdc-tab-link {
     color: #96a2b4;
   }
 
@@ -1159,11 +1197,11 @@
     }
   }
 
-  .mat-menu-panel {
+  .mat-mdc-menu-panel {
     background: #12161f;
   }
 
-  .mat-menu-item {
+  .mat-mdc-menu-item {
     color: #96a2b4;
 
     .mat-icon {
@@ -1171,7 +1209,7 @@
     }
   }
 
-  .mat-menu-item-submenu-trigger::after {
+  .mat-mdc-menu-item-submenu-trigger::after {
     color: #96a2b4;
   }
 
@@ -1202,15 +1240,15 @@
     }
   }
 
-  .mat-select-panel {
+  .mat-mdc-select-panel {
     background: #12161f;
     color: #b8bbbd;
 
-    .mat-option {
+    .mat-mdc-option {
       color: #b8bbbd;
     }
 
-    .mat-option.mat-active {
+    .mat-mdc-option.mat-active {
       color: #b8bbbd;
       background: rgba(0, 0, 0, 0.4);
     }
@@ -1219,11 +1257,18 @@
   .mat-pseudo-checkbox {
     color: #b8bbbd;
   }
-
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of autocomplete that may no longer apply for the MDC version.
+ */
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of autocomplete that may no longer apply for the MDC version.
+ */
   .mat-autocomplete-panel {
     background: #12161f;
     color: #b8bbbd;
-
+    /*
+ TODO(mdc-migration): The following rule targets internal classes of option that may no longer apply for the MDC version.
+ */
     .mat-option-text {
       color: #b8bbbd;
     }
@@ -1251,13 +1296,13 @@
     color: #96a2b4 !important;
   }
 
-  .mat-button[disabled],
-  .mat-icon-button[disabled],
-  .mat-stroked-button[disabled],
-  .mat-flat-button[disabled],
-  .mat-raised-button[disabled],
-  .mat-fab[disabled],
-  .mat-mini-fab[disabled],
+  .mat-mdc-button[disabled],
+  .mat-mdc-icon-button[disabled],
+  .mat-mdc-outlined-button[disabled],
+  .mat-mdc-unelevated-button[disabled],
+  .mat-mdc-raised-button[disabled],
+  .mat-mdc-fab[disabled],
+  .mat-mdc-mini-fab[disabled],
   .mat-flat-button[disabled],
   .mat-raised-button[disabled],
   .mat-fab[disabled],
@@ -1269,7 +1314,7 @@
     color: rgba(255, 255, 255, 0.23);
   }
 
-  .mat-stroked-button:not([disabled]) {
+  .mat-mdc-outlined-button:not([disabled]) {
     border-color: rgba(255, 255, 255, 0.3);
   }
 
@@ -1277,7 +1322,7 @@
     background: #12161f;
   }
 
-  .mat-row {
+  .mat-mdc-row {
     border-bottom-color: rgba(255, 255, 255, 0.12);
   }
   .material-icons-two-tone {
@@ -1315,6 +1360,9 @@
     background: #11141b;
     border: 1px solid #11141b;
   }
+  /*
+ TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.
+ */
   .mat-form-field-prefix,
   .mat-form-field-suffix {
     color: #96a2b4;

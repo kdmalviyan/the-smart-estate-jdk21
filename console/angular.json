@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "atrio": {
+    "sfdrealestate": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -76,18 +76,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "atrio:build"
+            "browserTarget": "sfdrealestate:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "atrio:build:production"
+              "browserTarget": "sfdrealestate:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "atrio:build"
+            "browserTarget": "sfdrealestate:build"
           }
         },
         "test": {
@@ -112,7 +112,7 @@
         }
       }
     },
-    "atrio-e2e": {
+    "sfdrealestate-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -121,11 +121,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "atrio:serve"
+            "devServerTarget": "sfdrealestate:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "atrio:serve:production"
+              "devServerTarget": "sfdrealestate:serve:production"
             }
           }
         }

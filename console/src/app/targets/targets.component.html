@@ -28,8 +28,8 @@
                       </mat-slide-toggle>
                     </li>
                     <li>
-                      <div class="icon-button-demo">
-                        <button (click)='addTarget()'   mat-mini-fab  >
+                      <div class="icon-button-demo" [hidden]="isAdminOrSuperAdmin()">
+                        <button (click)='addTarget()' mat-mini-fab  >
                           <mat-icon class="col-white">add</mat-icon>
                         </button>
                       </div>

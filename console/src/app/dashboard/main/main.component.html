@@ -4,20 +4,19 @@
     <!-- Widgets -->
     <div class="row">
       <div class="col-lg-3 col-sm-6">
-        <mat-card style="border-radius: 35px;"  (click)="goToTotalLead()" class="mat-elevation-z8 tile-card height margin-bottom">
-          <div class="info-box7-block tile">
+        <div class="info-box7 l-bg-card2 order-info-box7" (click)="goToTotalLead()">
+          <div class="info-box7-block">
             <h4 class="m-b-20 heading">Total Lead</h4>
-
             <h2 class="text-end"><i class="fas fa-chart-line float-start"></i><span>{{totalLeads?.count}}</span></h2>
-
             <!-- <p class="m-b-0">18% Higher Then Last Month</p> -->
           </div>
-        </mat-card>
+        </div>  
+
       </div>
 
       <div class="col-lg-3 col-sm-6">
-        <!-- <div class="info-box7 l-bg-purple order-info-box7"> -->
-          <mat-card  style="border-radius: 35px;" (click)="goToActiveLead()" class="mat-elevation-z8 tile-card height margin-bottom">
+         <div class="info-box7 l-bg-purple order-info-box7" (click)="goToActiveLead()"> 
+          <!-- <mat-card  appearance="outlined"  style="border-radius: 35px;"  class="mat-elevation-z8 tile-card height margin-bottom"> -->
           <div class="info-box7-block tile">
             <h4 class="m-b-20 heading">Total Active Leads</h4>
 
@@ -26,82 +25,83 @@
 
             <!-- <p class="m-b-0">21% Higher Then Last Month</p> -->
           </div>
-          <!--  </div> -->
-        </mat-card>
+           </div>
+        <!-- </mat-card> -->
       </div>
 
       <div class="col-lg-3 col-sm-6">
-        <!--  <div class="info-box7 l-bg-orange order-info-box7"> -->
-          <mat-card  style="border-radius: 35px;" (click)="goToFollowup()" class="mat-elevation-z8 tile-card height margin-bottom">
+         <div class="info-box7 l-bg-orange order-info-box7">
+          <!-- <mat-card  appearance="outlined"  style="border-radius: 35px;" (click)="goToFollowup()" class="mat-elevation-z8 tile-card height margin-bottom"> -->
           <div class="info-box7-block tile">
             <h4 class="m-b-20 heading">Today's Followup</h4>
 
             <h2 class="text-end"><i class="fas fa-comments float-start"></i><span>{{followUps?.count}}</span>
             </h2>
-
-            <!-- <p class="m-b-0">37% Higher Then Last Month</p> -->
           </div>
-          <!-- </div> -->
-        </mat-card>
+          </div>
+        <!-- </mat-card> -->
       </div>
 
       <div class="col-lg-3 col-sm-6">
-        <!-- <div class="info-box7 l-bg-card1 order-info-box7"> -->
-          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height margin-bottom">
+        <div class="info-box7 l-bg-card1 order-info-box7">
+          <!-- <mat-card  appearance="outlined"  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height margin-bottom"> -->
           <div class="info-box7-block tile">
             <h4 class="m-b-20 heading">Today's Meeting</h4>
             <h2 class="text-end"><i class="fas fa-business-time float-start"></i><span>0</span></h2>
             <!-- <p class="m-b-0">10% Higher Then Last Month</p> -->
           </div>
-          <!-- </div> -->
-        </mat-card>
+          </div>
+        <!-- </mat-card> -->
       </div>
     </div>
     <div class="row">
       <div class="col-lg-3 col-sm-6">
-          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height">
+        <div class="info-box7 l-bg-card2 order-info-box7">
+
+          <!-- <mat-card  appearance="outlined"  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height"> -->
           <div class="info-box7-block tile">
-            <h4 class="m-b-20 heading">Performance & Ranking</h4>
+            <h4 class="m-b-20 heading">Performance</h4>
             <h2 class="text-end"><i class="fas fa-star float-start"></i><span>0</span></h2>
             <!--  <p class="m-b-0">18% Higher Then Last Month</p> -->
           </div>
-        </mat-card>
+        <!-- </mat-card> -->
+        </div>
       </div>
 
       <div class="col-lg-3 col-sm-6">
-        <!-- <div class="info-box7 l-bg-purple order-info-box7"> -->
-          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height">
+        <div class="info-box7 l-bg-purple order-info-box7">
+          <!-- <mat-card  appearance="outlined"  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height"> -->
           <div class="info-box7-block tile">
             <h4 class="m-b-20 heading">Follow-Up Ranking</h4>
             <h2 class="text-end"><i class="fas fa-star float-start"></i><span>0</span></h2>
             <!-- <p class="m-b-0">21% Higher Then Last Month</p> -->
           </div>
-          <!--  </div> -->
-        </mat-card>
+           </div>
+        <!-- </mat-card> -->
       </div>
 
       <div class="col-lg-3 col-sm-6">
-        <!--  <div class="info-box7 l-bg-orange order-info-box7"> -->
-          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height">
+         <div class="info-box7 l-bg-orange order-info-box7">
+          <!-- <mat-card  appearance="outlined"  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height"> -->
           <div class="info-box7-block tile">
-            <h4 class="m-b-20 heading">Weekly Target(Visit)</h4>
+            <h4 class="m-b-20 heading">Weekly Target (Visit)</h4>
             <h2 class="text-end"><i class="fas fa-crosshairs float-start"></i><span>{{weeklyTargetSitevisit}}</span></h2>
             <!-- <p class="m-b-0">37% Higher Then Last Month</p> -->
           </div>
-          <!-- </div> -->
-        </mat-card>
+          </div>
+        <!-- </mat-card> -->
       </div>
 
       <div class="col-lg-3 col-sm-6">
-        <!-- <div class="info-box7 l-bg-card1 order-info-box7"> -->
-          <mat-card  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height">
+        <div class="info-box7 l-bg-card1 order-info-box7">
+          <!-- <mat-card  appearance="outlined"  style="border-radius: 35px;" class="mat-elevation-z8 tile-card height"> -->
           <div class="info-box7-block tile">
-            <h4 class="m-b-20 heading">Weekly Target(Booking)</h4>
+            <h4 class="m-b-20 heading"> Target (Booking)</h4>
             <h2 class="text-end"><i class="fas fa-bullseye float-start"></i><span>{{weeklyTargetBooking}}</span></h2>
             <!--  <p class="m-b-0">10% Higher Then Last Month</p> -->
           </div>
-          <!-- </div> -->
-        </mat-card>
+          </div>
+        <!-- </mat-card> -->
       </div>
     </div>
     <br>
