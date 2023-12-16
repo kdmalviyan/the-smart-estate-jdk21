@@ -32,10 +32,10 @@ public class DataSourceConfig {
 
     @Bean
     public DataSource dataSource() {
-        List<Tenant> tenants = tenantAWSService.loadTenants();
-//        List.of(
-//                createLocalTenant()
-//        );//For testing only;
+        //List<Tenant> tenants = tenantAWSService.loadTenants();
+        List<Tenant> tenants = List.of(
+                createLocalTenant()
+        );//For testing only;
         createDatasourceMap(tenants);
         TenantRoutingDataSource routingDataSource = new TenantRoutingDataSource();
         routingDataSource.setTargetDataSources(targetDataSources);
@@ -72,6 +72,7 @@ public class DataSourceConfig {
     }
 
     private DataSource createDataSource(final Tenant tenant) {
+        TenantCache.cacheTenant(tenant);
         return DataSourceBuilder.
                 create()
                 .password(tenant.getDbPassword())
