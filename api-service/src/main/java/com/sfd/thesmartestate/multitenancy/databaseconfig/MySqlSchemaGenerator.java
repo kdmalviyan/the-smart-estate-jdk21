@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +26,6 @@ import java.util.Objects;
 @Component
 @Slf4j
 public class MySqlSchemaGenerator implements SchemaGenerator {
-    private final ResourceLoader resourceLoader;
     private final FileService fileService;
     private final PasswordEncoder passwordEncoder;
 
@@ -38,10 +36,8 @@ public class MySqlSchemaGenerator implements SchemaGenerator {
     @Value("${tenant.run-db-scripts}")
     private boolean runDbScripts;
 
-    public MySqlSchemaGenerator(final ResourceLoader resourceLoader,
-                                final FileService fileService,
+    public MySqlSchemaGenerator(final FileService fileService,
                                 final PasswordEncoder passwordEncoder) {
-        this.resourceLoader = resourceLoader;
         this.fileService = fileService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -90,14 +86,12 @@ public class MySqlSchemaGenerator implements SchemaGenerator {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tb_employees");
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
-                String username = resultSet.getString("username");
-                return Objects.nonNull(username);
-            }
+            resultSet.next();
+            String username = resultSet.getString("username");
+            return Objects.nonNull(username);
         } catch (SQLException e) {
             return false;
         }
-        return false;
     }
 
     private void executeDatabaseScript(Connection connection) throws IOException {
