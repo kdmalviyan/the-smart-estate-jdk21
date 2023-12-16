@@ -62,7 +62,7 @@ public class MySqlSchemaGenerator implements SchemaGenerator {
     }
 
     private void createTenantSuperadmin(Connection connection, Tenant tenant) throws SQLException {
-        final String USER_INSERT = "INSERT INTO `tb_users` " +
+        final String USER_INSERT = "INSERT INTO `tb_employees` " +
                 "VALUES (1,NULL,NULL,'" +
                 LocalDateTime.now() +  "',NULL," +
                 "'super@dupar@gmail.com',true," +
@@ -81,7 +81,7 @@ public class MySqlSchemaGenerator implements SchemaGenerator {
 
     private boolean isDatabaseAlreadyExists(Connection connection) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tb_users");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM tb_employees");
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             String username = resultSet.getString("username");
