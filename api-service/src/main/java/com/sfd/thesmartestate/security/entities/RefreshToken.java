@@ -23,9 +23,9 @@ public class RefreshToken {
     @JsonIgnore
     private Employee employee;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "refresh_token", length = 5000)
     private String token;
 
-    @Column(nullable = false)
+    @Column(name = "expiry_date")
     private LocalDateTime expiryDate;
 }

@@ -55,4 +55,9 @@ public class CustomerServiceImpl implements CustomerService {
         return repository.saveAndFlush(customer);
     }
 
+    @Override
+    public Customer findByCustomerUniqueId(String customerUniqueId) {
+        return repository.findByCustomerUniqueId(customerUniqueId);
+    }
+
 }

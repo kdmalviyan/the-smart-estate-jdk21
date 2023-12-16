@@ -32,6 +32,12 @@ public class Customer implements Serializable, Comparable<Customer> {
     @Column(name = "customer_unique_id")
     private String customerUniqueId;
 
+    @Column(name = "profile_image_thumb_path")
+    private String profileImageThumbPath;
+
+    @Column(name = "profile_image_path")
+    private String profileImagePath;
+
     @Override
     public int compareTo(Customer o) {
         return this.getPhone().compareTo(o.getPhone());
