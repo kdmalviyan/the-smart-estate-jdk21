@@ -2,7 +2,7 @@ package com.sfd.thesmartestate.common.controllers;
 
 import com.sfd.thesmartestate.common.services.MetadataService;
 import com.sfd.thesmartestate.uipermissions.PermissionTab;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class MetadataController {
 
     private final MetadataService metadataService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @GetMapping("")
     private ResponseEntity<?> loadMetadata() {
@@ -50,7 +50,7 @@ public class MetadataController {
     @GetMapping("sidemenuPermission")
     public ResponseEntity<List<PermissionTab>> getUiPermissions() {
         List<PermissionTab> permissionTabs = new ArrayList<>();
-        userService.findLoggedInUser()
+        employeeService.findLoggedInEmployee()
                 .getRoles()
                 .forEach(role -> permissionTabs.addAll(role.getUiPermissions().stream()
                         .filter(PermissionTab::isTopMenu)
@@ -62,7 +62,7 @@ public class MetadataController {
     @GetMapping("allTabs")
     public ResponseEntity<List<PermissionTab>> getAllTabs() {
         List<PermissionTab> permissionTabs = new ArrayList<>();
-        userService.findLoggedInUser()
+        employeeService.findLoggedInEmployee()
                 .getRoles()
                 .forEach(role -> permissionTabs.addAll(role.getUiPermissions().stream()
                         .filter(PermissionTab::isTopMenu)

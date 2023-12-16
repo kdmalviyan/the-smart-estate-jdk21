@@ -7,7 +7,7 @@ import com.sfd.thesmartestate.lms.entities.Lead;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.rawleads.RawLead;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import com.sfd.thesmartestate.users.teams.entities.Team;
 import com.sfd.thesmartestate.users.teams.services.TeamService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class PageableFilterRequestHelper {
 
     private final EntityManager entityManager;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final TeamService teamService;
 
     private final BudgetHelper budgetHelper;
@@ -115,7 +115,7 @@ public class PageableFilterRequestHelper {
 
     private void buildWithAssignedTo(String assignedTo, PageableFilterDto.PageableFilterDtoBuilder leadPageableFiltersBuilder) {
         if (Objects.nonNull(assignedTo) && StringUtils.hasText(assignedTo)) {
-            Employee employee = userService.findLoggedInUser();
+            Employee employee = employeeService.findLoggedInEmployee();
             if (employee.isSuperAdmin() || employee.isAdmin()) {
                 leadPageableFiltersBuilder.withAssignedTo(assignedTo);
             } else {
@@ -286,7 +286,7 @@ public class PageableFilterRequestHelper {
 
 
     private boolean isAssignedToFilterApplied(PageableFilterDto pageableFilterDto, StringBuilder queryBuilder, boolean searchTextApplied, boolean typeFilterApplied) {
-        Employee employee = userService.findLoggedInUser();
+        Employee employee = employeeService.findLoggedInEmployee();
         if (employee.isSuperAdmin() || employee.isAdmin()) {
             return applyFilter(pageableFilterDto.getAssignedTo(),
                     typeFilterApplied
@@ -474,7 +474,7 @@ public class PageableFilterRequestHelper {
     }
 
     boolean applyDeactiveLeadsFilter(StringBuilder queryBuilder, boolean filterApplied) {
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         if (!loggedInEmployee.isSuperAdmin() && !loggedInEmployee.isAdmin()) {
             if (filterApplied) {
                 queryBuilder.append(" AND l.status.name !='DEACTIVE'");

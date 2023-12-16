@@ -3,12 +3,11 @@ package com.sfd.thesmartestate.users.services;
 import com.sfd.thesmartestate.users.dtos.ChangePasswordRequestPayload;
 import com.sfd.thesmartestate.users.dtos.ResetPasswordRequestPayload;
 import com.sfd.thesmartestate.users.entities.Employee;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public interface UserService extends UserDetailsService {
+public interface EmployeeService {
     List<Employee> findAll();
 
     List<Employee> findUsersByProjectId(Long projectId);
@@ -25,8 +24,6 @@ public interface UserService extends UserDetailsService {
 
     List<Employee> getUserByNameStartsWithAndProjectName(String name, String projectName);
 
-    Employee findLoggedInUser();
-
     Employee findById(Long id);
 
     Employee changePassword(ChangePasswordRequestPayload requestPayload);
@@ -38,5 +35,6 @@ public interface UserService extends UserDetailsService {
     Employee uploadProfilePhoto(MultipartFile photo, Long userId, String vendorId);
 
     Employee findByEmployeeUniqueId(String employeeUniqueId);
+    Employee findLoggedInEmployee();
 
 }

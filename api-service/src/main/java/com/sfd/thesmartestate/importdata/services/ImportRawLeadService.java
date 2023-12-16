@@ -7,7 +7,7 @@ import com.sfd.thesmartestate.importdata.dto.XlsLeadRowDto;
 import com.sfd.thesmartestate.lms.rawleads.RawLead;
 import com.sfd.thesmartestate.lms.rawleads.RawLeadService;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import static com.sfd.thesmartestate.importdata.services.ImportLeadServiceImpl.F
 public class ImportRawLeadService implements ImportLeadService {
     private final CustomerService customerService;
     private final RawLeadService rawLeadService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @Override
 
@@ -72,7 +72,7 @@ public class ImportRawLeadService implements ImportLeadService {
 
     private RawLeadImportData validateAndGenerateLeadData(List<XlsLeadRowDto> rows) {
         RawLeadImportData leadImportData = new RawLeadImportData();
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
 
         int rowNumber = 1;
         int rowsSkipped = 0;

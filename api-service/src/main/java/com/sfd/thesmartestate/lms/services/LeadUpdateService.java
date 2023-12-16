@@ -13,7 +13,7 @@ import com.sfd.thesmartestate.lms.targets.TargetService;
 import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.services.ProjectService;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @SuppressFBWarnings("EI_EXPOSE_REP")
 
 public class LeadUpdateService {
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final LeadStatusService leadStatusService;
     private final LeadTypeService leadTypeService;
     private final LeadSourceService leadSourceService;
@@ -51,7 +51,7 @@ public class LeadUpdateService {
         if (optional.isPresent()) {
             Lead lead = optional.get();
             lead.getComments().add(comment);
-            lead.setUpdatedBy(userService.findLoggedInUser());
+            lead.setUpdatedBy(employeeService.findLoggedInEmployee());
             lead.setLastUpdateAt(LocalDateTime.now());
             repository.save(lead);
         }
@@ -63,13 +63,13 @@ public class LeadUpdateService {
             Lead lead = optional.get();
             lead.getCalls().add(call);
             lead.setStatus(leadStatusService.findByName(Constants.FOLLOW_UP));
-            lead.setUpdatedBy(userService.findLoggedInUser());
+            lead.setUpdatedBy(employeeService.findLoggedInEmployee());
             lead.setLastUpdateAt(LocalDateTime.now());
 
             //add remark of call
             Comment comment = new Comment();
             comment.setMessage(call.getComment());
-            comment.setCreatedBy(userService.findLoggedInUser());
+            comment.setCreatedBy(employeeService.findLoggedInEmployee());
             comment.setCreatedAt(LocalDateTime.now());
             comment.setCommentType(LeadEvents.MOBILE_REMARK.name());
             lead.getComments().add(comment);
@@ -82,7 +82,7 @@ public class LeadUpdateService {
         Optional<Lead> optional = repository.findById(lead.getId());
         if (optional.isPresent()) {
             Lead leadInDb = optional.get();
-            Employee loggedInEmployee = userService.findLoggedInUser();
+            Employee loggedInEmployee = employeeService.findLoggedInEmployee();
             // update lead value on base of status
             setLeadStatusOnEvent(lead, leadEvent, leadInDb, loggedInEmployee);
 
@@ -105,7 +105,7 @@ public class LeadUpdateService {
                 }
                 break;
             case USER_ASSIGNED:
-                leadInDb.setAssignedTo(userService.findById(lead.getAssignedTo().getId()));
+                leadInDb.setAssignedTo(employeeService.findById(lead.getAssignedTo().getId()));
                 break;
             case LEAD_TYPE_CHANGED:
                 leadInDb.setType(leadTypeService.findById(lead.getType().getId()));
@@ -143,7 +143,7 @@ public class LeadUpdateService {
         repository.findByCustomerPhoneAndProjectName(persistentLead.getCustomer().getPhone(), project.getName())
                 .orElseThrow(() -> new LeadException("Already in system with Customer Phone: " + persistentLead.getCustomer().getPhone() + "  and Project: " + project.getName()));
         persistentLead.setProject(project);
-        persistentLead.setAssignedTo(userService.findById(userId));
+        persistentLead.setAssignedTo(employeeService.findById(userId));
         return update(persistentLead, LeadEvents.PROJECT_CHANGED);
     }
 

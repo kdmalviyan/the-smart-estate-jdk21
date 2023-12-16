@@ -12,7 +12,7 @@ import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.services.LeadStatusService;
 import com.sfd.thesmartestate.lms.services.LeadUpdateService;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 public class FollowupServiceImpl implements FollowupService {
     private final FollowupRepository repository;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final LeadEventService leadEventService;
     private final LeadStatusService leadStatusService;
     private final LeadUpdateService leadUpdateService;
@@ -47,7 +47,7 @@ public class FollowupServiceImpl implements FollowupService {
 
     @Override
     public Followup create(Followup followup) {
-        followup.setCreatedBy(userService.findLoggedInUser());
+        followup.setCreatedBy(employeeService.findLoggedInEmployee());
         followup.setCreatedAt(LocalDateTime.now());
         return repository.save(followup);
     }
@@ -71,7 +71,7 @@ public class FollowupServiceImpl implements FollowupService {
     @Override
     public Followup update(Followup followup) {
         followup.setLastUpdateAt(LocalDateTime.now());
-        followup.setUpdatedBy(userService.findLoggedInUser());
+        followup.setUpdatedBy(employeeService.findLoggedInEmployee());
         return repository.save(followup);
     }
 
@@ -103,7 +103,7 @@ public class FollowupServiceImpl implements FollowupService {
     @Override
     public Long findByIsOpenAndFollowupTimeGreaterThan(boolean isOpen, LocalDateTime followupStart, LocalDateTime followupEnd) {
 
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         if (loggedInEmployee.isSuperAdmin() || loggedInEmployee.isAdmin()) {
             return repository.findByIsOpenAndFollowupTimeBetweenStartAndEndDate(isOpen, followupStart, followupEnd);
         }
@@ -132,7 +132,7 @@ public class FollowupServiceImpl implements FollowupService {
             status = filterRequestPayload.getStatus();
         }
         Page<Followup> page = getFollowupPage(filterRequestPayload, followupStartTime, followupEndTime, startAmount,
-                endAmount, searchText, deactivationReason, status, userService.findLoggedInUser());
+                endAmount, searchText, deactivationReason, status, employeeService.findLoggedInEmployee());
 
         List<FollowupResponseDto> leadResponseDtoList = page.getContent().stream()
                 .map(FollowUpResponseMapper::mapToFollowupResponse
@@ -218,7 +218,7 @@ public class FollowupServiceImpl implements FollowupService {
     @Override
     public void updateLeadStatus(Followup followup) {
         Lead lead = followup.getLead();
-        lead.setUpdatedBy(userService.findLoggedInUser());
+        lead.setUpdatedBy(employeeService.findLoggedInEmployee());
         lead.setStatus(leadStatusService.findByName(Constants.FOLLOW_UP_COMPLETE));
         leadEventService.setLeadEventComment(lead, LeadEvents.STATUS_CHANGED, followup);
         lead = leadUpdateService.updateLeadFollowup(lead, followup);

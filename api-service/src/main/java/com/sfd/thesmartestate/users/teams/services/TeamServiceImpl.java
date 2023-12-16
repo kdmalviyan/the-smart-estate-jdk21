@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.users.teams.services;
 import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.services.ProjectService;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import com.sfd.thesmartestate.users.teams.entities.Team;
 import com.sfd.thesmartestate.users.teams.exceptions.TeamException;
 import com.sfd.thesmartestate.users.teams.repository.TeamRepository;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final ProjectService projectService;
 
     @Override
@@ -37,8 +37,8 @@ public class TeamServiceImpl implements TeamService {
         team.setProject(validateProject(team.getProject()));
         team.setCreatedAt(LocalDateTime.now());
         team.setLastUpdateAt(LocalDateTime.now());
-        team.setCreatedBy(userService.findLoggedInUser());
-        team.setUpdatedBy(userService.findLoggedInUser());
+        team.setCreatedBy(employeeService.findLoggedInEmployee());
+        team.setUpdatedBy(employeeService.findLoggedInEmployee());
         return teamRepository.save(team);
     }
 
@@ -74,7 +74,7 @@ public class TeamServiceImpl implements TeamService {
         validateTeam(team);
         validateProject(team.getProject());
         team.setLastUpdateAt(LocalDateTime.now());
-        team.setUpdatedBy(userService.findLoggedInUser());
+        team.setUpdatedBy(employeeService.findLoggedInEmployee());
         return teamRepository.save(team);
     }
 
@@ -86,11 +86,11 @@ public class TeamServiceImpl implements TeamService {
         if (Objects.isNull(members)) {
             members = new HashSet<>();
         }
-        if (!members.add(userService.findById(userId))) {
+        if (!members.add(employeeService.findById(userId))) {
             throw new TeamException("Member can not be added, its already present in team members");
         }
         team.setLastUpdateAt(LocalDateTime.now());
-        team.setUpdatedBy(userService.findLoggedInUser());
+        team.setUpdatedBy(employeeService.findLoggedInEmployee());
         return teamRepository.save(team);
     }
 
@@ -100,10 +100,10 @@ public class TeamServiceImpl implements TeamService {
         Set<Employee> members = team.getMembers();
         checkMemberIsNotTeamLead(team.getSupervisor().getId(), userId);
         if (Objects.nonNull(members)) {
-            members.remove(userService.findById(userId));
+            members.remove(employeeService.findById(userId));
         }
         team.setLastUpdateAt(LocalDateTime.now());
-        team.setUpdatedBy(userService.findLoggedInUser());
+        team.setUpdatedBy(employeeService.findLoggedInEmployee());
         return teamRepository.save(team);
     }
 
@@ -117,11 +117,11 @@ public class TeamServiceImpl implements TeamService {
     public Team assignTeamLeader(Long teamId, Long userId) {
         Team team = findById(teamId);
         validateTeamLeader(team);
-        Employee employee = userService.findById(userId);
+        Employee employee = employeeService.findById(userId);
         team.getMembers().add(employee);
         team.setSupervisor(employee);
         team.setLastUpdateAt(LocalDateTime.now());
-        team.setUpdatedBy(userService.findLoggedInUser());
+        team.setUpdatedBy(employeeService.findLoggedInEmployee());
         return teamRepository.save(team);
     }
 
@@ -139,8 +139,8 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team changeTeamLeader(Long teamId, Long currentLeadId, Long newLeadId) {
         Team team = findById(teamId);
-        Employee currentLead = userService.findById(currentLeadId);
-        Employee newLead = userService.findById(newLeadId);
+        Employee currentLead = employeeService.findById(currentLeadId);
+        Employee newLead = employeeService.findById(newLeadId);
         if (isChangeRequestValid(team, currentLead, newLead)) {
             team.setSupervisor(newLead);
         } else {
@@ -148,7 +148,7 @@ public class TeamServiceImpl implements TeamService {
         }
         team.getMembers().add(newLead);
         team.setLastUpdateAt(LocalDateTime.now());
-        team.setUpdatedBy(userService.findLoggedInUser());
+        team.setUpdatedBy(employeeService.findLoggedInEmployee());
         return teamRepository.save(team);
     }
 

@@ -1,5 +1,6 @@
 package com.sfd.thesmartestate.users.services;
 
+import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.entities.LoginDetails;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

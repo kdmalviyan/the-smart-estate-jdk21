@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.users.teams.controllers;
 
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import com.sfd.thesmartestate.users.teams.entities.Team;
 import com.sfd.thesmartestate.users.teams.services.TeamService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -21,7 +21,7 @@ import java.util.List;
 public class TeamController {
 
     private final TeamService teamService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @GetMapping("")
     public ResponseEntity<List<Team>> listAllTeams() {
@@ -88,7 +88,7 @@ public class TeamController {
 
     @GetMapping("/users/{projectId}")
     public ResponseEntity<List<Employee>> listAllUsersByProject(@PathVariable("projectId") Long projectId) {
-        return ResponseEntity.ok(userService.findUsersByProjectId(projectId));
+        return ResponseEntity.ok(employeeService.findUsersByProjectId(projectId));
     }
 
     @GetMapping("/deactivate/{id}")

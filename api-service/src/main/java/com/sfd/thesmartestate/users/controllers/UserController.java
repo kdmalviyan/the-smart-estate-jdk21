@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.users.controllers;
 import com.sfd.thesmartestate.users.dtos.ChangePasswordRequestPayload;
 import com.sfd.thesmartestate.users.dtos.ResetPasswordRequestPayload;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @CrossOrigin("*")
 public class UserController {
 
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     /**
      * Get all users and FILTER superadmin
@@ -31,46 +31,46 @@ public class UserController {
      */
     @GetMapping("")
     public ResponseEntity<List<Employee>> listAllUsers() {
-        return ResponseEntity.ok(userService.findAll().stream().filter(user -> !user.isSuperAdmin()).collect(Collectors.toList()));
+        return ResponseEntity.ok(employeeService.findAll().stream().filter(user -> !user.isSuperAdmin()).collect(Collectors.toList()));
     }
 
     @PostMapping("")
     public ResponseEntity<Employee> createUser(@RequestBody Employee employee) {
-        return ResponseEntity.ok(userService.createUser(employee));
+        return ResponseEntity.ok(employeeService.createUser(employee));
     }
 
     @PutMapping("")
     public ResponseEntity<Employee> update(@RequestBody Employee employee) {
-        return ResponseEntity.ok(userService.update(employee));
+        return ResponseEntity.ok(employeeService.update(employee));
     }
 
     @PutMapping("password/change")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequestPayload requestPayload) {
         log.info("Changing password for " + requestPayload.getUsername());
-        return ResponseEntity.ok(userService.changePassword(requestPayload));
+        return ResponseEntity.ok(employeeService.changePassword(requestPayload));
     }
 
     @GetMapping("password/forgot/{emailUsername}")
     public ResponseEntity<?> forgot(@PathVariable("emailUsername") String emailUsername) {
         log.info("Sending password reset OTP for " + emailUsername);
-        userService.sendForgotPasswordOTP(emailUsername);
+        employeeService.sendForgotPasswordOTP(emailUsername);
         return ResponseEntity.ok("OTP sent successfully for changing password, Please check your email!");
     }
 
     @PutMapping("password/reset")
     public ResponseEntity<Employee> resetPassword(@RequestBody ResetPasswordRequestPayload requestPayload) {
         log.info("Resetting password for " + requestPayload.getUsername());
-        return ResponseEntity.ok(userService.resetPassword(requestPayload));
+        return ResponseEntity.ok(employeeService.resetPassword(requestPayload));
     }
 
     @GetMapping(value = "project/{projectId}")
     public ResponseEntity<List<Employee>> findUsersByProject(@PathVariable("projectId") Long projectId) {
-        return ResponseEntity.ok(userService.findUsersByProjectId(projectId));
+        return ResponseEntity.ok(employeeService.findUsersByProjectId(projectId));
     }
 
     @GetMapping(value = "/userName")
     public ResponseEntity<Employee> findUserByUserName(@RequestParam("userName") String userName) {
-        return ResponseEntity.ok(userService.getUserByUsername(userName));
+        return ResponseEntity.ok(employeeService.getUserByUsername(userName));
     }
 
     @PostMapping(
@@ -83,6 +83,6 @@ public class UserController {
             @PathVariable("userId") Long userId,
             @RequestHeader("X-VendorID") String vendorId
     ) {
-        return ResponseEntity.ok(userService.uploadProfilePhoto(photo, userId, vendorId));
+        return ResponseEntity.ok(employeeService.uploadProfilePhoto(photo, userId, vendorId));
     }
 }

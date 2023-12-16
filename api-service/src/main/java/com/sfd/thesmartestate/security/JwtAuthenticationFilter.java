@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sfd.thesmartestate.common.Constants;
 import com.sfd.thesmartestate.security.exceptions.InvalidCredentialsException;
 import com.sfd.thesmartestate.users.services.LoginDetailsService;
-import com.sfd.thesmartestate.users.services.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.extern.slf4j.Slf4j;

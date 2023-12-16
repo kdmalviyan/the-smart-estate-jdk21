@@ -10,7 +10,7 @@ import com.sfd.thesmartestate.security.services.RefreshTokenService;
 import com.sfd.thesmartestate.users.entities.Employee;
 import com.sfd.thesmartestate.users.entities.LoginDetails;
 import com.sfd.thesmartestate.users.services.LoginDetailsService;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @Slf4j
 public record AuthenticationController(AuthenticationService authenticationService,
                                        RefreshTokenService refreshTokenService,
-                                       UserService userService,
+                                       EmployeeService employeeService,
                                        LoginDetailsService loginDetailsService,
                                        CustomerService customerService) {
 
@@ -44,7 +44,7 @@ public record AuthenticationController(AuthenticationService authenticationServi
 
         LoginDetails loginDetails = loginDetailsService.findLoggedInUser();
         if(Objects.nonNull(loginDetails.getEmployeeUniqueId())) {
-            Employee employee = userService.findByEmployeeUniqueId(loginDetails.getEmployeeUniqueId());
+            Employee employee = employeeService.findByEmployeeUniqueId(loginDetails.getEmployeeUniqueId());
             response.setAdmin(employee.isAdmin());
             response.setSuperAdmin(employee.isSuperAdmin());
             response.setProfilePath(employee.getProfileImageThumbPath());

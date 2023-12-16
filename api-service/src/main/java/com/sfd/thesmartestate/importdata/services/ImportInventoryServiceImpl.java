@@ -10,7 +10,7 @@ import com.sfd.thesmartestate.projects.inventory.InventoryService;
 import com.sfd.thesmartestate.projects.services.InventoryStatusService;
 import com.sfd.thesmartestate.projects.services.ProjectService;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
     private final InventoryStatusService inventoryStatusService;
     private final InventoryService inventoryService;
     private final ProjectService projectService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     public static final String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 
@@ -81,7 +81,7 @@ public class ImportInventoryServiceImpl implements ImportInventoryService {
         Project project = projectService.findById(projectId);
         Set<Inventory> projectInventories = project.getInventories();
         InventoryStatus inventoryStatus = inventoryStatusService.findByName(Constants.AVAILABLE);
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         for (XlsInventoryRowDto xlsInventoryRowDto : rows) {
             try {
                 if (isInventoryValid(xlsInventoryRowDto.getTower(), xlsInventoryRowDto.getInventoryName(), projectInventories)) {

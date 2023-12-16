@@ -12,7 +12,7 @@ import com.sfd.thesmartestate.projects.repositories.InventoryStatusRepository;
 import com.sfd.thesmartestate.projects.services.InventoryStatusService;
 import com.sfd.thesmartestate.projects.services.ProjectService;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -87,7 +87,7 @@ public class InitialDataLoader {
     final ProjectService projectService;
     final DeactivationReasonService deactivationReasonService;
     private final RoleService roleService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final LeadSourceRepository leadSourceRepository;
@@ -98,7 +98,7 @@ public class InitialDataLoader {
     private final InventoryStatusRepository inventoryStatusRepository;
 
     public InitialDataLoader(final RoleService roleService,
-                             final UserService userService,
+                             final EmployeeService employeeService,
                              final BCryptPasswordEncoder bCryptPasswordEncoder,
                              final LeadSourceService leadSourceService,
                              final LeadStatusService leadStatusService,
@@ -114,7 +114,7 @@ public class InitialDataLoader {
                              final DeactivationReasonRepository deactivationReasonRepository,
                              final InventoryStatusRepository inventoryStatusRepository) {
         this.roleService = roleService;
-        this.userService = userService;
+        this.employeeService = employeeService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.leadSourceService = leadSourceService;
         this.leadStatusService = leadStatusService;
@@ -152,9 +152,9 @@ public class InitialDataLoader {
     }
 
     private void loadUsers() {
-        if (userService.count() == 0) {
+        if (employeeService.count() == 0) {
             Employee superadmin = createUser("superadmin", bCryptPasswordEncoder.encode("Password@1"), "ROLE_SUPERADMIN");
-            userService.createUser(superadmin);
+            employeeService.createUser(superadmin);
         }
     }
 

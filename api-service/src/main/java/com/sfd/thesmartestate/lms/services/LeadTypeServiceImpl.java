@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.lms.services;
 import com.sfd.thesmartestate.lms.entities.LeadType;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.repositories.LeadTypeRepository;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class LeadTypeServiceImpl implements LeadTypeService {
 
     private final LeadTypeRepository leadTypeRepository;
-    private UserService userService;
+    private EmployeeService employeeService;
 
     @Override
     public List<LeadType> findAll() {
@@ -33,9 +33,9 @@ public class LeadTypeServiceImpl implements LeadTypeService {
         LeadType existingLeadType = findByType(createLeadType(leadType.getName()));
         if (Objects.isNull(existingLeadType)) {
             leadType.setName(createLeadType(leadType.getName()));
-            leadType.setCreatedBy(userService.findLoggedInUser());
+            leadType.setCreatedBy(employeeService.findLoggedInEmployee());
             leadType.setLastUpdateAt(LocalDateTime.now());
-            leadType.setUpdatedBy(userService.findLoggedInUser());
+            leadType.setUpdatedBy(employeeService.findLoggedInEmployee());
             leadType.setCreatedAt(LocalDateTime.now());
             leadType.setActive(true);
             return leadTypeRepository.save(leadType);
@@ -51,7 +51,7 @@ public class LeadTypeServiceImpl implements LeadTypeService {
             if (Objects.isNull(findByType(createLeadType(leadType.getName())))) {
                 existingLeadType.setName(createLeadType(leadType.getName()));
                 existingLeadType.setDescription(leadType.getDescription());
-                existingLeadType.setUpdatedBy(userService.findLoggedInUser());
+                existingLeadType.setUpdatedBy(employeeService.findLoggedInEmployee());
                 existingLeadType.setLastUpdateAt(LocalDateTime.now());
                 return leadTypeRepository.save(existingLeadType);
             } else {
@@ -88,7 +88,7 @@ public class LeadTypeServiceImpl implements LeadTypeService {
         if (Objects.nonNull(leadType)) {
             leadType.setActive(false);
             leadType.setLastUpdateAt(LocalDateTime.now());
-            leadType.setUpdatedBy(userService.findLoggedInUser());
+            leadType.setUpdatedBy(employeeService.findLoggedInEmployee());
             return leadTypeRepository.save(leadType);
         } else {
             throw new LeadException("Lead Type Not Found");

@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.lms.services;
 import com.sfd.thesmartestate.lms.entities.LeadSource;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.repositories.LeadSourceRepository;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class LeadSourceServiceImpl implements LeadSourceService {
 
     private final LeadSourceRepository leadSourceRepository;
-    private UserService userService;
+    private EmployeeService employeeService;
 
     @Override
     public List<LeadSource> findAll() {
@@ -34,9 +34,9 @@ public class LeadSourceServiceImpl implements LeadSourceService {
         if (Objects.isNull(existingLeadSource)) {
             leadSource.setName(createLeadSourceName(leadSource.getName()));
             leadSource.setCreatedAt(LocalDateTime.now());
-            leadSource.setCreatedBy(userService.findLoggedInUser());
+            leadSource.setCreatedBy(employeeService.findLoggedInEmployee());
             leadSource.setLastUpdateAt(LocalDateTime.now());
-            leadSource.setUpdatedBy(userService.findLoggedInUser());
+            leadSource.setUpdatedBy(employeeService.findLoggedInEmployee());
             leadSource.setActive(true);
             return leadSourceRepository.save(leadSource);
         } else {
@@ -52,7 +52,7 @@ public class LeadSourceServiceImpl implements LeadSourceService {
                 existingLeadSource.setName(createLeadSourceName(leadSource.getName()));
                 existingLeadSource.setDescription(leadSource.getDescription());
                 existingLeadSource.setLastUpdateAt(LocalDateTime.now());
-                existingLeadSource.setUpdatedBy(userService.findLoggedInUser());
+                existingLeadSource.setUpdatedBy(employeeService.findLoggedInEmployee());
                 return leadSourceRepository.save(existingLeadSource);
             } else {
                 throw new LeadException("Lead Source already exists with this name");
@@ -79,7 +79,7 @@ public class LeadSourceServiceImpl implements LeadSourceService {
         if (Objects.nonNull(leadSource)) {
             leadSource.setActive(false);
             leadSource.setLastUpdateAt(LocalDateTime.now());
-            leadSource.setUpdatedBy(userService.findLoggedInUser());
+            leadSource.setUpdatedBy(employeeService.findLoggedInEmployee());
             return leadSourceRepository.save(leadSource);
         } else {
             throw new LeadException("Lead Source Not Found");

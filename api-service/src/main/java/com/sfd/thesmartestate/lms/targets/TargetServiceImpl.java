@@ -5,7 +5,7 @@ import com.sfd.thesmartestate.dashboard.dtos.TargetCountResponseDto;
 import com.sfd.thesmartestate.lms.exceptions.TargetException;
 import com.sfd.thesmartestate.projects.services.ProjectService;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import com.sfd.thesmartestate.users.teams.entities.Team;
 import com.sfd.thesmartestate.users.teams.services.TeamService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -27,14 +27,14 @@ import java.util.stream.Collectors;
 
 public class TargetServiceImpl implements TargetService {
     private final TargetRepository repository;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final ProjectService projectService;
     private final TargetStatisticsHelper helper;
     private final TeamService teamService;
 
     @Override
     public Target create(Target target) {
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         target.setCreatedAt(LocalDateTime.now());
         target.setCreatedBy(loggedInEmployee);
         if (Objects.isNull(target.getAssignedTo())) {
@@ -115,7 +115,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<Target> findAll(boolean groupBy) {
-        Employee loggedImEmployee = userService.findLoggedInUser();
+        Employee loggedImEmployee = employeeService.findLoggedInEmployee();
         List<Target> targets;
         if (loggedImEmployee.isSuperAdmin() || loggedImEmployee.isAdmin()) {
             if (groupBy) {
@@ -145,7 +145,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getVisitsTargetCount() {
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
@@ -177,7 +177,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getVisitsWeeklyTargetCount() {
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
@@ -195,7 +195,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getVisitsMonthlyTargetCount() {
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
@@ -213,7 +213,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getBookingsTargetCount() {
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
@@ -243,7 +243,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getBookingsWeeklyTargetCount() {
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {
@@ -261,7 +261,7 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public List<TargetCountResponseDto> getBookingsMonthlyTargetCount() {
-        Employee loggedInEmployee = userService.findLoggedInUser();
+        Employee loggedInEmployee = employeeService.findLoggedInEmployee();
         Map<String, List<Target>> projectWiseTargets = helper.createProjectWiseTargets(loggedInEmployee);
         List<TargetCountResponseDto> response = new ArrayList<>();
         for (String projectName : projectWiseTargets.keySet()) {

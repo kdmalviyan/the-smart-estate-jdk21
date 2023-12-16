@@ -11,7 +11,7 @@ import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.services.ProjectService;
 import com.sfd.thesmartestate.security.exceptions.UserNotFoundException;
 import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import com.sfd.thesmartestate.users.teams.entities.Team;
 import com.sfd.thesmartestate.users.teams.exceptions.TeamException;
 import com.sfd.thesmartestate.users.teams.services.TeamService;
@@ -36,7 +36,7 @@ public class LeadServiceHelper {
     private final BudgetHelper budgetHelper;
     private final CustomerService customerService;
     private final LeadInventorySizeService leadInventorySizeService;
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final ProjectService projectService;
     private final TeamService teamService;
 
@@ -66,7 +66,7 @@ public class LeadServiceHelper {
 
     public void addBasicDetails(Lead lead) {
         lead.setCreatedAt(LocalDateTime.now());
-        lead.setCreatedBy(userService.findLoggedInUser());
+        lead.setCreatedBy(employeeService.findLoggedInEmployee());
     }
 
     public void addInitialComment(Lead lead) {
@@ -75,7 +75,7 @@ public class LeadServiceHelper {
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new LeadException("Lead has an empty comment, you must provide a comment at the time of lead creation"));
-        comment.setCreatedBy(userService.findLoggedInUser());
+        comment.setCreatedBy(employeeService.findLoggedInEmployee());
         comment.setCreatedAt(LocalDateTime.now());
         comment.setCommentType("Inquiry");
     }
@@ -101,7 +101,7 @@ public class LeadServiceHelper {
     }
 
     public void addAssignedToDetails(Lead lead) {
-        lead.setAssignedTo(userService.findById(lead.getAssignedTo().getId()));
+        lead.setAssignedTo(employeeService.findById(lead.getAssignedTo().getId()));
     }
 
     /**

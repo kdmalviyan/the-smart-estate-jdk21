@@ -13,6 +13,7 @@ import com.sfd.thesmartestate.users.UserHelper;
 import com.sfd.thesmartestate.users.dtos.ChangePasswordRequestPayload;
 import com.sfd.thesmartestate.users.dtos.ResetPasswordRequestPayload;
 import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.users.entities.LoginDetails;
 import com.sfd.thesmartestate.users.exceptions.UserManagementException;
 import com.sfd.thesmartestate.users.repositories.UserRepository;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -20,9 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,15 +42,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @SuppressFBWarnings("EI_EXPOSE_REP")
 
-public class UserServiceImpl implements UserService {
-
+public class EmployeeServiceImpl implements EmployeeService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserHelper userHelper;
     private final NotificationSenderFactory notificationSenderFactory;
     private final FileService fileService;
     private final OTPService otpService;
-
+    private final LoginDetailsService loginDetailsService;
     @Value("${user.default.password}")
     private String defaultPassword;
 
@@ -95,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Employee update(Employee employee) {
-        Employee loggedInEmployee = findLoggedInUser();
+        Employee loggedInEmployee = findLoggedInEmployee();
         Employee persistentEmployee = validateUsernameChangesAndGetPersistentUser(employee);
         if (Objects.isNull(loggedInEmployee)) {
             throw new UserManagementException("Invalid permissions, please login again.");
@@ -174,25 +171,6 @@ public class UserServiceImpl implements UserService {
 
     private boolean notActive(Employee employee) {
         return !employee.isActive();
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        final Employee employee = userRepository.findByUsername(username);
-        if (Objects.isNull(employee)) {
-            throw new UsernameNotFoundException(username);
-        }
-        return employee;
-    }
-
-    @Override
-    public Employee findLoggedInUser() {
-        try {
-            return (Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        } catch (Exception e) {
-            log.error("Unable to find loggedin user");
-        }
-        return null;
     }
 
     @Override
@@ -279,6 +257,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Employee findByEmployeeUniqueId(String employeeUniqueId) {
         return userRepository.findByEmployeeUniqueId(employeeUniqueId);
+    }
+
+    @Override
+    public Employee findLoggedInEmployee() {
+        LoginDetails loginDetails = loginDetailsService.findLoggedInUser();
+        return findByEmployeeUniqueId(loginDetails.getEmployeeUniqueId());
     }
 
     private void validatePhoto(MultipartFile photo) {

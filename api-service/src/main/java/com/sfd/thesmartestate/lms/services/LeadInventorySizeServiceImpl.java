@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.lms.services;
 import com.sfd.thesmartestate.lms.entities.LeadInventorySize;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.repositories.LeadInventorySizeRepository;
-import com.sfd.thesmartestate.users.services.UserService;
+import com.sfd.thesmartestate.users.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class LeadInventorySizeServiceImpl implements LeadInventorySizeService {
 
     private final LeadInventorySizeRepository leadInventorySizeRepository;
 
-    private final UserService userService;
+    private final EmployeeService employeeService;
 
     @Override
     public List<LeadInventorySize> findAll() {
@@ -35,8 +35,8 @@ public class LeadInventorySizeServiceImpl implements LeadInventorySizeService {
         LeadInventorySize existingInventorySize=findBySize(createInventorySize(leadInventorySize.getSize()));
         if (Objects.isNull(existingInventorySize)) {
             leadInventorySize.setSize(createInventorySize(leadInventorySize.getSize()));
-            leadInventorySize.setCreatedBy(userService.findLoggedInUser());
-            leadInventorySize.setUpdatedBy(userService.findLoggedInUser());
+            leadInventorySize.setCreatedBy(employeeService.findLoggedInEmployee());
+            leadInventorySize.setUpdatedBy(employeeService.findLoggedInEmployee());
             leadInventorySize.setCreatedAt(LocalDateTime.now());
             leadInventorySize.setLastUpdateAt(LocalDateTime.now());
             leadInventorySize.setActive(true);
@@ -54,7 +54,7 @@ public class LeadInventorySizeServiceImpl implements LeadInventorySizeService {
         if (Objects.nonNull(existingLeadInventory)) {
             if(Objects.isNull(findBySize(createInventorySize(leadInventorySize.getSize())))){
                 existingLeadInventory.setLastUpdateAt(LocalDateTime.now());
-                existingLeadInventory.setUpdatedBy(userService.findLoggedInUser());
+                existingLeadInventory.setUpdatedBy(employeeService.findLoggedInEmployee());
                 existingLeadInventory.setDescription(leadInventorySize.getDescription());
                 existingLeadInventory.setSize(leadInventorySize.getSize());
                 return  leadInventorySizeRepository.save(existingLeadInventory);
@@ -95,7 +95,7 @@ public class LeadInventorySizeServiceImpl implements LeadInventorySizeService {
             if(Objects.nonNull(leadInventory)){
                 leadInventory.setLastUpdateAt(LocalDateTime.now());
                 leadInventory.setActive(false);
-                leadInventory.setUpdatedBy(userService.findLoggedInUser());
+                leadInventory.setUpdatedBy(employeeService.findLoggedInEmployee());
                 return leadInventorySizeRepository.save(leadInventory);
             }
             else{
