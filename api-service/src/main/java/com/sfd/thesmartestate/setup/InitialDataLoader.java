@@ -54,7 +54,8 @@ public class InitialDataLoader {
             "ROLE_ADMIN", "Admin",
             "ROLE_BUSINESS_EXECUTIVE", "Business Executive",
             "ROLE_BUSINESS_HEAD", "Business Head",
-            "ROLE_BUSINESS_MANAGER", "Business Manager");
+            "ROLE_BUSINESS_MANAGER", "Business Manager",
+            "ROLE_CUSTOMER", "Customer");
     private static final Map<String, String> initialInventorySize = Map.of(
             "4_bhk_+_servant_room", "4 BHK+servant room",
             "4_bhk", "4 BHK",

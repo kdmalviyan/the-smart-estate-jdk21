@@ -1,5 +1,6 @@
 package com.sfd.thesmartestate.customer.services;
 
+import com.sfd.thesmartestate.common.services.RoleService;
 import com.sfd.thesmartestate.customer.entities.Customer;
 import com.sfd.thesmartestate.customer.repositories.CustomerRepository;
 import com.sfd.thesmartestate.users.entities.LoginDetails;
@@ -8,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +17,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository repository;
     private final LoginDetailsService loginDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
     @Override
     public List<Customer> findAll() {
         return repository.findAll();
@@ -35,6 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer.getLoginDetails().setCustomerUniqueId(customerUniqueId);
             customer.getLoginDetails()
                     .setPassword(passwordEncoder.encode(customer.getLoginDetails().getPassword()));
+            customer.getLoginDetails().setRoles(Set.of(roleService.findByName("ROLE_CUSTOMER")));
             return repository.saveAndFlush(customer);
         }
         return repository.findByCustomerUniqueId(loginDetails.getCustomerUniqueId());
