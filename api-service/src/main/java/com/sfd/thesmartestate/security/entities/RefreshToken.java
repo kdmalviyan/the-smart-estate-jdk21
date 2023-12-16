@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.security.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 

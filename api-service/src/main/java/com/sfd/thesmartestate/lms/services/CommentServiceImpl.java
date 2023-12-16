@@ -2,8 +2,8 @@ package com.sfd.thesmartestate.lms.services;
 
 import com.sfd.thesmartestate.lms.entities.Comment;
 import com.sfd.thesmartestate.lms.repositories.CommentRepository;
-import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.EmployeeService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

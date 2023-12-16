@@ -2,7 +2,7 @@ package com.sfd.thesmartestate.lms.targets;
 
 import com.sfd.thesmartestate.common.LeadEvents;
 import com.sfd.thesmartestate.dashboard.dtos.TargetCountResponseDto;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.Employee;
 
 import java.time.LocalDate;
 import java.util.List;

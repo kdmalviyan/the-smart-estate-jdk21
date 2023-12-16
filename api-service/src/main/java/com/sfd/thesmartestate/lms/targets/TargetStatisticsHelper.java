@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.lms.targets;
 
 import com.sfd.thesmartestate.dashboard.dtos.TargetWeekResponseDto;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.notifications.services;
 import com.sfd.thesmartestate.notifications.entities.OneTimePassword;
 import com.sfd.thesmartestate.notifications.enums.OTPTarget;
 import com.sfd.thesmartestate.notifications.enums.OTPType;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.Employee;
 
 public interface OTPService {
     OneTimePassword save(OneTimePassword otp);

@@ -6,10 +6,10 @@ import com.sfd.thesmartestate.lms.entities.Budget;
 import com.sfd.thesmartestate.lms.entities.Lead;
 import com.sfd.thesmartestate.lms.exceptions.LeadException;
 import com.sfd.thesmartestate.lms.rawleads.RawLead;
-import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.EmployeeService;
-import com.sfd.thesmartestate.users.teams.entities.Team;
-import com.sfd.thesmartestate.users.teams.services.TeamService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
+import com.sfd.thesmartestate.employee.teams.entities.Team;
+import com.sfd.thesmartestate.employee.teams.services.TeamService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -340,7 +340,7 @@ public class PageableFilterRequestHelper {
             } else {
                 Optional<Long> isSubordinate = teamMembers.stream().filter(userId -> pageableFilterDto.getAssignedTo().equals(userId.toString())).findAny();
                 // Leader applied filter for user which is not his subordinate so check for it ,in case of false
-                // show all his users list by default
+                // show all his employee list by default
                 if (isSubordinate.isPresent()) {
                     queryBuilder.append("l.assignedTo.id in(" + pageableFilterDto.getAssignedTo());
                 } else {

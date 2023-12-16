@@ -2,8 +2,7 @@ package com.sfd.thesmartestate.security;
 
 import com.sfd.thesmartestate.common.Constants;
 import com.sfd.thesmartestate.security.certificates.SecurityCertificatesManager;
-import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.entities.LoginDetails;
+import com.sfd.thesmartestate.employee.entities.LoginDetails;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;

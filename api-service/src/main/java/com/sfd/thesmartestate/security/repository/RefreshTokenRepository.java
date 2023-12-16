@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.security.repository;
 
 import com.sfd.thesmartestate.security.entities.RefreshToken;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;

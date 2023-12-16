@@ -187,7 +187,7 @@ public class PermissionInitializer {
                                     "Team Management",
                                     6,
                                     "team-management",
-                                    "users",
+                                    "employee",
                                     "",
                                     false,
                                     Set.of(),

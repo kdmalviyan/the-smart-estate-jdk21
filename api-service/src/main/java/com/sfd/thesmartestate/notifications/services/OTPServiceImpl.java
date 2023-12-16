@@ -6,7 +6,7 @@ import com.sfd.thesmartestate.notifications.enums.OTPTarget;
 import com.sfd.thesmartestate.notifications.enums.OTPType;
 import com.sfd.thesmartestate.notifications.exceptions.OneTimePasswordException;
 import com.sfd.thesmartestate.notifications.repositories.OTPRepository;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

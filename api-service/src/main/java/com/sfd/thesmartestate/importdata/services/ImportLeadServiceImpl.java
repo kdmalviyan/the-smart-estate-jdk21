@@ -10,8 +10,8 @@ import com.sfd.thesmartestate.lms.services.LeadService;
 import com.sfd.thesmartestate.lms.services.LeadSourceService;
 import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.EmployeeService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -104,7 +104,7 @@ public class ImportLeadServiceImpl implements ImportLeadService {
             xlsRow.setRownum(rowNumber);
 
             if (isValid) {
-                List<Employee> defaultAssignedToEmployee = employeeService.getUserByNameStartsWithAndProjectName(xlsRow.getAssignTo(), xlsRow.getProjectName());
+                List<Employee> defaultAssignedToEmployee = employeeService.getEmployeeByNameStartsWithAndProjectName(xlsRow.getAssignTo(), xlsRow.getProjectName());
                 if (defaultAssignedToEmployee.isEmpty()) {
                     errors.add(new ErrorDto("Assigned user " + xlsRow.getAssignTo() + " not found for the project :" + xlsRow.getProjectName(), "USER_NOT_FOUND", rowNumber, -1L));
                     rowsSkipped++;

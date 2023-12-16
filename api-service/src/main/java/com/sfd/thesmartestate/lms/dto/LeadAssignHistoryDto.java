@@ -1,6 +1,6 @@
 package com.sfd.thesmartestate.lms.dto;
 
-import com.sfd.thesmartestate.users.dtos.UserResponse;
+import com.sfd.thesmartestate.employee.dtos.UserResponse;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import lombok.NoArgsConstructor;

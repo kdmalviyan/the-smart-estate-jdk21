@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.lms.repositories;
 import com.sfd.thesmartestate.adhoc.dto.DuplicateResponse;
 import com.sfd.thesmartestate.lms.entities.Lead;
 import com.sfd.thesmartestate.projects.entities.Project;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface LeadRepository extends JpaRepository<Lead, Long>, JpaSpecificationExecutor {
+public interface LeadRepository extends JpaRepository<Lead, Long>, JpaSpecificationExecutor<Lead> {
     Optional<Lead> findByCustomerPhoneAndProject(String phone, Project project);
 
     Optional<Lead> findByCustomerPhoneAndProjectName(String phone, String projectName);
@@ -50,9 +50,9 @@ public interface LeadRepository extends JpaRepository<Lead, Long>, JpaSpecificat
     List<Lead> findByLeadWithNullInventorySize();
 
     @Query(value = "SELECT " +
-            " new com.sfd.thesmartestate.adhoc.dto.DuplicateResponse(COUNT(l) as recordCount ," +
+            "new com.sfd.thesmartestate.adhoc.dto.DuplicateResponse(COUNT(l) as recordCount ," +
             "l.customer.id as customerId,l.project.id as projectId) " +
-            " FROM Lead l " +
-            " GROUP BY l.project.id,l.customer.id having COUNT(l) >1")
+            "FROM Lead l " +
+            "GROUP BY l.project.id,l.customer.id having COUNT(l) >1")
     List<DuplicateResponse> findCustomerAndPhoneDuplicateLeads();
 }

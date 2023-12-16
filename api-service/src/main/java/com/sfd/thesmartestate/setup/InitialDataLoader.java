@@ -11,8 +11,8 @@ import com.sfd.thesmartestate.projects.entities.Project;
 import com.sfd.thesmartestate.projects.repositories.InventoryStatusRepository;
 import com.sfd.thesmartestate.projects.services.InventoryStatusService;
 import com.sfd.thesmartestate.projects.services.ProjectService;
-import com.sfd.thesmartestate.users.entities.Employee;
-import com.sfd.thesmartestate.users.services.EmployeeService;
+import com.sfd.thesmartestate.employee.entities.Employee;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -154,14 +154,12 @@ public class InitialDataLoader {
     private void loadUsers() {
         if (employeeService.count() == 0) {
             Employee superadmin = createUser("superadmin", bCryptPasswordEncoder.encode("Password@1"), "ROLE_SUPERADMIN");
-            employeeService.createUser(superadmin);
+            employeeService.createEmployee(superadmin);
         }
     }
 
     private Employee createUser(String username, String password, String roleName) {
         Employee employee = new Employee();
-        employee.setPassword(password);
-        employee.setUsername(username);
         employee.getLoginDetails().setPassword(password);
         employee.getLoginDetails().setUsername(username);
         String employeeUniqueId = UUID.randomUUID().toString();

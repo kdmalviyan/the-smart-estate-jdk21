@@ -1,6 +1,6 @@
 package com.sfd.thesmartestate.customer.entities;
 
-import com.sfd.thesmartestate.users.entities.LoginDetails;
+import com.sfd.thesmartestate.employee.entities.LoginDetails;
 import lombok.Data;
 
 import jakarta.persistence.*;

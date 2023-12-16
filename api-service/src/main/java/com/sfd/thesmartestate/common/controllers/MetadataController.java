@@ -2,7 +2,7 @@ package com.sfd.thesmartestate.common.controllers;
 
 import com.sfd.thesmartestate.common.services.MetadataService;
 import com.sfd.thesmartestate.uipermissions.PermissionTab;
-import com.sfd.thesmartestate.users.services.EmployeeService;
+import com.sfd.thesmartestate.employee.services.EmployeeService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "metadata")
@@ -39,7 +38,7 @@ public class MetadataController {
         response.put("roles", metadataService.fetchAllRoles());
         response.put("leadType", metadataService.fetchAllLeadType());
         response.put("leadInventorySizes", metadataService.fetchAllLeadInventorySize());
-        response.put("users", metadataService.fetchAllUsers());
+        response.put("employee", metadataService.fetchAllUsers());
         response.put("deactivationReason", metadataService.fetchAllDeactivationReason());
         response.put("projects", metadataService.fetchAllProjects());
         response.put("inventoryStatus", metadataService.fetchAllInventoryStatus());
@@ -55,7 +54,7 @@ public class MetadataController {
                 .forEach(role -> permissionTabs.addAll(role.getUiPermissions().stream()
                         .filter(PermissionTab::isTopMenu)
                         .sorted(Comparator.comparing(PermissionTab::getIndex))
-                        .collect(Collectors.toList())));
+                        .toList()));
         return ResponseEntity.ok(permissionTabs);
     }
 
@@ -67,7 +66,7 @@ public class MetadataController {
                 .forEach(role -> permissionTabs.addAll(role.getUiPermissions().stream()
                         .filter(PermissionTab::isTopMenu)
                         .sorted(Comparator.comparing(PermissionTab::getIndex))
-                        .collect(Collectors.toList())));
+                        .toList()));
         return ResponseEntity.ok(permissionTabs);
     }
 }

@@ -2,7 +2,7 @@ package com.sfd.thesmartestate.notifications.entities;
 
 import com.sfd.thesmartestate.notifications.enums.OTPTarget;
 import com.sfd.thesmartestate.notifications.enums.OTPType;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 

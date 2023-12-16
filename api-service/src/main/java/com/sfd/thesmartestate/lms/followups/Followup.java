@@ -1,7 +1,7 @@
 package com.sfd.thesmartestate.lms.followups;
 
 import com.sfd.thesmartestate.lms.entities.Lead;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.entities.Employee;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 

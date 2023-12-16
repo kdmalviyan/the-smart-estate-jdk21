@@ -4,8 +4,8 @@ import com.sfd.thesmartestate.security.JwtTokenGenerator;
 import com.sfd.thesmartestate.security.entities.RefreshToken;
 import com.sfd.thesmartestate.security.exceptions.InvalidCredentialsException;
 import com.sfd.thesmartestate.security.exceptions.UserDisableException;
-import com.sfd.thesmartestate.users.entities.LoginDetails;
-import com.sfd.thesmartestate.users.services.LoginDetailsService;
+import com.sfd.thesmartestate.employee.entities.LoginDetails;
+import com.sfd.thesmartestate.employee.services.LoginDetailsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,11 +45,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return (jwtTokenGenerator.generate(loginDetails, false));
     }
 
-    private void checkUserFoundAndNotDisabled(String username, LoginDetails userDetails) {
-        if (userDetails == null) {
+    private void checkUserFoundAndNotDisabled(String username, LoginDetails loginDetails) {
+        if (loginDetails == null) {
             throw new UsernameNotFoundException("Username " + username + " not found");
         } else {
-            if (!userDetails.isEnabled()) {
+            if (!loginDetails.isEnabled()) {
                 throw new UserDisableException("User account is disabled, please check with your admin team.");
             }
         }

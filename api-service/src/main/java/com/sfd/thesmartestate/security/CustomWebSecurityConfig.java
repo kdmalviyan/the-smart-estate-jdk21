@@ -3,7 +3,7 @@ package com.sfd.thesmartestate.security;
 
 import com.sfd.thesmartestate.common.Constants;
 import com.sfd.thesmartestate.multitenancy.filters.TenantFilter;
-import com.sfd.thesmartestate.users.services.LoginDetailsService;
+import com.sfd.thesmartestate.employee.services.LoginDetailsService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

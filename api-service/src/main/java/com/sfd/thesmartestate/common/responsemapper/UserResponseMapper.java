@@ -1,9 +1,9 @@
 package com.sfd.thesmartestate.common.responsemapper;
 
 import com.sfd.thesmartestate.projects.dto.ProjectDTO;
-import com.sfd.thesmartestate.users.dtos.RoleDto;
-import com.sfd.thesmartestate.users.dtos.UserResponse;
-import com.sfd.thesmartestate.users.entities.Employee;
+import com.sfd.thesmartestate.employee.dtos.RoleDto;
+import com.sfd.thesmartestate.employee.dtos.UserResponse;
+import com.sfd.thesmartestate.employee.entities.Employee;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;
