@@ -9,11 +9,7 @@ import java.time.LocalDateTime;
  * @author kuldeep
  */
 @Data
-@Entity
-@Table(name = "tb_tenant_subscriptions")
 public class Subscription {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private boolean isActive;
     private boolean isExpired;

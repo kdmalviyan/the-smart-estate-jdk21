@@ -2,11 +2,13 @@ package com.sfd.thesmartestate.multitenancy.tenants.aws;
 
 import com.sfd.thesmartestate.multitenancy.DataSourceConfig;
 import com.sfd.thesmartestate.multitenancy.tenants.Tenant;
-import com.sfd.thesmartestate.multitenancy.tenants.TenantService;
+import com.sfd.thesmartestate.multitenancy.tenants.TenantClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author kuldeep
@@ -15,17 +17,14 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class TenantRefresher {
-    private final TenantService tenantService;
-    private final TenantAWSService tenantAWSService;
+    private final TenantClientService tenantClientService;
 
     private final DataSourceConfig dataSourceConfig;
 
     @Scheduled(cron = "0 0 0 * * *")
     public void refreshTenantsConfig() {
-        tenantAWSService.loadTenants();
-        Iterable<Tenant> updatedTenants = tenantService.createTenant(TenantCache.list());
-        updatedTenants.forEach(t -> log.info("Tenant config refreshed: " + t.getOrganizationId()));
-        dataSourceConfig.refreshDataSource();
+        List<Tenant> tenants = tenantClientService.fetchAllTenants();
+        dataSourceConfig.refreshDataSource(tenants);
 
     }
 }

@@ -2,9 +2,9 @@ package com.sfd.thesmartestate.multitenancy.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sfd.thesmartestate.common.dto.ExceptionDto;
+import com.sfd.thesmartestate.multitenancy.tenants.TenantClientService;
 import com.sfd.thesmartestate.multitenancy.tenants.TenantContext;
 import com.sfd.thesmartestate.multitenancy.tenants.TenantException;
-import com.sfd.thesmartestate.multitenancy.tenants.TenantService;
 import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TenantFilter implements Filter {
     private static final String TENANT_ID_HEADER = "X-Tenant";
-    private final TenantService tenantService;
+    private final TenantClientService tenantService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
